@@ -29,6 +29,8 @@ const assets = [
   'zengly-home-dark.png',
   'zengly-home-light.png',
   'zengly-menu.png',
+  'zengly-split-bill-group.jpg',
+  'zengly-split-bill.png',
   'zengly-vaniti-intro.png',
   'zengly-vaniti-leaderboard.png',
   'zengly-vaniti-sprayers.png'
