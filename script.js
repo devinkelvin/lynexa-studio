@@ -77,6 +77,30 @@
     });
   });
 
+  if (window.location.hash) {
+    const settleHashOnLoad = () => {
+      const target = doc.querySelector(window.location.hash);
+      if (!target) return;
+      let attempts = 0;
+      let cancelled = false;
+      ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
+        window.addEventListener(type, () => { cancelled = true; }, { once: true, passive: true });
+      });
+      const settleInitialHash = () => {
+        if (cancelled || attempts >= 12) return;
+        attempts += 1;
+        const previousBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = 'auto';
+        target.scrollIntoView({ block: 'start', behavior: 'auto' });
+        root.style.scrollBehavior = previousBehavior;
+        window.setTimeout(settleInitialHash, 160);
+      };
+      window.setTimeout(settleInitialHash, 60);
+    };
+    if (doc.readyState === 'complete') settleHashOnLoad();
+    else window.addEventListener('load', settleHashOnLoad, { once: true });
+  }
+
   doc.querySelectorAll('[data-choice-group]').forEach((group) => {
     const multiple = group.hasAttribute('data-multiple');
     const buttons = [...group.querySelectorAll('button')];
@@ -197,7 +221,7 @@
         triggerScript.src = 'assets/vendor/ScrollTrigger.min.js';
         triggerScript.onload = () => {
           const motionScript = doc.createElement('script');
-          motionScript.src = 'motion.js?v=31';
+          motionScript.src = 'motion.js?v=33';
           doc.body.appendChild(motionScript);
         };
         doc.body.appendChild(triggerScript);

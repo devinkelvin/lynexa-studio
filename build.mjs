@@ -19,11 +19,19 @@ const assets = [
   'kelvin.jpg',
   'lagos-collaboration.jpg',
   'lagos-professionals.jpg',
-  'lynexa_full_logo.png',
-  'lynexa_mark.png',
-  'swiftly_logo.png',
-  'zengly_logo.png',
-  'zengly_text_logo.png'
+  'lagos-strategy-session.jpg',
+  'lynexa-full-official.png',
+  'lynexa-mark-official.png',
+  'swiftly-full-logo.png',
+  'zengly_text_logo.png',
+  'zengly-podium.png',
+  'zengly-sign.png',
+  'zengly-home-dark.png',
+  'zengly-home-light.png',
+  'zengly-menu.png',
+  'zengly-vaniti-intro.png',
+  'zengly-vaniti-leaderboard.png',
+  'zengly-vaniti-sprayers.png'
 ];
 
 await rm(join(root, 'dist'), { recursive: true, force: true });

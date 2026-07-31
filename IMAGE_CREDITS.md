@@ -4,5 +4,6 @@ The following production photography is used under the [Pexels License](https://
 
 - `assets/lagos-professionals.jpg` — “Professional African businesswomen smiling while working with laptops in a modern Lagos office setting,” photographed by Ninthgrid. Source: https://www.pexels.com/photo/confident-african-businesswomen-collaborating-in-lagos-office-30690402/
 - `assets/lagos-collaboration.jpg` — “Two colleagues collaborate on a laptop, sharing ideas in a casual office setting,” photographed by Ninthgrid. Source: https://www.pexels.com/photo/casual-teamwork-on-laptop-in-lagos-office-30678873/
+- `assets/lagos-strategy-session.jpg` — “A man and woman sitting together in Lagos, Nigeria working on a laptop indoors,” photographed by Ninthgrid. Source: https://www.pexels.com/photo/two-people-collaborating-on-laptop-in-lagos-30688590/
 
-Existing Lynexa, Zengly, Swiftly, and founder assets remain the property of their respective owner(s). `assets/african_founders.png` is retained in the project archive but is not used on the live site.
+The Zengly interface screens and campaign artwork, official Lynexa marks, Swiftly logo, and founder portrait were supplied by Lynexa Innovations Limited for this website. `assets/african_founders.png` remains retained in the local project archive but is not included in the live build.
