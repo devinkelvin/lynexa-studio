@@ -2,7 +2,6 @@
   'use strict';
 
   const doc = document;
-  const root = doc.documentElement;
   const body = doc.body;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -24,17 +23,12 @@
   window.setInterval(updateLagosTime, 1000);
 
   const header = doc.querySelector('[data-header]');
-  let lastScrollY = window.scrollY;
   let headerTicking = false;
   const updateHeader = () => {
-    const current = window.scrollY;
-    if (header) {
-      header.classList.toggle('is-scrolled', current > 20);
-      header.classList.toggle('is-hidden', current > 160 && current > lastScrollY + 4 && !body.classList.contains('menu-open'));
-    }
-    lastScrollY = current;
+    if (header) header.classList.toggle('is-scrolled', window.scrollY > 20);
     headerTicking = false;
   };
+  updateHeader();
   window.addEventListener('scroll', () => {
     if (!headerTicking) {
       window.requestAnimationFrame(updateHeader);
@@ -65,40 +59,23 @@
       event.preventDefault();
       const hash = link.getAttribute('href');
       if (window.location.hash !== hash) window.history.pushState(null, '', hash);
-      const settleAnchor = () => {
-        const previousBehavior = root.style.scrollBehavior;
-        root.style.scrollBehavior = 'auto';
-        target.scrollIntoView({ block: 'start', behavior: 'auto' });
-        root.style.scrollBehavior = previousBehavior;
-      };
-      settleAnchor();
-      window.setTimeout(settleAnchor, 120);
-      window.setTimeout(settleAnchor, 520);
+      target.scrollIntoView({
+        block: 'start',
+        behavior: reduceMotion ? 'auto' : 'smooth'
+      });
     });
   });
 
   if (window.location.hash) {
-    const settleHashOnLoad = () => {
+    const positionHashOnLoad = () => {
       const target = doc.querySelector(window.location.hash);
       if (!target) return;
-      let attempts = 0;
-      let cancelled = false;
-      ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((type) => {
-        window.addEventListener(type, () => { cancelled = true; }, { once: true, passive: true });
-      });
-      const settleInitialHash = () => {
-        if (cancelled || attempts >= 12) return;
-        attempts += 1;
-        const previousBehavior = root.style.scrollBehavior;
-        root.style.scrollBehavior = 'auto';
+      window.requestAnimationFrame(() => {
         target.scrollIntoView({ block: 'start', behavior: 'auto' });
-        root.style.scrollBehavior = previousBehavior;
-        window.setTimeout(settleInitialHash, 160);
-      };
-      window.setTimeout(settleInitialHash, 60);
+      });
     };
-    if (doc.readyState === 'complete') settleHashOnLoad();
-    else window.addEventListener('load', settleHashOnLoad, { once: true });
+    if (doc.readyState === 'complete') positionHashOnLoad();
+    else window.addEventListener('load', positionHashOnLoad, { once: true });
   }
 
   doc.querySelectorAll('[data-choice-group]').forEach((group) => {
