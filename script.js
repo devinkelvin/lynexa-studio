@@ -52,6 +52,44 @@
     if (event.key === 'Escape') setMenu(false);
   });
 
+  let activeScrollFrame = 0;
+  const cancelActiveScroll = () => {
+    if (!activeScrollFrame) return;
+    window.cancelAnimationFrame(activeScrollFrame);
+    activeScrollFrame = 0;
+  };
+  ['wheel', 'touchstart', 'pointerdown'].forEach((type) => {
+    window.addEventListener(type, cancelActiveScroll, { passive: true });
+  });
+  window.addEventListener('keydown', (event) => {
+    if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) cancelActiveScroll();
+  });
+
+  const easeInOutCubic = (progress) => progress < .5
+    ? 4 * progress * progress * progress
+    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+  const scrollToTarget = (target) => {
+    cancelActiveScroll();
+    const headerOffset = (header?.offsetHeight || 0) + 24;
+    const start = window.scrollY;
+    const destination = Math.max(0, start + target.getBoundingClientRect().top - headerOffset);
+    const distance = destination - start;
+    if (reduceMotion || Math.abs(distance) < 2) {
+      window.scrollTo(0, destination);
+      return;
+    }
+    const duration = Math.min(1400, Math.max(850, Math.abs(distance) * .12));
+    const startedAt = window.performance.now();
+    const animateScroll = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      window.scrollTo(0, start + distance * easeInOutCubic(progress));
+      if (progress < 1) activeScrollFrame = window.requestAnimationFrame(animateScroll);
+      else activeScrollFrame = 0;
+    };
+    activeScrollFrame = window.requestAnimationFrame(animateScroll);
+  };
+
   doc.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       const target = doc.querySelector(link.getAttribute('href'));
@@ -59,10 +97,7 @@
       event.preventDefault();
       const hash = link.getAttribute('href');
       if (window.location.hash !== hash) window.history.pushState(null, '', hash);
-      target.scrollIntoView({
-        block: 'start',
-        behavior: reduceMotion ? 'auto' : 'smooth'
-      });
+      scrollToTarget(target);
     });
   });
 
@@ -77,6 +112,16 @@
     if (doc.readyState === 'complete') positionHashOnLoad();
     else window.addEventListener('load', positionHashOnLoad, { once: true });
   }
+
+  doc.querySelectorAll('a[href*=".html"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || reduceMotion) return;
+      event.preventDefault();
+      body.classList.add('is-page-leaving');
+      window.setTimeout(() => { window.location.href = link.href; }, 380);
+    });
+  });
+  window.addEventListener('pageshow', () => body.classList.remove('is-page-leaving'));
 
   doc.querySelectorAll('[data-choice-group]').forEach((group) => {
     const multiple = group.hasAttribute('data-multiple');
@@ -186,6 +231,26 @@
 
   doc.querySelectorAll('.zengly-copy article').forEach((item, index) => item.classList.toggle('is-active', index === 0));
 
+  const zenglySection = doc.getElementById('zengly');
+  if (zenglySection) {
+    const warmZenglyMedia = () => {
+      zenglySection.querySelectorAll('img[loading="lazy"]').forEach((image) => {
+        image.loading = 'eager';
+        if (!image.decode) return;
+        if (image.complete) image.decode().catch(() => {});
+        else image.addEventListener('load', () => image.decode().catch(() => {}), { once: true });
+      });
+    };
+    if ('IntersectionObserver' in window) {
+      const mediaObserver = new IntersectionObserver((entries, observer) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        warmZenglyMedia();
+        observer.disconnect();
+      }, { rootMargin: '2600px 0px', threshold: 0 });
+      mediaObserver.observe(zenglySection);
+    } else warmZenglyMedia();
+  }
+
   if (!reduceMotion) {
     let motionRequested = false;
     const loadMotion = () => {
@@ -198,16 +263,18 @@
         triggerScript.src = 'assets/vendor/ScrollTrigger.min.js';
         triggerScript.onload = () => {
           const motionScript = doc.createElement('script');
-          motionScript.src = 'motion.js?v=33';
+          motionScript.src = 'motion.js?v=34';
           doc.body.appendChild(motionScript);
         };
         doc.body.appendChild(triggerScript);
       };
       doc.body.appendChild(gsapScript);
     };
-    window.addEventListener('scroll', () => {
+    const scheduleMotion = () => {
       if ('requestIdleCallback' in window) window.requestIdleCallback(loadMotion, { timeout: 800 });
-      else window.setTimeout(loadMotion, 180);
-    }, { once: true, passive: true });
+      else window.setTimeout(loadMotion, 120);
+    };
+    if (doc.readyState === 'complete') scheduleMotion();
+    else window.addEventListener('load', scheduleMotion, { once: true });
   }
 })();

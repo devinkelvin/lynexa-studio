@@ -101,12 +101,4 @@
   }, { threshold: .2 });
   doc.querySelectorAll('[data-counter]').forEach((counter) => counterObserver.observe(counter));
 
-  doc.querySelectorAll('a[href$=".html"]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      const destination = link.href;
-      gsap.to('body', { opacity: 0, duration: .28, ease: 'power2.in', onComplete: () => { window.location.href = destination; } });
-    });
-  });
 })();
