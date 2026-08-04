@@ -58,7 +58,10 @@ em { color: var(--accent-bright); font-style: normal; }
 .button::before { position: absolute; inset: 0; z-index: -1; transform: scaleX(0); transform-origin: right; background: var(--accent); content: ""; transition: transform .45s var(--ease); }
 .button:hover { color: white; }
 .button:hover::before { transform: scaleX(1); transform-origin: left; }
-.button i { display: grid; flex: none; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: var(--ink); color: white; font: 600 16px/1 var(--body); font-style: normal; transition: transform .35s var(--ease); }
+.button i { display: grid; flex: none; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: var(--ink); color: white; font-size: 0; font-style: normal; transition: transform .35s var(--ease); }
+.button i::before, .button i::after { grid-area: 1 / 1; content: ""; }
+.button i::before { width: 13px; height: 1.5px; border-radius: 999px; background: currentColor; transform: rotate(-45deg); }
+.button i::after { width: 7px; height: 7px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; transform: translate(3px, -3px); }
 .button:hover i { transform: translate(2px, -2px); }
 .button:active i { transform: translate(1px, -1px); }
 .button--small { display: none; min-width: 160px; min-height: 44px; padding: 7px 8px 7px 18px; font-size: 14px; }
