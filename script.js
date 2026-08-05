@@ -162,33 +162,85 @@
   updatePlanner();
 
   const contactForm = doc.getElementById('contact-form');
-  contactForm?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!contactForm.reportValidity()) return;
-    const formData = new FormData(contactForm);
-    const selectedGroups = [...contactForm.querySelectorAll('[data-choice-group]')].map((group) =>
-      [...group.querySelectorAll('[aria-pressed="true"]')].map((button) => button.textContent.trim()).join(', ')
-    );
-    const name = String(formData.get('name') || '').trim();
-    const email = String(formData.get('email') || '').trim();
-    const company = String(formData.get('company') || '').trim();
-    const message = String(formData.get('message') || '').trim();
-    const launch = String(formData.get('launch_time') || '').trim();
-    const subject = encodeURIComponent(`Project enquiry from ${name}${company ? ` — ${company}` : ''}`);
-    const bodyCopy = encodeURIComponent([
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Company: ${company || 'Not provided'}`,
-      `Project type: ${selectedGroups[0] || 'Not selected'}`,
-      `Budget: ${selectedGroups[1] || 'Not selected'}`,
-      `Launch target: ${launch || 'Not provided'}`,
-      '',
-      message
-    ].join('\n'));
-    const status = doc.getElementById('form-status');
-    if (status) status.textContent = 'Opening your email client…';
-    window.location.href = `mailto:hello@lynexa.co?subject=${subject}&body=${bodyCopy}`;
-  });
+  if (contactForm) {
+    const inputs = contactForm.querySelectorAll('input, textarea');
+
+    const showError = (input) => {
+      let errorContainer = input.parentElement.querySelector('.field-error');
+      if (!errorContainer) {
+        errorContainer = doc.createElement('span');
+        errorContainer.className = 'field-error';
+        errorContainer.setAttribute('aria-live', 'polite');
+        input.parentElement.appendChild(errorContainer);
+      }
+      let message = 'This field is required.';
+      if (input.validity.valueMissing) {
+        message = 'This field is required.';
+      } else if (input.validity.typeMismatch) {
+        message = `Please enter a valid ${input.type} address.`;
+      } else if (input.validationMessage) {
+        message = input.validationMessage;
+      }
+      errorContainer.textContent = message;
+      input.classList.add('is-invalid');
+    };
+
+    const clearError = (input) => {
+      const errorContainer = input.parentElement.querySelector('.field-error');
+      if (errorContainer) {
+        errorContainer.remove();
+      }
+      input.classList.remove('is-invalid');
+    };
+
+    inputs.forEach((input) => {
+      input.addEventListener('invalid', (e) => {
+        e.preventDefault();
+        showError(input);
+      });
+      input.addEventListener('input', () => {
+        if (input.validity.valid) {
+          clearError(input);
+        }
+      });
+      input.addEventListener('blur', () => {
+        if (!input.validity.valid) {
+          showError(input);
+        } else {
+          clearError(input);
+        }
+      });
+    });
+
+    contactForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      inputs.forEach(clearError);
+      if (!contactForm.reportValidity()) return;
+      const formData = new FormData(contactForm);
+      const selectedGroups = [...contactForm.querySelectorAll('[data-choice-group]')].map((group) =>
+        [...group.querySelectorAll('[aria-pressed="true"]')].map((button) => button.textContent.trim()).join(', ')
+      );
+      const name = String(formData.get('name') || '').trim();
+      const email = String(formData.get('email') || '').trim();
+      const company = String(formData.get('company') || '').trim();
+      const message = String(formData.get('message') || '').trim();
+      const launch = String(formData.get('launch_time') || '').trim();
+      const subject = encodeURIComponent(`Project enquiry from ${name}${company ? ` — ${company}` : ''}`);
+      const bodyCopy = encodeURIComponent([
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Company: ${company || 'Not provided'}`,
+        `Project type: ${selectedGroups[0] || 'Not selected'}`,
+        `Budget: ${selectedGroups[1] || 'Not selected'}`,
+        `Launch target: ${launch || 'Not provided'}`,
+        '',
+        message
+      ].join('\n'));
+      const status = doc.getElementById('form-status');
+      if (status) status.textContent = 'Opening your email client…';
+      window.location.href = `mailto:hello@lynexa.co?subject=${subject}&body=${bodyCopy}`;
+    });
+  }
 
   doc.querySelectorAll('.faq details').forEach((detail) => {
     detail.addEventListener('toggle', () => {
