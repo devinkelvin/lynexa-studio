@@ -2,3 +2,6 @@ audit/
 dist/
 *.tar.gz
 lynexa_website.zip
+
+# Local Netlify folder
+.netlify
