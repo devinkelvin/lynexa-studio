@@ -1,6 +1,5 @@
 import { btn, link, img, phone, browser, head2, breadcrumbs, crumbLd, ctaBand, status, icon } from '../lib.mjs';
-import { PROJECTS, CATEGORIES } from '../content/work.mjs';
-import { VENTURE_ART } from '../content/art.mjs';
+import { PROJECTS, CATEGORIES, VENTURE_PHOTO } from '../content/work.mjs';
 
 const ZENGLY_SITE = 'https://zenglypay.com/';
 
@@ -12,7 +11,7 @@ export function workIndex() {
     if (p.slug === 'swiftly') return `<span class="showcase__media swiftly-media">${img('lagos-collaboration', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`;
     if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnownow.netlify.app', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
     if (p.slug === 'kelvinekuhoho') return `<span class="showcase__media showcase__media--site showcase__media--night">${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
-    if (VENTURE_ART[p.slug]) return `<span class="showcase__media showcase__media--cover">${VENTURE_ART[p.slug]}</span>`;
+    if (VENTURE_PHOTO[p.slug]) return `<span class="showcase__media showcase__media--cover">${img('venture-' + p.slug, VENTURE_PHOTO[p.slug].alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Photo: ${VENTURE_PHOTO[p.slug].credit}</small></span>`;
     return '';
   };
   const card = (p) => {

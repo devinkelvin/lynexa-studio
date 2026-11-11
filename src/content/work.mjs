@@ -62,3 +62,10 @@ export const PROJECTS = [
     cats: ['venture']
   }
 ];
+
+// Real photography for studio ventures without product screens yet (Unsplash licence; see IMAGE_CREDITS.md).
+export const VENTURE_PHOTO = {
+  landlink: { alt: 'Aerial view of dense housing and streets in Lagos, the kind of land LandLink aims to make easier to verify.', credit: 'Omotayo Kofoworola' },
+  sparkhive: { alt: 'Three young Nigerian professionals gathered around a laptop, talking through an idea.', credit: 'Ninthgrid' },
+  lexforum: { alt: 'An empty courtroom with wood-panelled walls and the judge’s bench.', credit: 'Dragon White Munthe' }
+};

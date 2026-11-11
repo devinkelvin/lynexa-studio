@@ -246,6 +246,45 @@
     forms.forEach((f) => fo.observe(f));
   }
 
+  /* Venture models: "Apply with this model" pre-selects the matching option in the application form */
+  document.querySelectorAll('[data-pick-model]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const val = a.getAttribute('data-pick-model');
+      const form = document.querySelector('#apply form');
+      if (!form) return;
+      const radio = [...form.querySelectorAll('input[name="model"]')].find((r) => r.value === val);
+      if (!radio) return;
+      radio.checked = true;
+      radio.dispatchEvent(new Event('change', { bubbles: true }));
+      let note = form.querySelector('[data-model-note]');
+      if (!note) {
+        note = document.createElement('p');
+        note.className = 'form-picked';
+        note.setAttribute('data-model-note', '');
+        note.setAttribute('role', 'status');
+        form.insertBefore(note, form.querySelector('.form__step'));
+      }
+      note.textContent = 'Model selected: ' + val + '. You can change it in the last step.';
+    });
+  });
+
+  /* Legal pages: highlight the section being read in the contents list */
+  const tocBox = document.querySelector('.legal-toc details');
+  if (tocBox && !matchMedia('(min-width: 960px)').matches) tocBox.open = false;
+  const tocLinks = [...document.querySelectorAll('.legal-toc a')];
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    const byId = new Map(tocLinks.map((a) => [a.hash.slice(1), a]));
+    const to = new IntersectionObserver((es) => {
+      es.forEach((en) => {
+        if (!en.isIntersecting) return;
+        tocLinks.forEach((a) => { a.classList.remove('is-current'); a.removeAttribute('aria-current'); });
+        const a = byId.get(en.target.id);
+        if (a) { a.classList.add('is-current'); a.setAttribute('aria-current', 'location'); }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.legal-sec').forEach((sec) => to.observe(sec));
+  }
+
   /* Reset busy buttons when returning via back/forward cache */
   window.addEventListener('pageshow', (e) => {
     if (!e.persisted) return;
