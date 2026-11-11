@@ -68,6 +68,13 @@
     revealables.forEach((el) => io.observe(el));
   } else revealables.forEach((el) => el.classList.add('is-in'));
 
+  /* About: draw the 'one team' ring when it scrolls in */
+  const ring = document.querySelector('[data-reveal-ring]');
+  if (ring && 'IntersectionObserver' in window) {
+    const ro = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { ring.classList.add('is-in'); ro.disconnect(); } }), { threshold: 0.4 });
+    ro.observe(ring);
+  } else if (ring) ring.classList.add('is-in');
+
   /* Work filter */
   const filter = document.querySelector('[data-filter]');
   if (filter) {

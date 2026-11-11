@@ -1,6 +1,7 @@
 import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, founder, icon } from '../lib.mjs';
 import { PILLARS, svcBySlug } from '../content/services.mjs';
 import { PROJECTS } from '../content/work.mjs';
+import { PILLAR_ART, VENTURE_ART } from '../content/art.mjs';
 import { SITE } from '../site.mjs';
 
 const HOME_FAQ = [
@@ -16,6 +17,7 @@ export default function home() {
   const zengly = PROJECTS.find((p) => p.slug === 'zengly');
   const swiftly = PROJECTS.find((p) => p.slug === 'swiftly');
   const cv = PROJECTS.find((p) => p.slug === 'createmycvnow');
+  const kp = PROJECTS.find((p) => p.slug === 'kelvinekuhoho');
   const ventures = PROJECTS.filter((p) => !p.page && !p.href);
 
   const body = `
@@ -62,9 +64,12 @@ export default function home() {
     <ol class="scards">
       ${PILLARS.map((p, i) => `
       <li class="scard" style="--i:${i}">
-        <div class="scard__top"><h3>${p.title}</h3><span class="scard__n" aria-hidden="true">0${i + 1}</span></div>
-        <p>${p.text}</p>
-        <ul class="scard__links">${p.links.map((s) => `<li><a href="/services/${s}/">${svcBySlug[s].name}${icon.arrow}</a></li>`).join('')}</ul>
+        <div class="scard__body">
+          <div class="scard__top"><h3>${p.title}</h3><span class="scard__n" aria-hidden="true">0${i + 1}</span></div>
+          <p>${p.text}</p>
+          <ul class="scard__links">${p.links.map((s) => `<li><a href="/services/${s}/">${svcBySlug[s].name}${icon.arrow}</a></li>`).join('')}</ul>
+        </div>
+        <div class="scard__art">${PILLAR_ART[p.key]}</div>
       </li>`).join('')}
     </ol>
     <p class="center-cta">${btn('/services/', 'See all services', 'secondary', ' data-magnetic')}</p>
@@ -100,17 +105,26 @@ export default function home() {
       </a>
       <a class="showcase__item" href="${cv.href}" target="_blank" rel="noopener noreferrer" data-cursor-text="Visit">
         <span class="showcase__media showcase__media--site" data-reveal>
-          ${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnow.netlify.app', { sizes: '(min-width: 900px) 36vw, 90vw' })}
+          ${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnownow.netlify.app', { sizes: '(min-width: 900px) 36vw, 90vw' })}
         </span>
         <span class="showcase__meta">
           <span class="showcase__title">CreateMyCVNow ${status(...cv.status)}</span>
           <span class="showcase__desc">${cv.summary}<span class="sr-only"> (opens in a new tab)</span></span>
         </span>
       </a>
-      <div class="showcase__item showcase__list">
+      <a class="showcase__item" href="${kp.href}" target="_blank" rel="noopener noreferrer" data-cursor-text="Visit">
+        <span class="showcase__media showcase__media--site showcase__media--night" data-reveal>
+          ${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 36vw, 90vw' })}
+        </span>
+        <span class="showcase__meta">
+          <span class="showcase__title">kelvinekuhoho.com ${status(...kp.status)}</span>
+          <span class="showcase__desc">${kp.summary}<span class="sr-only"> (opens in a new tab)</span></span>
+        </span>
+      </a>
+      <div class="showcase__ventures">
         <p class="showcase__list-title">Also in the studio</p>
-        <ul>
-          ${ventures.map((p) => `<li><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</li>`).join('')}
+        <ul class="vcards">
+          ${ventures.map((p) => `<li class="vcard"><span class="vcard__media">${VENTURE_ART[p.slug]}</span><span class="vcard__body"><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</span></li>`).join('')}
         </ul>
       </div>
     </div>

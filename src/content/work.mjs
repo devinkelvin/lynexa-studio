@@ -25,12 +25,20 @@ export const PROJECTS = [
     role: ['Product specification', 'Venture strategy', 'Marketing site prototype', 'Fare comparison research']
   },
   {
-    slug: 'createmycvnow', name: 'CreateMyCVNow', page: false, href: 'https://createmycvnow.netlify.app/',
+    slug: 'createmycvnow', name: 'CreateMyCVNow', page: false, href: 'https://createmycvnownow.netlify.app/',
     sector: 'Careers, AI',
     summary: 'An AI-powered CV checker and builder for Nigerian job seekers, with ATS scoring and downloadable templates.',
     status: ['live', 'Live'],
     cats: ['web', 'product-design'],
     role: ['Product design', 'Web app engineering', 'AI features', 'Payments integration']
+  },
+  {
+    slug: 'kelvinekuhoho', name: 'Kelvin Ekuhoho portfolio', page: false, href: 'https://kelvinekuhoho.com/',
+    sector: 'Personal brand, web',
+    summary: 'An editorial, dark-mode portfolio for our founder, with a cinematic intro, selected work and a direct line for enquiries.',
+    status: ['live', 'Live'],
+    cats: ['web', 'brand'],
+    role: ['Art direction', 'Web design', 'Front-end engineering']
   },
   {
     slug: 'landlink', name: 'LandLink', page: false,

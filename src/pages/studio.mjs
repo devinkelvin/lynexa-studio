@@ -21,12 +21,33 @@ export function aboutPage() {
     <p class="credit">Photography: Ninthgrid via Pexels, Lagos.</p>
   </div>
 </section>
-<section class="sec" aria-labelledby="why-title">
-  <div class="shell split">
-    <h2 id="why-title" style="font-size:1rem;letter-spacing:0;color:var(--stone);font-weight:600">Why Lynexa exists</h2>
-    <div style="display:grid;gap:1.5rem">
-      <p class="statement">Building a startup should not take five vendors, a year of meetings and a product nobody can use.</p>
-      <p class="lead">Too many good ideas stall between the pitch and the product. Founders hire a designer, then a developer, then an agency for the website, and spend their runway translating between them. Lynexa puts strategy, design, engineering and launch in one accountable team, so the idea survives the journey.</p>
+<section class="sec surface-dark sheet why" aria-labelledby="why-title">
+  <div class="shell">
+    <div class="why__head">
+      <p class="why__kicker">Why Lynexa exists</p>
+      <h2 id="why-title">Building a startup should not take five vendors and a year of meetings.</h2>
+      <p class="lead">Too many good ideas stall between the pitch and the product. Founders hire a designer, then a developer, then an agency for the website, and spend their runway translating between them.</p>
+    </div>
+    <div class="why__compare">
+      <figure class="why__panel why__panel--before">
+        <figcaption><b>The usual way</b><span>Five briefs, five invoices, five ideas of “done”.</span></figcaption>
+        <ol class="why__chain">
+          <li>Strategy consultant</li><li>UX designer</li><li>Developer</li><li>Web agency</li><li>Pitch designer</li>
+        </ol>
+        <p class="why__note">The idea gets re-explained at every handoff, and a little of it is lost each time.</p>
+      </figure>
+      <figure class="why__panel why__panel--after">
+        <figcaption><b>With Lynexa</b><span>One accountable team from first conversation to launch.</span></figcaption>
+        <div class="why__orbit" data-reveal-ring>
+          <svg class="why__ring" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="78"/><circle cx="100" cy="100" r="78" class="why__ring-arc"/></svg>
+          <span class="why__core">One<br>team</span>
+          <span class="why__step why__step--1">Understand</span>
+          <span class="why__step why__step--2">Design</span>
+          <span class="why__step why__step--3">Build</span>
+          <span class="why__step why__step--4">Launch</span>
+        </div>
+        <p class="why__note">The person who shaped the idea is still in the room when it ships.</p>
+      </figure>
     </div>
   </div>
 </section>

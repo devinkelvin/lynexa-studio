@@ -818,3 +818,85 @@ html:not(.js) .form__step + .form__step { padding-top: 1.75rem; border-top: 1px 
 }
 .form__step[hidden], [data-work-item][hidden] { display: none !important; }
 .wa-float.is-tucked { transform: translateY(160%); pointer-events: none; }
+
+/* ===== v3: illustrations, venture covers, About "why" ===== */
+.art { width: 100%; height: auto; overflow: visible; }
+.art .art-soft rect, .art .art-soft, .art .art-node rect { fill: rgba(168,152,255,.08); stroke: rgba(168,152,255,.35); stroke-width: 1.5; }
+.art .art-line, .art .art-line * { fill: none; stroke: rgba(241,238,232,.45); stroke-width: 3; stroke-linecap: round; }
+.art .art-line rect, .art .art-line circle { stroke-width: 1.8; }
+.art .art-strong, .art .art-strong * { fill: none; stroke: var(--violet-light); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.art .art-soft-stroke path { fill: none; stroke: rgba(168,152,255,.55); stroke-width: 2; stroke-dasharray: 5 6; }
+.art .art-accent-fill { fill: rgba(90,53,254,.35); }
+.art .art-dot, .art .art-dot * { fill: var(--amber); }
+.art .art-milestone circle { fill: var(--graphite); stroke: var(--amber); stroke-width: 3; }
+.art .art-swatch-a { fill: var(--violet); } .art .art-swatch-b { fill: var(--amber); } .art .art-swatch-c { fill: var(--bone); }
+.scard { grid-template-columns: 1fr; }
+.scard__body { display: grid; gap: 1.1rem; align-content: start; position: relative; z-index: 1; }
+.scard__art { width: min(260px, 70%); justify-self: end; margin-top: -.5rem; position: relative; z-index: 1; }
+.scard::after { display: none; }
+@media (min-width: 900px) {
+  .scard { grid-template-columns: 1.4fr 1fr; align-items: center; gap: 2.5rem; }
+  .scard__art { width: 100%; max-width: 320px; margin: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scard__art .art { transition: transform 1s var(--ease-out); }
+  .scard:hover .scard__art .art { transform: translateY(-6px) rotate(-1.5deg); }
+}
+
+/* Venture cover cards */
+.cover-art { display: block; width: 100%; height: 100%; }
+.showcase__media--cover { background: var(--graphite-2); }
+.showcase__media--cover .cover-art { position: absolute; inset: 0; transition: transform 1.2s var(--ease-out); }
+.work-card:hover .showcase__media--cover .cover-art { transform: scale(1.04); }
+.showcase__media--night { background: linear-gradient(150deg, #2c3550, #0f1220); }
+.showcase__ventures { display: grid; gap: 1.25rem; }
+.vcards { display: grid; gap: 1rem; }
+.vcard { display: grid; overflow: hidden; border: 1px solid var(--line); border-radius: clamp(18px, 2vw, 24px); background: var(--graphite-2); }
+.vcard__media { display: block; aspect-ratio: 16 / 9; overflow: hidden; }
+.vcard__body { display: grid; gap: .5rem; justify-items: start; padding: 1.25rem 1.35rem 1.4rem; }
+.vcard__body b { font-size: 1.2rem; letter-spacing: -.02em; }
+.vcard__body > span:not(.status) { color: var(--stone); font-size: .95rem; }
+@media (min-width: 700px) { .vcards { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 900px) { .showcase__ventures { grid-column: 1 / -1; margin-top: 1rem; } }
+.work-card--text > div { padding: clamp(1.4rem, 3vw, 2rem); }
+
+/* About: why Lynexa exists */
+.why__head { display: grid; gap: 1.25rem; max-width: 60rem; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.why__kicker { font-weight: 600; color: var(--violet-light); }
+.why__head h2 { font-size: clamp(2.1rem, 1.3rem + 3.6vw, 4.6rem); letter-spacing: -.045em; line-height: 1; }
+.why__head .lead { color: #a9a4af; }
+.why__compare { display: grid; gap: 1rem; }
+@media (min-width: 900px) { .why__compare { grid-template-columns: 1fr 1fr; } }
+.why__panel { margin: 0; display: grid; gap: 1.75rem; align-content: start; padding: clamp(1.5rem, 3.5vw, 2.5rem); border-radius: clamp(20px, 2.4vw, 32px); }
+.why__panel figcaption { display: grid; gap: .35rem; }
+.why__panel figcaption b { font-size: 1.35rem; letter-spacing: -.02em; }
+.why__panel figcaption span { color: #a9a4af; }
+.why__panel--before { border: 1.5px dashed rgba(241,238,232,.22); }
+.why__panel--after { background: var(--violet); }
+.why__panel--after figcaption span { color: rgba(255,255,255,.9); }
+.why__chain { display: grid; gap: .55rem; counter-reset: c; }
+.why__chain li { position: relative; display: flex; align-items: center; gap: .75rem; padding: .7rem 1rem; border: 1px dashed rgba(241,238,232,.3); border-radius: 12px; color: #c9c4cf; font-weight: 600; }
+.why__chain li:nth-child(odd) { margin-right: 18%; } .why__chain li:nth-child(even) { margin-left: 18%; }
+.why__chain li::before { counter-increment: c; content: counter(c); display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(241,238,232,.08); font-size: .8rem; }
+.why__chain li + li::after { content: "handoff"; position: absolute; top: -1.05rem; left: 50%; transform: translateX(-50%); padding: 0 .4rem; font-size: .7rem; font-weight: 600; color: var(--amber); background: var(--graphite); }
+.why__note { font-size: .95rem; color: #a9a4af; }
+.why__panel--after .why__note { color: rgba(255,255,255,.9); }
+.why__orbit { position: relative; width: min(100%, 340px); aspect-ratio: 1; margin-inline: auto; }
+.why__ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+.why__ring circle { fill: none; stroke: rgba(255,255,255,.3); stroke-width: 1.5; }
+.why__ring .why__ring-arc { stroke: #fff; stroke-width: 2.5; stroke-dasharray: 490; stroke-dashoffset: 0; transform-origin: center; transform: rotate(-90deg); }
+.why__core { position: absolute; inset: 31%; display: grid; place-items: center; border-radius: 50%; background: #fff; color: var(--violet-deep); font-weight: 800; font-size: clamp(1rem, .8rem + 1vw, 1.4rem); line-height: 1.05; text-align: center; letter-spacing: -.02em; }
+.why__step { position: absolute; transform: translate(-50%, -50%); padding: .45rem .85rem; border-radius: 999px; background: var(--graphite); color: var(--bone); font-weight: 700; font-size: .9rem; white-space: nowrap; }
+.why__step--1 { left: 50%; top: 11%; } .why__step--2 { left: 89%; top: 50%; } .why__step--3 { left: 50%; top: 89%; } .why__step--4 { left: 11%; top: 50%; }
+@media (max-width: 420px) { .why__step { font-size: .78rem; padding: .35rem .65rem; } .why__step--2 { left: 84%; } .why__step--4 { left: 16%; } }
+@media (prefers-reduced-motion: no-preference) {
+  .js .why__ring .why__ring-arc { stroke-dashoffset: 490; transition: stroke-dashoffset 1.8s var(--ease-inout); }
+  .js .why__orbit.is-in .why__ring-arc { stroke-dashoffset: 0; }
+}
+@media (min-width: 900px) {
+  .showcase { grid-template-columns: repeat(3, 1fr); }
+  .showcase > .showcase__item:nth-child(3) { margin-top: 0; }
+  .showcase__item:not(.showcase__item--wide) .showcase__media { aspect-ratio: 5 / 4; }
+}
+.why__core, .why__step { z-index: 1; }
+.legend .status { white-space: nowrap; }

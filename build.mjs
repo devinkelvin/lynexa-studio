@@ -75,6 +75,14 @@ await writeFile(join(out, '_redirects'), `# Legacy single-page site
 /case-studies          /work/             301
 `);
 
+// Content-Security-Policy: production (and local builds) only. Netlify sets CONTEXT during builds;
+// on deploy previews and branch deploys it is omitted so the Netlify Drawer can load.
+const CSP = "default-src 'self'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests";
+const context = process.env.CONTEXT || 'local';
+if (context === 'production' || context === 'local') {
+  await writeFile(join(out, '_headers'), `/*\n  Content-Security-Policy: ${CSP}\n`);
+}
+
 await writeFile(join(out, 'site.webmanifest'), JSON.stringify({
   name: SITE.legalName, short_name: 'Lynexa', start_url: '/', display: 'browser',
   background_color: '#F1EEE8', theme_color: '#18171C',

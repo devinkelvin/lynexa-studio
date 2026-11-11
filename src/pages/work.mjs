@@ -1,5 +1,6 @@
 import { btn, link, img, phone, browser, head2, breadcrumbs, crumbLd, ctaBand, status, icon } from '../lib.mjs';
 import { PROJECTS, CATEGORIES } from '../content/work.mjs';
+import { VENTURE_ART } from '../content/art.mjs';
 
 const ZENGLY_SITE = 'https://zenglypay.com/';
 
@@ -9,7 +10,9 @@ export function workIndex() {
   const media = (p) => {
     if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly">${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}<span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
     if (p.slug === 'swiftly') return `<span class="showcase__media swiftly-media">${img('lagos-collaboration', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`;
-    if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnow.netlify.app', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
+    if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnownow.netlify.app', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
+    if (p.slug === 'kelvinekuhoho') return `<span class="showcase__media showcase__media--site showcase__media--night">${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
+    if (VENTURE_ART[p.slug]) return `<span class="showcase__media showcase__media--cover">${VENTURE_ART[p.slug]}</span>`;
     return '';
   };
   const card = (p) => {
@@ -52,7 +55,7 @@ export function workIndex() {
   </div>
 </section>
 ${ctaBand()}`;
-  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app, CreateMyCVNow, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app, CreateMyCVNow, kelvinekuhoho.com, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
 }
 
 const chapter = (title, html) => `<div class="chapter"><h2>${title}</h2><div class="chapter__body">${html}</div></div>`;
@@ -203,7 +206,7 @@ const SITES = [
     more: ['/work/zengly/', 'Read the Zengly case study']
   },
   {
-    name: 'CreateMyCVNow', host: 'createmycvnow.netlify.app', url: 'https://createmycvnow.netlify.app/', shot: 'cv', status: ['live', 'Live'],
+    name: 'CreateMyCVNow', host: 'createmycvnownow.netlify.app', url: 'https://createmycvnownow.netlify.app/', shot: 'cv', status: ['live', 'Live'],
     tone: 'mint',
     text: 'A web app, not just a website: Nigerian job seekers upload a CV, get an ATS score and export a stronger version. Payments and AI processing run server-side.',
     meta: [['Type', 'AI web application'], ['Our role', 'Product, design, engineering'], ['Built with', 'React, Vite, Netlify Functions']]
