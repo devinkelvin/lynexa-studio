@@ -25,6 +25,8 @@
       features: ['Short lessons', 'Practice tests', 'Progress tracking'], card: ['This week', '4 lessons'], rows: [['Mathematics', '80%'], ['English', '65%'], ['Mock exam', 'Sat']], cta: 'Continue learning' },
     { k: 'shop', words: ['shop', 'store', 'sell', 'selling', 'buy', 'market', 'marketplace', 'vendor', 'vendors', 'food', 'restaurant', 'order', 'orders', 'fashion', 'groceries'], suffix: 'Mart',
       features: ['Catalogue and search', 'Checkout and delivery', 'Order tracking'], card: ['Today’s orders', '38'], rows: [['Jollof combo', '₦3,500'], ['Ankara set', '₦18,000'], ['Delivery to Lekki', 'On the way']], cta: 'Place an order' },
+    { k: 'book', words: ['booking', 'bookings', 'book', 'appointment', 'appointments', 'salon', 'barber', 'barbers', 'barbershop', 'spa', 'schedule', 'scheduling', 'reservation', 'reservations', 'slot', 'slots'], suffix: 'Book',
+      features: ['Pick a time slot', 'Reminders and rescheduling', 'Deposits paid online'], card: ['Next free slot', 'Today, 4:00 pm'], rows: [['Standard session', '₦5,000'], ['Premium session', '₦12,000'], ['Home service', '₦15,000']], cta: 'Book a slot' },
     { k: 'people', words: ['event', 'events', 'party', 'friends', 'community', 'social', 'chat', 'wedding', 'church', 'club', 'network', 'creators', 'fans', 'dating'], suffix: 'Circle',
       features: ['Profiles and groups', 'Events and RSVPs', 'Messaging'], card: ['Going this weekend', '126'], rows: [['Tola’s birthday', 'Sat'], ['Tech meetup, Yaba', 'Thu'], ['Book club', 'Sun']], cta: 'Create an event' }
   ];
@@ -35,8 +37,18 @@
     const words = idea.toLowerCase().replace(/[^a-z0-9\s'’-]/g, ' ').split(/\s+/).filter(Boolean);
     let best = GENERIC, score = 0;
     KINDS.forEach((k) => { const sc = words.filter((w) => k.words.includes(w) || k.words.includes(w.replace(/s$/, ''))).length; if (sc > score) { score = sc; best = k; } });
-    const key = words.filter((w) => !STOP.has(w) && w.length > 2 && !(best.words || []).includes(w)).sort((a, b) => b.length - a.length)[0] || words.find((w) => !STOP.has(w)) || 'Idea';
-    const word = key.replace(/['’-]/g, '');
+    const GEN = new Set(['app', 'apps', 'booking', 'bookings', 'marketplace', 'platform', 'tracker', 'manager', 'management', 'service', 'services', 'system', 'tool', 'website', 'portal', 'dashboard', 'helps', 'connects', 'lets', 'buy', 'sell', 'find', 'get', 'see', 'track', 'manage', 'order', 'people', 'users', 'customers', 'everyone']);
+    const ok = (w) => w.length > 2 && !STOP.has(w) && !GEN.has(w);
+    const sing = (w) => (/(ss|us|is)$/.test(w) ? w : w.replace(/ies$/, 'y').replace(/(ch|sh|x)es$/, '$1').replace(/([^s])s$/, '$1'));
+    // Prefer who it is for ("for barbers", "for Lagos tailors"), then the most specific word.
+    const fi = words.lastIndexOf('for');
+    const aud = fi >= 0 ? words.slice(fi + 1).filter(ok) : [];
+    const place = (w) => /^(lagos|abuja|nigeria|nigerians?|africa|yaba|lekki|ikeja|ikorodu|small|local|busy|young)$/.test(w);
+    const inKind = (w) => (best.words || []).includes(w);
+    const pick = aud.find((w) => !place(w) && !inKind(w)) || aud.find((w) => !place(w) && !/^(lagos|abuja|nigeria|nigerians?|africa|yaba|lekki|ikeja|ikorodu|small|local|busy|young)$/.test(w))
+      || words.filter(ok).filter((w) => !(best.words || []).includes(w)).sort((a, b) => b.length - a.length)[0]
+      || words.filter(ok)[0] || 'Idea';
+    const word = sing(pick).replace(/['’-]/g, '');
     const name = word.charAt(0).toUpperCase() + word.slice(1, 12) + ' ' + best.suffix;
     return { ...best, name };
   }
