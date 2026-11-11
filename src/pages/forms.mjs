@@ -162,7 +162,7 @@ export function contactPage() {
     </div>
   </div>
 </section>`;
-  return { swarm: 'light', path: '/contact/', title: 'Contact Lynexa', description: `Contact Lynexa Innovations Limited in Ikorodu, Lagos: ${SITE.email}, ${SITE.phoneDisplay}, address and directions, or send a message.`, body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'ContactPage', url: 'https://lynexa.co/contact/', about: { '@id': 'https://lynexa.co/#organization' } }] };
+  return { path: '/contact/', title: 'Contact Lynexa', description: `Contact Lynexa Innovations Limited in Ikorodu, Lagos: ${SITE.email}, ${SITE.phoneDisplay}, address and directions, or send a message.`, body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'ContactPage', url: 'https://lynexa.co/contact/', about: { '@id': 'https://lynexa.co/#organization' } }] };
 }
 
 export function startPage() {
@@ -192,10 +192,10 @@ export function startPage() {
     ${projectForm()}
   </div>
 </section>`;
-  return { swarm: 'light', path: '/start-a-project/', title: 'Start a Project', description: 'Send Lynexa a short project brief for product design, MVP development, websites, branding or pitch materials. We reply within two working days.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/start-a-project/', title: 'Start a Project', description: 'Send Lynexa a short project brief for product design, MVP development, websites, branding or pitch materials. We reply within two working days.', body, jsonld: [crumbLd(trail)] };
 }
 
-const thanks = (path, title, h1, text, steps) => ({ swarm: 'light',
+const thanks = (path, title, h1, text, steps) => ({
   path, title, noindex: true, description: 'Thank you for contacting Lynexa.',
   body: `
 <section class="center-page">

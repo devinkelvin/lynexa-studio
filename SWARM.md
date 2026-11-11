@@ -52,12 +52,20 @@ The swarm is an enhancement only. Every page is complete, readable and usable wi
 
 None of these properties trigger layout shift. All hidden states sit behind `html.sw-on`, and any runtime error calls `fail()`, which shows everything and removes the swarm.
 
+## Every text is built
+
+`textLeaves()` finds every text block in a section: headings, paragraphs, list items, definition terms, captions, FAQ questions and status labels. It skips forms, navigation, buttons and anything hidden from assistive tech. Each block is primed (hidden) and then written by a cursor. Card text is written after the card's surface is drawn, row text after its rule is drawn, and anything left over goes to "loose text" units with up to three writing lanes.
+
+When the header is being built (`html.sw-intro`), content already on screen is hidden before first paint and built straight after the header. If the visitor scrolls away from the header, the header finishes at once and the page carries on.
+
+A watchdog finishes any section that runs past twice its time budget. When a section completes, every element it hid is settled, so nothing can be left invisible.
+
 ## Behaviour rules
 
 - **Fast scrolling.** Above 2.4 px/ms, or when jumping past a section, sections appear instantly. Nothing queues.
 - **Reverse scrolling.** Completed sections stay completed.
 - **Keyboard.** Focusing anything inside an unfinished unit finishes that unit at once.
-- **Forms.** Focus inside a form pauses the swarm: active builds finish, cursors return, and the formation dims to 30%. Form fields are never hidden or covered. Contact, Start a project and the thank-you pages run in `light` mode, where cursors may trace but nothing is hidden.
+- **Forms.** Focus inside a form pauses the swarm: active builds finish, cursors return, and the formation dims to 30%. Form fields are never hidden or covered. Contact, Start a project and the thank-you pages build their text like every other page, but form fields are never hidden or animated.
 - **Work filter.** Clicking a filter finishes everything, so filtering never replays effects.
 - **Hidden tab.** The render loop stops.
 - **Idle.** Painting drops to about 30fps and only repaints the formation's box. After 20 seconds with no input, the orbit freezes until the next scroll, key press or pointer move.

@@ -31,7 +31,7 @@
     },
     design: ['violet', 'magenta', 'coral', 'amber'],
     engineering: ['turquoise', 'sky', 'emerald', 'lime'],
-    capMs: { desktop: 1900, mobile: 1200 },  // longest a single section may take to build
+    capMs: { desktop: 2700, mobile: 1900 },  // longest a single section may take to build
     fastScroll: 2.4,                         // px per ms; faster than this and sections appear instantly
     idleStopMs: 20000                        // freeze the orbit after this long with no input
   };
@@ -222,7 +222,8 @@
   }
   function writeJobs(u, el, speed, o = {}) {
     const L = lineBoxes(el);
-    if (!L.length) return [];
+    if (u.handled) u.handled.add(el);
+    if (!L.length) return fadeJob(u, el, o.wait || 0);
     const er = docRect(el);
     const store = () => { if (!el.classList.contains('sw-wr')) { el.classList.remove('sw-t', 'sw-h'); el.classList.add('sw-wr'); u.els.add(el); } };
     return L.map((l, i) => {
@@ -236,7 +237,7 @@
       });
     });
   }
-  const writable = (el) => { const L = lineBoxes(el); return L.length && L.length <= 6; };
+  const writable = (el) => { const L = lineBoxes(el); return L.length && L.length <= 10; };
 
   // Heading: one cursor writes it line by line.
   function planHeading(u, h, tracks, wait = 0) {
@@ -258,6 +259,7 @@
   function planText(u, p, tracks, wait = 0) {
     const r = docRect(p);
     if (!r.h) return;
+    if (u.handled) u.handled.add(p);
     if (hideable(u) && writable(p)) { tracks.push(writeJobs(u, p, 3.2, { wait, guide: null })); return; }
     tracks.push([job([[r.x - 8, r.y + 2], [r.x - 8, r.y + Math.min(r.h, 90)]], ts(380, u), { wait, onStart: () => reveal(p, ts(560, u), 300) })]);
   }
@@ -275,6 +277,12 @@
     const media = card.querySelector('.device, .browser, .showcase__media, .vcard__media, .scard__art img, figure');
     if (svg) planSvg(u, svg, tracks, wait + per * 0.45, L);
     else if (media) planMedia(u, media, tracks, wait + per * 0.35, L, true);
+    if (hideable(u) && !L) {
+      const words = textLeaves([card]).filter((e) => u.els.has(e));
+      const t = [];
+      words.forEach((e, i) => t.push(...(writable(e) ? writeJobs(u, e, e.matches('h2, h3, h4, b, .showcase__title') ? 1.9 : 3.6, { wait: i ? 0 : wait + per * 0.55, guide: null }) : fadeJob(u, e, i ? 0 : wait + per * 0.55))));
+      if (t.length) tracks.push(t);
+    }
   }
   // Image: a light construction grid appears, then a cursor carries the leading edge across as the image is unmasked.
   function planMedia(u, m, tracks, wait = 0, live = null, inCard = false) {
@@ -362,6 +370,42 @@
     g.forEach((pts) => guides.push({ pts, color: 'rgba(90,53,254,.35)', prog: 1, born: clock, fadeAt: clock + d * 0.9, dash: true, live, plain: true }));
   }
 
+  // ---------------------------------------------------------------- every text block gets written
+  const TEXT = 'h2, h3, h4, h5, p, li, dt, dd, figcaption, blockquote, summary, .status, .credit, .showcase__title, .showcase__desc, .vcard__body > b, .vcard__body > span:not(.status), .channel b, .channel span, .scard__n, .step__n, .stack dt, .stack dd';
+  const SKIP = 'form, [data-stepper], .filter, nav, .btn, svg, [aria-hidden="true"], details > div, .sr-only, .wa-float, .cursor, .photo-credit, .vmodel__tag';
+  function textLeaves(roots) {
+    const set = new Set();
+    roots.forEach((r) => {
+      if (!r) return;
+      if (r.matches && r.matches(TEXT)) set.add(r);
+      r.querySelectorAll(TEXT).forEach((e) => set.add(e));
+    });
+    const list = [...set].filter((e) => e.textContent.trim() && !e.closest(SKIP));
+    // Prefer the innermost blocks (a card's title and paragraph rather than the whole card); inline labels such as a
+    // status pill inside a title are written along with their parent line.
+    const inline = (e) => /^(SPAN|B|SMALL|A|STRONG|EM)$/.test(e.tagName);
+    const blocks = list.filter((e) => !list.some((o) => o !== e && e.contains(o) && !inline(o)));
+    return blocks.filter((e) => !(inline(e) && blocks.some((o) => o !== e && o.contains(e))));
+  }
+  // Generic: write every primed text in a unit that its own choreography did not already handle
+  function planLeftoverText(u, tracks, wait) {
+    const left = textLeaves(scope(u)).filter((e) => !u.handled.has(e) && u.els.has(e) && ![...u.handled].some((h) => h.contains && h.contains(e)));
+    if (!left.length) return;
+    const lanes = Math.min(3, left.length), lanesT = Array.from({ length: lanes }, () => []);
+    left.forEach((e, i) => {
+      const lane = lanesT[i % lanes];
+      const jobs = writable(e) ? writeJobs(u, e, e.matches('h2, h3, h4, dt, b, .showcase__title') ? 1.8 : 3.4, { wait: lane.length ? 0 : wait + (i % lanes) * 90, guide: null }) : fadeJob(u, e, lane.length ? 0 : wait);
+      lane.push(...jobs);
+    });
+    lanesT.forEach((t) => t.length && tracks.push(t));
+  }
+  function fadeJob(u, e, wait) {
+    const r = docRect(e);
+    u.handled.add(e);
+    if (!r.h) return [job([[r.x, r.y], [r.x + 1, r.y]], 60, { wait, guide: null, pulse: false, onStart: () => reveal(e, 300, 200) })];
+    return [job([[r.x - 8, r.y + 2], [r.x - 8, r.y + Math.min(r.h, 90)]], ts(300, u), { wait, onStart: () => reveal(e, ts(500, u), 300) })];
+  }
+
   // ---------------------------------------------------------------- units (what gets built, and when)
   const CARD = '.reasons > div, .scard, .showcase__item, .vcard, .card, .vmodel, .model, .work-card, .channel, .faq-contact, .founder-card__panel';
   const FRAME = '.device, .browser';
@@ -377,7 +421,7 @@
   }
 
   function collect(section) {
-    if (section.classList.contains('hero') || section.classList.contains('page-hero')) return;
+    if (section.classList.contains('hero') || section.classList.contains('page-hero') || section.classList.contains('center-page')) return;
     if (section.querySelector('form, [data-stepper]') && !section.querySelector(CARD + ', h2')) return;
     const editorial = section.querySelector('.founder-card, .chapter, .case-hero') || (section.querySelector('.split') && !section.querySelector(CARD + ', ' + ROW));
     const understated = section.querySelector('.faq, .models');
@@ -398,7 +442,7 @@
     if (steps && free(steps)) { makeUnit(section, 'steps', { anchor: steps, data: { steps } }); claim(steps); }
     section.querySelectorAll('.phase').forEach((ph) => { makeUnit(section, 'phase', { anchor: ph, data: { ph } }); claim(ph); });
     const faq = section.querySelector('.faq');
-    if (faq) { makeUnit(section, 'faq', { anchor: faq, noHide: true, data: { faq } }); claim(faq); }
+    if (faq) { makeUnit(section, 'faq', { anchor: faq, data: { faq } }); claim(faq); }
 
     section.querySelectorAll('h2').forEach((h) => {
       if (!free(h) || h.closest(CARD)) return;
@@ -434,6 +478,11 @@
     const rgroups = new Map();
     rws.forEach((r) => { const k = r.parentElement; if (!rgroups.has(k)) rgroups.set(k, []); rgroups.get(k).push(r); });
     rgroups.forEach((list, k) => { makeUnit(section, 'rows', { anchor: k, data: { items: list } }); list.forEach(claim); });
+    // Every other text block in the section is written too, grouped by its container
+    const loose = textLeaves([section]).filter(free);
+    const lgroups = new Map();
+    loose.forEach((e) => { const k = e.closest('.shell > *, section') || section; if (!lgroups.has(k)) lgroups.set(k, []); lgroups.get(k).push(e); });
+    lgroups.forEach((items) => { makeUnit(section, 'texts', { anchor: items[0], data: { items } }); items.forEach(claim); });
     // Section call-to-action buttons (guides only)
     const ctas = [...section.querySelectorAll('.center-cta .btn, .sec-head + .actions .btn, :scope > .shell > p > .link, .cta-band__inner > .actions .btn')].filter((b) => !inForm(b));
     if (ctas.length) makeUnit(section, 'ctas', { anchor: ctas[0], noHide: true, data: { items: ctas, close: section.classList.contains('cta-band') } });
@@ -441,7 +490,7 @@
 
   function scope(u) {
     const d = u.data;
-    return { head: () => [d.h, ...d.texts], duo: () => [u.section], steps: () => [d.steps], phase: () => [d.ph], cards: () => d.items, frames: () => d.items, media: () => [d.m], rows: () => d.items, faq: () => [d.faq], ctas: () => d.items, intro: () => [u.section] }[u.kind]?.() || [];
+    return { head: () => [d.h, ...d.texts], duo: () => [u.section], steps: () => [d.steps], phase: () => [d.ph], cards: () => d.items, frames: () => d.items, media: () => [d.m], rows: () => d.items, faq: () => [d.faq], ctas: () => d.items, texts: () => d.items, intro: () => [u.section] }[u.kind]?.() || [];
   }
   const within = (u, t) => scope(u).some((el) => el && (el === t || el.contains(t)));
 
@@ -451,7 +500,7 @@
     const T = (el) => mark(u, el, 'sw-t');
     switch (u.kind) {
       case 'head': mark(u, d.h, 'sw-h'); d.texts.forEach(T); break;
-      case 'duo': u.section.querySelectorAll('h2').forEach((h) => mark(u, h, 'sw-h')); u.section.querySelectorAll('.split .lead').forEach(T); d.stack.querySelectorAll(':scope > div').forEach(T); break;
+      case 'duo': u.section.querySelectorAll('h2').forEach((h) => mark(u, h, 'sw-h')); u.section.querySelectorAll('.split .lead').forEach(T); break;
       case 'steps': d.steps.querySelectorAll(':scope > .step').forEach((s) => mark(u, s, 'sw-c')); break;
       case 'phase': {
         const ph = d.ph; mark(u, ph.querySelector('h2'), 'sw-h');
@@ -460,11 +509,15 @@
       }
       case 'cards': d.items.forEach((c) => mark(u, c, 'sw-c')); break;
       case 'frames': d.items.forEach((f) => { mark(u, f, 'sw-c'); const s = f.querySelector('.device__screen, .browser__screen'); if (s) mark(u, s, 'sw-m sw-m--up'); const c = f.querySelector('figcaption'); if (c) T(c); }); break;
-      case 'rows': d.items.forEach(T); break;
+      case 'rows': break;
       default: break;
     }
     // Media and illustration pending states are applied inside the planners (they need geometry), so plan
     // those now too, while the unit is still off-screen. The plan is rebuilt with fresh geometry on start.
+    if (hideable(u)) {
+      const whole = (e) => { for (let n = e; n && n !== u.section; n = n.parentElement) if (n.classList && (n.classList.contains('sw-t') || n.classList.contains('sw-h'))) return true; return false; };
+      textLeaves(scope(u)).forEach((e) => { if (!whole(e)) mark(u, e, 'sw-t'); });
+    }
     if (u.kind === 'media') mark(u, d.m, 'sw-m');
     if (u.kind === 'cards') d.items.forEach((c) => {
       const svg = c.querySelector('svg.art');
@@ -475,6 +528,7 @@
 
   function plan(u) {
     const d = u.data, tracks = [];
+    u.handled = new Set();
     switch (u.kind) {
       case 'head': {
         planHeading(u, d.h, tracks);
@@ -485,7 +539,7 @@
         const design = [], eng = [];
         u.section.querySelectorAll('h2').forEach((h) => planHeading(u, h, design));
         u.section.querySelectorAll('.split .lead').forEach((p) => planText(u, p, design, 300));
-        [...d.stack.querySelectorAll(':scope > div')].forEach((row, i) => planRow(u, row, eng, i * 110));
+        [...d.stack.querySelectorAll(':scope > div')].forEach((row, i) => { planRow(u, row, eng, i * 110, false); const w = textLeaves([row]).flatMap((e, k) => writeJobs(u, e, e.matches('dt') ? 1.8 : 3.4, { wait: k ? 0 : 200 + i * 110, guide: null })); if (w.length) eng.push(w); });
         const left = docRect(u.section.querySelector('.split > div') || d.stack), right = docRect(d.stack);
         const meet = [[left.x + left.w * 0.6, left.y + left.h + 18], [right.x, right.y + right.h + 18]];
         eng.push([job(meet, ts(700, u), { wait: 900 })]);
@@ -519,20 +573,21 @@
           const items = [...list.children];
           const track = items.map((it, i) => {
             const r = docRect(it.querySelector('svg') || it);
-            return job([[r.x + r.w / 2, r.y + r.h / 2], [r.x + r.w / 2 + 2, r.y + r.h / 2 + 2]], ts(170, u), { wait: i === 0 ? 600 + li * 200 : 0, guide: null, onStart: () => reveal(it, ts(420, u), 300) });
+            return [job([[r.x + r.w / 2, r.y + r.h / 2], [r.x + r.w / 2 + 2, r.y + r.h / 2 + 2]], ts(140, u), { wait: i === 0 ? 600 + li * 200 : 0, guide: null }), ...writeJobs(u, it, 3, { guide: null })];
           });
-          if (track.length) tracks.push(track);
+          if (track.length) tracks.push(track.flat());
         });
         break;
       }
       case 'cards': d.items.forEach((c, i) => planCard(u, c, tracks, i * 140)); break;
       case 'frames': d.items.forEach((f, i) => planFrame(u, f, tracks, i * 160)); break;
       case 'media': planMedia(u, d.m, tracks); break;
-      case 'rows': d.items.forEach((r, i) => planRow(u, r, tracks, i * 90)); break;
+      case 'rows': d.items.forEach((r, i) => planRow(u, r, tracks, i * 90, false)); break;
       case 'faq': {
         [...d.faq.querySelectorAll('details')].forEach((dt, i) => { const r = docRect(dt); tracks.push([job(rectPts(r, 'top'), ts(420, u), { wait: i * 80 })]); });
         break;
       }
+      case 'texts': break;
       case 'ctas': {
         d.items.forEach((b, i) => planButton(u, b, tracks, i * 120));
         if (d.close) {
@@ -550,6 +605,7 @@
       }
       default: break;
     }
+    if (hideable(u)) planLeftoverText(u, tracks, u.kind === 'texts' ? 0 : 320);
     return tracks;
   }
 
@@ -597,6 +653,9 @@
       c.releaseAt = clock + i * (isMobile() ? 35 : 50);    // staggered release from the formation
       next(c);
     });
+    // watchdog: no section may take much longer than its budget, whatever happens
+    const budget = (isMobile() ? CONFIG.capMs.mobile : CONFIG.capMs.desktop) * (u.tempo || 1);
+    after(budget * 2 + 1200, () => { if (u.state === 'building') finish(u); });
     setState();
     wake();
   }
@@ -617,7 +676,7 @@
     if (cursors.some((c) => (c.job && c.job.unit === u) || c.queue.some((j) => j.unit === u))) return;
     u.state = 'done';
     if (u.onDone) u.onDone();
-    after(1400, () => { u.els.forEach((el) => { if (el.classList.contains('sw-go')) settle(el); }); u.els.clear(); });
+    after(1400, () => { u.els.forEach((el) => settle(el)); u.els.clear(); });
     const i = active.indexOf(u);
     if (i >= 0) active.splice(i, 1);
     setState();
@@ -644,6 +703,7 @@
     const to = [j.pts[0][0] + off[0], j.pts[0][1] + off[1]];
     const dist = Math.hypot(to[0] - c.x, to[1] - c.y);
     c.tdur = j.quick ? clamp(dist / 4.5, 70, 200) : clamp(dist / (isMobile() ? 2 : 1.7), 140, isMobile() ? 420 : 620);
+    if (c.queue.length > 2) c.tdur *= 0.55;      // busy cursors hop quickly between pieces of work
     c.waitUntil = c.t0 + c.tdur + j.wait;
     c.bend = j.quick ? 6 : (Math.random() < 0.5 ? -1 : 1) * clamp(dist * 0.22, 10, 110);
     c.trail = [];
@@ -815,10 +875,10 @@
   // real screen. Return visitors get the same build, faster. If the swarm is late or fails, everything is shown.
   const HERO_TEXT = 'h1, .lead, .build__label, .build__note-text, .build__idea > p:not(.build__note-text), .build__caption, .crumbs, .status, .site-index li';
   const HERO_BOX = '.btn, .build__idea, .build__frame';
-  function heroDone() { root.classList.add('sw-hero-done'); after(600, () => root.classList.remove('sw-intro')); }
+  function heroDone() { introPending = false; root.classList.add('sw-hero-done'); after(600, () => root.classList.remove('sw-intro')); queueCheck(); }
   async function intro() {
-    const hero = document.querySelector('main > .hero, main > .page-hero');
-    if (!hero || !root.classList.contains('sw-intro')) { root.classList.remove('sw-intro'); return; }
+    const hero = document.querySelector('main > .hero, main > .page-hero, main > .center-page');
+    if (!hero || !root.classList.contains('sw-intro')) { introPending = false; root.classList.remove('sw-intro'); queueCheck(); return; }
     root.classList.add('sw-live');                         // cancels the CSS failsafe: the swarm has arrived
     if (performance.now() > 3300 || hero.getBoundingClientRect().bottom < 0) { heroDone(); return; }
     try { if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 600))]); } catch (e) { /* ignore */ }
@@ -874,7 +934,7 @@
     } else {
       tracks.push(write(hero.querySelector('.crumbs'), 2.2, 0, { guide: null }));
       tracks.push(write(hero.querySelector('h1'), 1.25, 120));
-      const texts = [...hero.querySelectorAll('.lead, .status, .site-index li')];
+      const texts = [...hero.querySelectorAll('.lead, .status, .site-index li, .next-steps p')];
       texts.forEach((t, i) => tracks.push(write(t, t.matches('.lead') ? 3.1 : 1.6, 560 + i * 120, { guide: null })));
       [...hero.querySelectorAll('.btn')].forEach((b, i) => tracks.push(box(b, 950 + i * 150, 'full', { d: 520 })));
       [...hero.querySelectorAll('.page-hero__grid img')].forEach((im, i) => {
@@ -930,13 +990,14 @@
   // Section detection: unit tops are cached in document coordinates (measured on start, resize, load and every
   // couple of seconds), so scrolling only compares numbers. IntersectionObserver is not used because Chrome treats
   // a fully clipped target as never intersecting.
-  let measuredAt = 0, checkQueued = false;
+  let measuredAt = 0, checkQueued = false, introPending = root.classList.contains('sw-intro');
   function measure() {
     measuredAt = performance.now();
     units.forEach((u) => { if (u.state === 'pending') { const r = (u.anchor || u.section).getBoundingClientRect(); u.top = r.top + sy(); u.visible = r.height > 0 || r.width > 0; } });
   }
   function check() {
     checkQueued = false;
+    if ((introPending || active.some((u) => u.kind === 'intro')) && sy() < 60) return;     // the page header builds first, unless the visitor has moved on
     if (performance.now() - measuredAt > 2000) measure();
     const atEnd = sy() + H() >= document.documentElement.scrollHeight - 4;
     const line = sy() + H() * (atEnd ? 1.05 : 1.0);
@@ -950,6 +1011,12 @@
     lastScrollY = y; lastScrollT = now;
     // the footer's last line sits under the formation at the very bottom: step back there
     atBottom = y + H() >= document.documentElement.scrollHeight - 90;
+    if (y > 60 && (introPending || active.some((u) => u.kind === 'intro'))) {
+      const iu = active.find((u) => u.kind === 'intro');
+      const hero = document.querySelector('main > .hero, main > .page-hero, main > .center-page');
+      if (iu && hero && hero.getBoundingClientRect().bottom < H() * 0.35) finish(iu);
+      else if (!iu && introPending && hero && hero.getBoundingClientRect().bottom < 0) heroDone();
+    }
     if (state !== 'paused') home.targetAlpha = atBottom ? 0.25 : IDLE_ALPHA;
     queueCheck();
     wake();
@@ -1005,11 +1072,13 @@
     if (mode !== 'none') {
       // Units below the fold are hidden now and built when they scroll in. Anything already on screen is left alone.
       document.querySelectorAll('main > section, main > .cta-band').forEach(collect);
-      const fold = H() * 0.98;
+      const introOn = root.classList.contains('sw-intro');
+      const fold = introOn ? 0 : H() * 0.98;
       units.forEach((u) => {
         const el = u.anchor || u.section;
-        const top = el.getBoundingClientRect().top;
-        if (top > fold && el.getBoundingClientRect().height > 0) {
+        const rr = el.getBoundingClientRect();
+        // with the header being built from scratch, content already on screen is built too (it was hidden before paint)
+        if ((introOn ? rr.bottom > 0 : rr.top > fold) && (rr.height > 0 || rr.width > 0)) {
           // owned media no longer needs the generic fade-in
           scope(u).forEach((el) => { if (!el) return; if (el.matches('[data-reveal]')) el.removeAttribute('data-reveal'); el.querySelectorAll('[data-reveal]').forEach((m) => m.removeAttribute('data-reveal')); });
           prime(u);
@@ -1054,6 +1123,6 @@
     window.LynexaSwarm = null;
   }
 
-  window.LynexaSwarm = { destroy, finishAll, config: CONFIG, debug: () => units.map((u) => ({ kind: u.kind, state: u.state, anchor: (u.anchor || u.section).tagName + '.' + (u.anchor || u.section).className })), get state() { return state; }, get cursors() { return cursors.length; } };
+  window.LynexaSwarm = { destroy, finishAll, config: CONFIG, cdebug: () => cursors.filter((c) => c.state !== 'orbit').map((c) => ({ s: c.state, q: c.queue.length, unit: c.job && c.job.unit && c.job.unit.kind, t0: Math.round(c.t0 - clock), wu: Math.round((c.waitUntil || 0) - clock), dur: c.job && Math.round(c.job.dur), wait: c.job && Math.round(c.job.wait) })), debug: () => units.map((u) => ({ kind: u.kind, state: u.state, anchor: (u.anchor || u.section).tagName + '.' + (u.anchor || u.section).className })), get state() { return state; }, get cursors() { return cursors.length; } };
   try { init(); } catch (e) { fail(e); }
 })();

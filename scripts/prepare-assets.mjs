@@ -26,7 +26,6 @@ const jobs = [
   ['lagos-professionals.jpg', 'lagos-professionals', [800, 1600], 72],
   ['lagos-collaboration.jpg', 'lagos-collaboration', [800, 1600], 72],
   ['lagos-strategy-session.jpg', 'lagos-strategy-session', [800, 1600], 72],
-  ['kelvin.jpg', 'kelvin-ekuhoho', [480, 768], 80],
   ['swiftly-full-logo.png', 'swiftly-logo', [383], 90],
   ['zengly_text_logo.png', 'zengly-logo', [400], 90],
   ['site-zengly-desktop.png', 'site-zengly-desktop', [720, 1440], 78],
@@ -37,7 +36,10 @@ const jobs = [
   ['site-cv-mobile.png', 'site-cv-mobile', [390], 80],
   ['venture-landlink.jpg', 'venture-landlink', [640, 1280], 72],
   ['venture-sparkhive.jpg', 'venture-sparkhive', [640, 1280], 72],
-  ['venture-lexforum.jpg', 'venture-lexforum', [640, 1280], 72]
+  ['venture-lexforum.jpg', 'venture-lexforum', [640, 1280], 72],
+  ['swiftly-danfo.jpg', 'swiftly-danfo', [800, 1600], 72],
+  ['about-team-lagos.jpg', 'about-team-lagos', [800, 1600], 74],
+  ['about-team-nesa.jpg', 'about-team-nesa', [800, 1600], 74]
 ];
 
 for (const [file, name, widths, quality] of jobs) {

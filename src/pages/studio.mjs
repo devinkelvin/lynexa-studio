@@ -15,10 +15,10 @@ export function aboutPage() {
 <section class="sec sec--tight" aria-label="Studio photography">
   <div class="shell">
     <div class="photo-band">
-      <div data-reveal>${img('lagos-strategy-session', 'Two people in Lagos working together on a laptop', { sizes: '(min-width: 900px) 58vw, 100vw' })}</div>
-      <div data-reveal>${img('lagos-professionals', 'Professionals working with laptops in a Lagos office', { sizes: '(min-width: 900px) 40vw, 100vw' })}</div>
+      <div data-reveal>${img('about-team-lagos', 'Three Nigerian tech professionals in a Lagos office reviewing a product on a laptop together', { sizes: '(min-width: 900px) 58vw, 100vw' })}</div>
+      <div data-reveal>${img('about-team-nesa', 'Two Nigerian software engineers pair-programming at a shared desk in a busy tech workspace', { sizes: '(min-width: 900px) 40vw, 100vw' })}</div>
     </div>
-    <p class="credit">Photography: Ninthgrid via Pexels, Lagos.</p>
+    <p class="credit">Photography via Unsplash: Ninthgrid, Lagos (left); NESA by Makers, Nigeria (right). Representative of the people and places we work with.</p>
   </div>
 </section>
 <section class="sec surface-dark sheet why" aria-labelledby="why-title">
@@ -107,7 +107,7 @@ export function aboutPage() {
   </div>
 </section>
 ${ctaBand()}`;
-  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a founder-led product design, engineering and venture studio in Lagos, Nigeria. Meet the studio and founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin], image: 'https://lynexa.co/assets/img/kelvin-ekuhoho-768.webp' }] };
+  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a founder-led product design, engineering and venture studio in Lagos, Nigeria. Meet the studio and founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
 }
 
 export function processPage() {

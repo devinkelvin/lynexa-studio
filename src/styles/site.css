@@ -292,7 +292,8 @@ main:focus { outline: none; }
 
 .swiftly-media { display: grid; place-items: center; background: #0d2a63; }
 .swiftly-media img.logo { width: min(60%, 320px); position: relative; z-index: 1; }
-.swiftly-media .bg { opacity: .28 !important; }
+.swiftly-media .bg { opacity: .55 !important; }
+.swiftly-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,42,99,.15), rgba(13,42,99,.55)); pointer-events: none; }
 
 /* Filter */
 .filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
@@ -1053,14 +1054,33 @@ html[data-motion="off"] .cursor { display: none !important; }
    paint only when motion is Full). If the swarm has not arrived by 3.6s the failsafe shows everything. */
 .sw-on .sw-wr:not(.sw-done):not(.sw-go) { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
 html.sw-intro:not(.sw-hero-done) main > .hero :is(h1, .lead, .build__label, .build__note-text, .build__idea > p, .build__caption, .hero__meta .btn, .build__idea, .build__frame):not(.sw-built),
+html.sw-intro:not(.sw-hero-done) main > .center-page :is(h1, .lead, .next-steps p, .btn):not(.sw-built),
 html.sw-intro:not(.sw-hero-done) main > .page-hero :is(.crumbs, h1, .lead, .status, .site-index li, .btn, .page-hero__grid img):not(.sw-built) {
   clip-path: polygon(0 0, 0 0, 0 0, 0 0); animation: sw-failsafe-clip 0s linear 3.6s forwards;
 }
 html.sw-intro:not(.sw-hero-done) main > .hero .build__line:not(.sw-built) { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); animation: sw-failsafe-clip 0s linear 3.6s forwards; }
 html.sw-intro:not(.sw-hero-done) main > .hero .build__frame--real .phone:not(.sw-built) { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); animation: sw-failsafe-clip 0s linear 3.6s forwards; }
-html.sw-intro.sw-live main :is(.hero, .page-hero) * { animation: none; }
+html.sw-intro.sw-live main :is(.hero, .page-hero, .center-page) * { animation: none; }
 html.sw-intro.sw-live main > .hero .wire i:not(.sw-wgo) { scale: 0 1; }
 @keyframes sw-failsafe-clip { to { clip-path: none; } }
 html.sw-intro .hero h1, html.sw-intro .hero__meta, html.sw-intro .build__stage { opacity: 1 !important; transform: none !important; }
 html.sw-intro:not(.sw-hero-done) .build__line::after { transform: scaleX(0) !important; transition: none !important; }
 html.sw-intro:not(.sw-hero-done) .build__line.sw-lgo::after { transform: scaleX(1) !important; transition: transform var(--sw-d, 1.2s) var(--sw-ease, ease) !important; }
+
+/* Founder card, text-led (no portrait): statement and signature on the left, story and facts on the right */
+.founder-card__panel { position: relative; overflow: hidden; align-content: start; }
+.founder-card__panel::before { content: "“"; position: absolute; right: clamp(-1rem, 2vw, 2rem); top: clamp(-4rem, -3vw, -2rem); font-size: clamp(14rem, 10rem + 14vw, 26rem); line-height: 1; font-weight: 800; color: rgba(255,255,255,.08); pointer-events: none; }
+.founder-card__intro, .founder-card__body { position: relative; display: grid; gap: 1.4rem; align-content: start; justify-items: start; }
+.founder-card__body > p { max-width: 36em; color: rgba(255,255,255,.88); font-size: 1.08rem; }
+.founder-card__sign { display: flex; align-items: center; gap: .9rem; margin-top: .5rem; }
+.founder-card__sign > span:last-child { display: grid; gap: .1rem; }
+.founder-card__sign b { font-size: 1.05rem; }
+.founder-card__sign > span:last-child > span { font-size: .875rem; color: rgba(255,255,255,.85); }
+.founder-card__mono { display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border-radius: 50%; background: #fff; color: var(--violet); font-weight: 800; letter-spacing: -.03em; }
+@media (min-width: 900px) {
+  .founder-card { grid-template-columns: 1fr; }
+  .founder-card__panel { grid-template-columns: 1fr 1.05fr; column-gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+}
+/* Before the swarm arrives, content below the header waits (so nothing on screen appears unbuilt). Failsafe: 3.6s. */
+html.sw-intro:not(.sw-live) main > :not(.hero):not(.page-hero):not(.center-page) { visibility: hidden; animation: sw-failsafe-vis 0s linear 3.6s forwards; }
+@keyframes sw-failsafe-vis { to { visibility: visible; } }

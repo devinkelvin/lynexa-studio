@@ -8,7 +8,7 @@ export function workIndex() {
   const used = CATEGORIES.filter(([k]) => PROJECTS.some((p) => p.cats.includes(k)));
   const media = (p) => {
     if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly">${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}<span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
-    if (p.slug === 'swiftly') return `<span class="showcase__media swiftly-media">${img('lagos-collaboration', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`;
+    if (p.slug === 'swiftly') return `<span class="showcase__media swiftly-media">${img('swiftly-danfo', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`;
     if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnownow.netlify.app', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
     if (p.slug === 'kelvinekuhoho') return `<span class="showcase__media showcase__media--site showcase__media--night">${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
     if (VENTURE_PHOTO[p.slug]) return `<span class="showcase__media showcase__media--cover">${img('venture-' + p.slug, VENTURE_PHOTO[p.slug].alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Photo: ${VENTURE_PHOTO[p.slug].credit}</small></span>`;
@@ -174,8 +174,8 @@ export function swiftlyPage() {
       <div><dt>Lynexa’s role</dt><dd>Venture strategy, specification, prototypes</dd></div>
       <div><dt>Status</dt><dd>Concept with internal prototype</dd></div>
     </dl>
-    <div class="case-hero__media swiftly-media" style="aspect-ratio:21/9;position:relative" data-reveal>${img('lagos-collaboration', '', { cls: 'bg', sizes: '100vw' }).replace('class="bg"', 'class="bg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"')}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</div>
-    <p class="credit">Photo: Ninthgrid via Pexels.</p>
+    <div class="case-hero__media swiftly-media" style="aspect-ratio:21/9;position:relative" data-reveal>${img('swiftly-danfo', '', { cls: 'bg', sizes: '100vw' }).replace('class="bg"', 'class="bg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"')}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</div>
+    <p class="credit">Photo: Sheyi Owolabi via Unsplash, Lagos danfo buses.</p>
   </div>
 </section>
 <section class="sec" aria-label="Venture overview">
