@@ -372,7 +372,7 @@
 
   // ---------------------------------------------------------------- every text block gets written
   const TEXT = 'h2, h3, h4, h5, p, li, dt, dd, figcaption, blockquote, summary, .status, .credit, .showcase__title, .showcase__desc, .vcard__body > b, .vcard__body > span:not(.status), .channel b, .channel span, .scard__n, .step__n, .stack dt, .stack dd';
-  const SKIP = 'form, [data-stepper], .filter, nav, .btn, svg, [aria-hidden="true"], details > div, .sr-only, .wa-float, .cursor, .photo-credit, .vmodel__tag';
+  const SKIP = 'form, [data-stepper], [data-proto], .filter, nav, .btn, svg, [aria-hidden="true"], details > div, .sr-only, .wa-float, .cursor, .photo-credit, .vmodel__tag';
   function textLeaves(roots) {
     const set = new Set();
     roots.forEach((r) => {
@@ -412,7 +412,7 @@
   const MEDIA = '.photo-band figure, .founder-card__photo, .case-hero__media, .duo figure, .gallery figure';
   const ROW = '.stack > div, .svc-row, .founder-card__facts > div, .also li, .fit li';
   const units = [];
-  const inForm = (el) => !!el.closest('form, .form, [data-stepper], .filter');
+  const inForm = (el) => !!el.closest('form, .form, [data-stepper], [data-proto], .filter');
 
   function makeUnit(section, kind, opts = {}) {
     const u = { section, kind, els: new Set(), plan: null, tempo: opts.tempo || section.__tempo || 1, noHide: mode === 'light' || opts.noHide, state: 'pending', anchor: opts.anchor, data: opts.data || {} };
@@ -422,7 +422,7 @@
 
   function collect(section) {
     if (section.classList.contains('hero') || section.classList.contains('page-hero') || section.classList.contains('center-page')) return;
-    if (section.querySelector('form, [data-stepper]') && !section.querySelector(CARD + ', h2')) return;
+    if (section.querySelector('form, [data-stepper]') && !section.querySelector(CARD + ', h2, [data-plan-out]')) return;
     const editorial = section.querySelector('.founder-card, .chapter, .case-hero') || (section.querySelector('.split') && !section.querySelector(CARD + ', ' + ROW));
     const understated = section.querySelector('.faq, .models');
     section.__tempo = editorial ? 1.15 : understated ? 0.7 : 0.9;
@@ -490,7 +490,7 @@
 
   function scope(u) {
     const d = u.data;
-    return { head: () => [d.h, ...d.texts], duo: () => [u.section], steps: () => [d.steps], phase: () => [d.ph], cards: () => d.items, frames: () => d.items, media: () => [d.m], rows: () => d.items, faq: () => [d.faq], ctas: () => d.items, texts: () => d.items, intro: () => [u.section] }[u.kind]?.() || [];
+    return { head: () => [d.h, ...d.texts], duo: () => [u.section], steps: () => [d.steps], phase: () => [d.ph], cards: () => d.items, frames: () => d.items, media: () => [d.m], rows: () => d.items, faq: () => [d.faq], ctas: () => d.items, texts: () => d.items, adhoc: () => d.items.map((i) => i.el), intro: () => [u.section] }[u.kind]?.() || [];
   }
   const within = (u, t) => scope(u).some((el) => el && (el === t || el.contains(t)));
 
@@ -709,6 +709,7 @@
     c.trail = [];
   }
   function goHome(c) {
+    if (c.g) { c.g.fadeAt = Math.min(c.g.fadeAt, clock); c.g = null; }
     if (c.state === 'orbit') return;
     toDoc(c);
     c.state = 'return'; c.job = null;
@@ -744,6 +745,8 @@
 
   function step(c, dt) {
     const px = c.x;
+    if (c.state === 'escort') { escortStep(c); c.vx = c.vx * 0.8 + ((c.x - px) / Math.max(dt, 1)) * 0.2; return; }
+    if (c.state === 'sweep') { sweepStep(c); c.vx = c.vx * 0.8 + ((c.x - px) / Math.max(dt, 1)) * 0.2; return; }
     if (c.state === 'orbit') {
       const [ox, oy] = orbitPos(c, clock);
       c.x = ox; c.y = oy;
@@ -791,7 +794,7 @@
     const dt = Math.min(50, now - (last || now));
     last = now;
     clock += dt;
-    const busy = cursors.some((c) => c.state !== 'orbit') || guides.length || pulses.length || timers.length;
+    const busy = cursors.some((c) => c.state !== 'orbit') || guides.length || pulses.length || timers.length || (finePointer && performance.now() - you.t < 2700);
     // idle: paint at ~30fps and only repaint the formation's box
     if (!busy && !fullClear && (++tick & 1)) { schedule(); return; }
     for (let i = timers.length - 1; i >= 0; i--) if (timers[i].at <= clock) { const t = timers[i]; timers.splice(i, 1); try { t.fn(); } catch (e) { fail(e); } }
@@ -867,13 +870,14 @@
       ctx.drawImage(s.img, -1.5 * s.k, -1.5 * s.k);
       ctx.restore();
     }
+    drawYou();
   }
 
   // ---------------------------------------------------------------- hero and page intros
   // The page header starts empty (hidden by CSS under html.sw-intro before first paint) and the swarm builds it
   // from scratch: it writes every line of text, draws every button and card, sketches the wireframe and frames the
   // real screen. Return visitors get the same build, faster. If the swarm is late or fails, everything is shown.
-  const HERO_TEXT = 'h1, .lead, .build__label, .build__note-text, .build__idea > p:not(.build__note-text), .build__caption, .crumbs, .status, .site-index li';
+  const HERO_TEXT = 'h1, .lead, .build__label, .build__note-text, .build__idea > p:not(.build__note-text), .build__caption, .crumbs, .status, .site-index li, .page-hero__more';
   const HERO_BOX = '.btn, .build__idea, .build__frame';
   function heroDone() { introPending = false; root.classList.add('sw-hero-done'); after(600, () => root.classList.remove('sw-intro')); queueCheck(); }
   async function intro() {
@@ -934,9 +938,16 @@
     } else {
       tracks.push(write(hero.querySelector('.crumbs'), 2.2, 0, { guide: null }));
       tracks.push(write(hero.querySelector('h1'), 1.25, 120));
-      const texts = [...hero.querySelectorAll('.lead, .status, .site-index li, .next-steps p')];
+      const texts = [...hero.querySelectorAll('.lead, .status, .site-index li, .next-steps p, .page-hero__more')];
       texts.forEach((t, i) => tracks.push(write(t, t.matches('.lead') ? 3.1 : 1.6, 560 + i * 120, { guide: null })));
       [...hero.querySelectorAll('.btn')].forEach((b, i) => tracks.push(box(b, 950 + i * 150, 'full', { d: 520 })));
+      const lost = hero.querySelector('.lost');
+      if (lost) {
+        const r = docRect(lost);
+        const ring = (k) => { const pts = []; for (let a = 0; a <= 16; a++) { const t = (a / 16 + k * 0.25) * Math.PI * 2; pts.push([r.x + r.w / 2 + Math.cos(t) * (r.w / 2 + 14), r.y + r.h / 2 + Math.sin(t) * (r.h / 2 + 14)]); } return pts; };
+        for (let k = 0; k < (isMobile() ? 2 : 4); k++) tracks.push([job(rectPts(r, 'full'), Wt(900), { wait: Wt(k * 120) }), job(ring(k), Wt(1100), { guide: 'dash' })]);
+        tracks.push(write(lost.querySelector('.lost__q'), 0.6, 2300, { guide: null }));
+      }
       [...hero.querySelectorAll('.page-hero__grid img')].forEach((im, i) => {
         const r = docRect(im), d = Wt(700);
         tracks.push([job(rectPts(r, 'a'), d, { wait: Wt(200 + i * 100), onStart: () => { im.classList.add('sw-m'); u.els.add(im); reveal(im, d, 600); } })]);
@@ -985,6 +996,137 @@
     cleanup.push(() => { host.classList.remove('sw-rail'); phases.forEach((p) => p.style.removeProperty('--sw-rail')); });
   }
 
+  // ---------------------------------------------------------------- on-demand builds (used by the idea sketch, planner, 404)
+  // build([{ el, type: 'text'|'box'|'wire'|'media'|'trace', lane, speed, wait }]) hides the elements and has the swarm
+  // build them right now. Anything the swarm cannot reach is simply shown.
+  const PEND_CLS = { text: 'sw-t', box: 'sw-c', wire: 'sw-w', media: 'sw-m' };
+  function build(items, { tempo = 1 } = {}) {
+    items = items.filter((it) => it && it.el && it.el.isConnected);
+    if (!items.length) return;
+    const u = { section: document.body, kind: 'adhoc', els: new Set(), tempo, noHide: false, state: 'pending', data: { items } };
+    units.push(u);
+    items.forEach((it) => {
+      const el = it.el, c = PEND_CLS[it.type];
+      el.classList.remove('sw-go', 'sw-now', 'sw-built', 'sw-done', ...PENDING);
+      el.style.removeProperty('clip-path');
+      if (c) { el.classList.add(c); u.els.add(el); }
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (u.state !== 'pending') return;
+      u.handled = new Set();
+      const lanes = new Map();
+      items.forEach((it, i) => {
+        const key = it.lane === undefined ? i : it.lane;
+        if (!lanes.has(key)) lanes.set(key, []);
+        const lane = lanes.get(key), el = it.el, r = docRect(el);
+        const wait = it.wait || 0;
+        if (it.type === 'text') lane.push(...writeJobs(u, el, it.speed || 2.4, { wait, guide: null }));
+        else if (it.type === 'box') { const d = ts(it.dur || clamp(380 + (r.w + r.h) * 0.3, 420, 900), u); lane.push(job(rectPts(r, 'a'), d, { wait, onStart: () => reveal(el, d, 900) })); }
+        else if (it.type === 'wire') { const d = ts(it.dur || clamp(150 + r.w * 0.9, 180, 420), u); lane.push(job([[r.x, r.y + r.h / 2], [r.x + r.w, r.y + r.h / 2]], d, { wait, guide: null, pulse: false, onStart: () => reveal(el, d, 400) })); }
+        else if (it.type === 'media') { const d = ts(it.dur || 800, u); lane.push(job([[r.x, r.y + r.h], [r.x + r.w, r.y + r.h], [r.x + r.w, r.y]], d, { wait, onStart: () => reveal(el, d, 600) })); }
+        else if (it.type === 'trace') { const d = ts(it.dur || 700, u); lane.push(job(it.pts || rectPts(r, 'full'), d, { wait })); }
+      });
+      const tracks = [...lanes.values()].filter((t) => t.length);
+      const free = cursors.filter((c) => c.state === 'orbit' || c.state === 'return');
+      if (!free.length || !tracks.length) return finish(u);
+      let use = tracks;
+      if (tracks.length > free.length) {
+        use = Array.from({ length: free.length }, () => []);
+        tracks.forEach((t, i) => use[i % free.length].push(...t));
+      }
+      u.state = 'building'; active.push(u); u.cursors = [];
+      use.forEach((t, i) => { const c = free[i]; u.cursors.push(c); c.queue = t.map((j) => ({ ...j, unit: u })); c.releaseAt = clock + i * 35; next(c); });
+      after(6000, () => { if (u.state === 'building') finish(u); });
+      setState(); wake();
+    }));
+    return u;
+  }
+
+  // ---------------------------------------------------------------- the visitor joins the swarm
+  // A small "You" tag rides with the visitor's pointer, and hovering a button calls a few cursors over to work with you.
+  const finePointer = matchMedia('(pointer: fine)').matches;
+  const you = { x: -99, y: -99, t: -1e9, hide: false };
+  let escortEl = null;
+  function escortStart(el) {
+    if (escortEl === el) return;
+    escortStop();
+    if (!finePointer || isMobile() || state === 'paused') return;
+    escortEl = el;
+    cursors.filter((c) => c.state === 'orbit' && !c.reserve).slice(0, 3).forEach((c, k) => { c.state = 'escort'; c.space = 'view'; c.esc = { el, k, seed: Math.random() * 6 }; c.trail = []; });
+    setState(); wake();
+  }
+  function escortStop() {
+    if (!escortEl) return;
+    escortEl = null;
+    cursors.forEach((c) => { if (c.state === 'escort') { c.esc = null; goHome(c); } });
+    setState(); wake();
+  }
+  function escortStep(c) {
+    const el = c.esc && c.esc.el;
+    if (!el || !el.isConnected) { goHome(c); return; }
+    const r = el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > H()) { escortStop(); return; }
+    const w = Math.sin(clock * 0.004 + c.esc.seed) * 3;
+    const spots = [[r.right + 6, r.top - 6 + w], [r.left - 10, r.bottom + 2 - w], [r.right - 6 + w, r.bottom + 10]];
+    const [tx, ty] = spots[c.esc.k % 3];
+    c.x += (tx - c.x) * 0.16; c.y += (ty - c.y) * 0.16;
+    if (!degraded) { c.trail.push([c.x + sx(), c.y + sy()]); if (c.trail.length > 6) c.trail.shift(); }
+  }
+  function drawYou() {
+    if (!finePointer || isMobile() || you.hide) return false;
+    const age = performance.now() - you.t;
+    if (age > 2600) return false;
+    const a = age > 2000 ? 1 - (age - 2000) / 600 : 1;
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.font = '600 11px "Plus Jakarta Sans", system-ui, sans-serif';
+    const tw = ctx.measureText('You').width, x = you.x + 16, y = you.y + 20;
+    ctx.fillStyle = '#5a35fe';
+    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, tw + 12, 18, 6); ctx.fill(); } else ctx.fillRect(x, y, tw + 12, 18);
+    ctx.fillStyle = '#fff'; ctx.fillText('You', x + 6, y + 13);
+    ctx.restore();
+    return true;
+  }
+
+  // ---------------------------------------------------------------- page transitions: the swarm carries you to the next page
+  function sweepOut(href) {
+    try { sessionStorage.setItem('lx-sweep', '1'); } catch (e) { /* ignore */ }
+    escortEl = null;
+    cursors.forEach((c, i) => {
+      if (c.space === 'doc') { c.x -= sx(); c.y -= sy(); }
+      c.space = 'view'; c.queue = []; c.job = null; c.esc = null;
+      c.state = 'sweep'; c.from = [c.x, c.y]; c.t0 = clock + (i % 8) * 12; c.tdur = 300;
+      c.to = [W() + 40 + Math.random() * 120, clamp(c.y + (Math.random() - 0.5) * H() * 0.5, 20, H() - 20)];
+      c.bend = (Math.random() - 0.5) * 120; c.trail = [];
+    });
+    root.classList.add('sw-leaving');
+    wake();
+    setTimeout(() => { location.href = href; }, 280);
+  }
+  function sweepStep(c) {
+    const t = clamp((clock - c.t0) / c.tdur, 0, 1);
+    if (clock < c.t0) return;
+    [c.x, c.y] = bez(c.from, c.to, c.bend, easeIO(t));
+    c.trail.push([c.x + sx(), c.y + sy()]); if (c.trail.length > 10) c.trail.shift();
+  }
+  function arriveIn() {
+    let swept = false;
+    try { swept = sessionStorage.getItem('lx-sweep') === '1'; sessionStorage.removeItem('lx-sweep'); } catch (e) { /* ignore */ }
+    if (!swept) return;
+    cursors.forEach((c, i) => { c.space = 'view'; c.x = -30 - Math.random() * 160; c.y = clamp(H() * (0.15 + Math.random() * 0.8), 20, H() - 20); c.state = 'travel'; goHome(c); c.t0 = clock + (i % 10) * 25; });
+    wake();
+  }
+  function onLinkClick(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.closest('[data-no-sweep]')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || (url.pathname === location.pathname && url.search === location.search)) return;
+    if (state === 'paused' || document.hidden) return;
+    e.preventDefault();
+    sweepOut(url.href);
+  }
+
   // ---------------------------------------------------------------- wiring
   const cleanup = [];
   // Section detection: unit tops are cached in document coordinates (measured on start, resize, load and every
@@ -1023,6 +1165,7 @@
   }
   function onPointer(e) {
     lastInput = performance.now();
+    if (e.pointerType === 'mouse' || e.pointerType === 'pen') { you.x = e.clientX; you.y = e.clientY; you.t = performance.now(); you.hide = !!(e.target.closest && e.target.closest('input, textarea, select, [contenteditable], .proto, dialog')); }
     const d = Math.hypot(e.clientX - home.x, e.clientY - home.y);
     const near = d < 120 * home.scale + 40;
     const want = state === 'paused' ? 0.3 : near ? 0.15 : atBottom ? 0.25 : IDLE_ALPHA;
@@ -1034,7 +1177,7 @@
     const t = e.target;
     // keyboard users always see what they focus: finish any unit that contains it
     units.forEach((u) => { if (u.state !== 'done' && within(u, t)) finish(u); });
-    if (t.closest && t.closest('form, [data-stepper]')) {
+    if (t.closest && t.closest('form:not([data-pitch]):not([data-planner]), [data-stepper]')) {
       clearTimeout(formTimer);
       if (state !== 'paused') { active.slice().forEach(finish); cursors.forEach(goHome); state = 'paused'; root.dataset.swarmState = state; home.targetAlpha = 0.3; wake(); }
     }
@@ -1095,6 +1238,9 @@
     on(window, 'scroll', onScroll, { passive: true });
     on(window, 'resize', onResize);
     on(document, 'pointermove', onPointer, { passive: true });
+    on(document, 'pointerover', (e) => { const b = e.target.closest && e.target.closest('.btn, .vmodel__cta'); if (b && !b.closest('form')) escortStart(b); }, { passive: true });
+    on(document, 'pointerout', (e) => { if (escortEl && !(e.relatedTarget && escortEl.contains(e.relatedTarget))) { const b = e.target.closest && e.target.closest('.btn, .vmodel__cta'); if (b === escortEl) escortStop(); } }, { passive: true });
+    on(document, 'click', onLinkClick);
     on(document, 'keydown', () => wake());
     on(document, 'focusin', onFocusIn);
     on(document, 'focusout', onFocusOut);
@@ -1103,12 +1249,13 @@
     on(window, 'load', () => { measure(); queueCheck(); });
     on(window, 'hashchange', finishAll);
     on(window, 'pagehide', () => { if (raf) cancelAnimationFrame(raf); raf = 0; running = false; });
-    on(window, 'pageshow', (e) => { if (e.persisted) { finishAll(); wake(); } });
+    on(window, 'pageshow', (e) => { if (e.persisted) { root.classList.remove('sw-leaving'); cursors.forEach((c) => { if (c.state === 'sweep' || c.state === 'escort') { c.state = 'travel'; goHome(c); } }); finishAll(); wake(); } });
     on(document, 'click', (e) => { if (e.target.closest && e.target.closest('[data-cat], a[href^="#"]')) finishAll(); }, true);
     const mo = new MutationObserver(onMenu);
     mo.observe(root, { attributes: true, attributeFilter: ['class'] });
     cleanup.push(() => mo.disconnect());
     running = true;
+    arriveIn();
     wake();
   }
 
@@ -1123,6 +1270,6 @@
     window.LynexaSwarm = null;
   }
 
-  window.LynexaSwarm = { destroy, finishAll, config: CONFIG, cdebug: () => cursors.filter((c) => c.state !== 'orbit').map((c) => ({ s: c.state, q: c.queue.length, unit: c.job && c.job.unit && c.job.unit.kind, t0: Math.round(c.t0 - clock), wu: Math.round((c.waitUntil || 0) - clock), dur: c.job && Math.round(c.job.dur), wait: c.job && Math.round(c.job.wait) })), debug: () => units.map((u) => ({ kind: u.kind, state: u.state, anchor: (u.anchor || u.section).tagName + '.' + (u.anchor || u.section).className })), get state() { return state; }, get cursors() { return cursors.length; } };
+  window.LynexaSwarm = { destroy, finishAll, build, config: CONFIG, cdebug: () => cursors.filter((c) => c.state !== 'orbit').map((c) => ({ s: c.state, q: c.queue.length, unit: c.job && c.job.unit && c.job.unit.kind, t0: Math.round(c.t0 - clock), wu: Math.round((c.waitUntil || 0) - clock), dur: c.job && Math.round(c.job.dur), wait: c.job && Math.round(c.job.wait) })), debug: () => units.map((u) => ({ kind: u.kind, state: u.state, anchor: (u.anchor || u.section).tagName + '.' + (u.anchor || u.section).className })), get state() { return state; }, get cursors() { return cursors.length; } };
   try { init(); } catch (e) { fail(e); }
 })();

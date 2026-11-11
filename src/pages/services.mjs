@@ -12,6 +12,7 @@ export function servicesIndex() {
       <h1>Everything it takes to get a product to market.</h1>
       <p class="lead">Strategy, product design, engineering, brand, websites and investor materials. Hire us for the whole journey or for the one piece you are missing.</p>
     </div>
+    <p class="page-hero__more">${link('/mvp-planner/', 'Estimate a timeline for your product')}</p>
   </div>
 </section>
 <section class="sec sec--tight" aria-label="Services">

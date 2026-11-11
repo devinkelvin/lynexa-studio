@@ -86,6 +86,38 @@ export function zenglyPage() {
   </div>
 </section>
 
+<section class="sec sec--tight proto-sec" aria-labelledby="proto-title">
+  <div class="shell proto">
+    <div class="proto__intro">
+      <h2 id="proto-title">Tap through Zengly</h2>
+      <p>These are Zengly’s real design screens, linked into a small click-through. Tap the highlighted areas on the phone, or jump straight to a screen. Zengly is in pre-launch, so this is the design, not the live app.</p>
+      <div class="proto__nav" role="group" aria-label="Jump to a screen">
+        <button type="button" data-proto-go="home" aria-pressed="true">Home</button>
+        <button type="button" data-proto-go="menu" aria-pressed="false">All services</button>
+        <button type="button" data-proto-go="split" aria-pressed="false">Split bill</button>
+        <button type="button" data-proto-go="sprayers" aria-pressed="false">Vaniti</button>
+        <button type="button" data-proto-go="leaderboard" aria-pressed="false">Leaderboard</button>
+      </div>
+      <button class="proto__theme" type="button" data-proto-theme aria-pressed="false"><span>Light mode</span><i aria-hidden="true"></i></button>
+      <p class="sr-only" aria-live="polite" data-proto-status></p>
+    </div>
+    <div class="proto__device">
+      <div class="proto__phone" data-proto>
+        <span class="device__island" aria-hidden="true"></span>
+        ${[
+          ['home', 'the home screen', 'zengly-home-dark', 'Zengly home screen in dark mode with balance, quick actions and services', [['Open Vaniti', 'sprayers', 30.6, 28, 16.8, 11.2], ['Open Split Bill', 'split', 53.5, 28, 17, 11.2], ['See all services', 'menu', 75, 41.3, 18.4, 10.6]]],
+          ['home-light', 'the home screen in light mode', 'zengly-home-light', 'Zengly home screen in light mode with balance, quick actions and services', [['Open Vaniti', 'sprayers', 30.6, 28, 16.8, 11.2], ['Open Split Bill', 'split', 53.5, 28, 17, 11.2], ['See all services', 'menu', 75, 41.3, 18.4, 10.6]]],
+          ['menu', 'all services', 'zengly-menu', 'Zengly services menu listing transfers, bills, Vaniti and Split Bill', [['Back', 'back', 0, 6.7, 18.6, 6.1], ['Open Vaniti', 'sprayers', 34.8, 21, 29, 12], ['Open Split Bill', 'split', 66, 21, 28.5, 12]]],
+          ['split', 'Split Bill', 'zengly-split-bill', 'Zengly split-bill screen showing a “Divide expenses fairly” card and bill history', [['Back', 'back', 0, 7.3, 18.6, 6.7]]],
+          ['sprayers', 'Vaniti', 'zengly-vaniti-sprayers', 'Zengly Vaniti screen showing an event’s top sprayers', [['Back', 'back', 0, 7.3, 18.6, 6.7], ['See the leaderboard', 'leaderboard', 71.8, 33.5, 24, 4.9], ['See more sprayers', 'leaderboard', 31.9, 82.9, 35, 5.5]]],
+          ['leaderboard', 'the Vaniti leaderboard', 'zengly-vaniti-leaderboard', 'Zengly Vaniti leaderboard ranking the top sprayers at an event', [['Back', 'back', 0, 5.5, 18.6, 6.7], ['Switch to Baller mode', 'sprayers', 4.3, 14, 44.4, 3.9]]]
+        ].map(([id, title, im, alt, spots]) => `<div class="proto__screen" data-screen="${id}" data-title="${title}" aria-hidden="true">${img(im, alt, { sizes: '300px' })}${spots.map(([label, go, l, t, w, h]) => `<button class="proto__hot" type="button" tabindex="-1" data-go="${go}" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%"><span class="sr-only">${label}</span></button>`).join('')}</div>`).join('')}
+      </div>
+      <p class="proto__tip" aria-hidden="true">Tap the glowing areas</p>
+    </div>
+  </div>
+</section>
+
 <section class="sec" aria-label="Case study">
   <div class="shell">
     ${chapter('The context', `<p>In Nigeria, money is social. People contribute to celebrations, spray cash on the dance floor at weddings, split the bill after dinner and chip in for each other’s data. Most banking apps still treat money as something one person does alone, in a tab labelled “Transfer”.</p>`)}

@@ -55,6 +55,15 @@ export default function home() {
       </div>
       <p class="build__caption">Zengly’s split-bill feature, from a sentence to a wireframe to the interface in the app. Zengly is in pre-launch.</p>
     </div>
+    <form class="pitch" data-pitch novalidate>
+      <label class="pitch__label" for="pitch-idea">Try it with your idea</label>
+      <div class="pitch__row">
+        <input id="pitch-idea" name="idea" type="text" maxlength="140" autocomplete="off" placeholder="An app that helps flatmates split rent and bills" aria-describedby="pitch-hint">
+        <button class="btn btn--primary btn--sm" type="submit"><span>Sketch it</span></button>
+      </div>
+      <p class="pitch__hint" id="pitch-hint">Describe it in one sentence. We sketch a first screen above, right here in your browser. Nothing is sent until you choose to send a brief.</p>
+      <p class="sr-only" aria-live="polite" data-pitch-live></p>
+    </form>
   </div>
 </section>
 
