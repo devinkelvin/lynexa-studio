@@ -233,14 +233,14 @@ const footer = () => `
 
 // Runs before first paint: marks JS, applies a saved motion preference, and (first visit, motion allowed)
 // asks the hero wireframe to wait for the swarm to draw it. Its hash is added to the CSP at build time.
-export const HEAD_SCRIPT = "(function(e){e.classList.add('js');try{var m=localStorage.getItem('lx-motion');if(m)e.setAttribute('data-motion',m);var r=matchMedia('(prefers-reduced-motion: reduce)').matches;if((m==='full'||(!m&&!r))&&!localStorage.getItem('lx-sw-seen')&&!sessionStorage.getItem('lx-sw:/'))e.classList.add('sw-intro')}catch(x){}})(document.documentElement)";
+export const HEAD_SCRIPT = "(function(e){e.classList.add('js');try{var m=localStorage.getItem('lx-motion');if(m)e.setAttribute('data-motion',m);var r=matchMedia('(prefers-reduced-motion: reduce)').matches,c=navigator.connection;if((m==='full'||(!m&&!r))&&!(c&&c.saveData)&&e.getAttribute('data-swarm-mode')!=='none'){e.classList.add('sw-intro');var l=document.createElement('link');l.rel='preload';l.as='script';l.href=e.getAttribute('data-swarm-src');document.head.appendChild(l)}}catch(x){}})(document.documentElement)";
 
 export function layout({ path, title, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', bodyClass = '', swarm = 'full' }) {
   const canonical = SITE.url + path;
   const fullTitle = path === '/' ? title : `${title} | Lynexa`;
   const ld = [orgLd(), ...jsonld];
   return `<!doctype html>
-<html lang="en-NG" data-swarm-src="/assets/swarm.js?v=__BUILD__">
+<html lang="en-NG" data-swarm-src="/assets/swarm.js?v=__BUILD__" data-swarm-mode="${swarm}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

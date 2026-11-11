@@ -64,7 +64,8 @@ None of these properties trigger layout shift. All hidden states sit behind `htm
 - **Pointer.** Moving the pointer near the formation fades it to 15%. At the very bottom of the page it dims to 25% so the footer stays readable.
 - **Menu.** While the mobile menu is open, the overlay is hidden.
 - **Navigation.** `pagehide` stops the loop. A back/forward cache restore finishes everything and resumes. There is only ever one overlay.
-- **Repeat visits.** The full hero sequence, where the idea card is traced, the wireframe drawn and the phone framed, plays on the first visit only (`localStorage lx-sw-seen`). Later visits get a short headline trace, and each page's intro plays once per session.
+- **Page headers are built from scratch.** With motion on Full, `HEAD_SCRIPT` adds `html.sw-intro` before first paint, so the header starts empty, and it preloads `swarm.js`. The swarm writes every line of text, draws the buttons, cards and the timeline rule, sketches the wireframe and raises the real screen into the phone. On the homepage this takes about 3s on a first visit and about 2s on return visits (`localStorage lx-sw-seen`). If the swarm has not arrived within 3.5s, CSS and JS failsafes show everything. Keyboard focus inside the header finishes the build at once.
+- **Writing.** Headings and paragraphs of up to six lines are written by a cursor: a clip-path staircase follows the cursor tip along each line, with a quick carriage return between lines (`writeJobs`). Longer paragraphs settle in instead.
 - **Slow devices.** If `hardwareConcurrency` is 4 or less, or `deviceMemory` is 2 or less, the swarm uses 30% fewer cursors. Sustained slow frames switch off trails, grids and pulses.
 
 ## Sizes, colours and timings
@@ -79,7 +80,8 @@ All of these live in `CONFIG` at the top of `swarm.js`:
 | Corner | `bottom-left` (WhatsApp is bottom-right). Override with `data-swarm-corner="bottom-right"` (or `top-left` / `top-right`) on `<html>`. Safe-area insets are respected. |
 | Colours | Violet `#5a35fe`, magenta `#c026d3`, coral `#f0614f`, amber `#e8962a` (the design group); turquoise `#0fb5a6`, sky `#1d9bf0`, emerald `#109a6a`, lime `#6fa514` (the engineering group). Each sprite has a white keyline and a faint dark hairline so it reads on both light and dark sections. |
 | Section budget | At most 1.9s per section on desktop and 1.2s on mobile, scaled by tempo: 0.9 standard, 1.15 editorial (founder, case-study chapters, text-only split layouts), 0.7 understated (engagement models, FAQ). |
-| Travel | Curved paths at about 1.7 px/ms (2 px/ms on mobile), 140–620ms per trip. |
+| Travel | Curved paths at about 1.7 px/ms (2 px/ms on mobile), 140–620ms per trip. Carriage returns take 70–200ms. |
+| Writing speed | Hero headline 1.15 px/ms, page headlines 1.25, section headings 1.5, paragraphs about 3.1, all scaled by tempo and device. |
 
 ## Adding the swarm to a new page or section
 

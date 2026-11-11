@@ -1048,3 +1048,19 @@ html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-
 html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 html[data-motion="reduced"] [data-reveal], html[data-motion="off"] [data-reveal] { clip-path: none !important; opacity: 1 !important; }
 html[data-motion="off"] .cursor { display: none !important; }
+
+/* Living Build System: page headers start empty and are built by the swarm (html.sw-intro is set before first
+   paint only when motion is Full). If the swarm has not arrived by 3.6s the failsafe shows everything. */
+.sw-on .sw-wr:not(.sw-done):not(.sw-go) { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
+html.sw-intro:not(.sw-hero-done) main > .hero :is(h1, .lead, .build__label, .build__note-text, .build__idea > p, .build__caption, .hero__meta .btn, .build__idea, .build__frame):not(.sw-built),
+html.sw-intro:not(.sw-hero-done) main > .page-hero :is(.crumbs, h1, .lead, .status, .site-index li, .btn, .page-hero__grid img):not(.sw-built) {
+  clip-path: polygon(0 0, 0 0, 0 0, 0 0); animation: sw-failsafe-clip 0s linear 3.6s forwards;
+}
+html.sw-intro:not(.sw-hero-done) main > .hero .build__line:not(.sw-built) { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); animation: sw-failsafe-clip 0s linear 3.6s forwards; }
+html.sw-intro:not(.sw-hero-done) main > .hero .build__frame--real .phone:not(.sw-built) { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); animation: sw-failsafe-clip 0s linear 3.6s forwards; }
+html.sw-intro.sw-live main :is(.hero, .page-hero) * { animation: none; }
+html.sw-intro.sw-live main > .hero .wire i:not(.sw-wgo) { scale: 0 1; }
+@keyframes sw-failsafe-clip { to { clip-path: none; } }
+html.sw-intro .hero h1, html.sw-intro .hero__meta, html.sw-intro .build__stage { opacity: 1 !important; transform: none !important; }
+html.sw-intro:not(.sw-hero-done) .build__line::after { transform: scaleX(0) !important; transition: none !important; }
+html.sw-intro:not(.sw-hero-done) .build__line.sw-lgo::after { transform: scaleX(1) !important; transition: transform var(--sw-d, 1.2s) var(--sw-ease, ease) !important; }

@@ -153,20 +153,21 @@
   const after = (ms, fn) => timers.push({ at: clock + ms, fn });
 
   // ---------------------------------------------------------------- reveal helpers (DOM)
-  const PENDING = ['sw-h', 'sw-t', 'sw-c', 'sw-m', 'sw-m--up', 'sw-p', 'sw-f', 'sw-w'];
+  const PENDING = ['sw-h', 'sw-t', 'sw-c', 'sw-m', 'sw-m--up', 'sw-p', 'sw-f', 'sw-w', 'sw-wr'];
   function reveal(el, ms, extra = 900) {
     if (!el || !el.isConnected || el.classList.contains('sw-go')) return;
     el.style.setProperty('--sw-d', Math.round(ms) + 'ms');
-    el.classList.add('sw-go');
+    el.classList.add('sw-go', 'sw-built');
     after(ms + extra, () => settle(el));
   }
   function settle(el) {
-    el.classList.remove('sw-go', 'sw-now', ...PENDING);
+    el.classList.remove('sw-go', 'sw-now', 'sw-done', ...PENDING);
     el.style.removeProperty('--sw-d');
+    el.style.removeProperty('clip-path');
     if (el.dataset.swPl) { el.removeAttribute('pathLength'); delete el.dataset.swPl; }
   }
   function instant(el) {
-    el.classList.add('sw-now', 'sw-go');
+    el.classList.add('sw-now', 'sw-go', 'sw-built');
     requestAnimationFrame(() => requestAnimationFrame(() => settle(el)));
   }
 
@@ -186,7 +187,7 @@
       if (hit) { hit.l = Math.min(hit.l, b.left); hit.r = Math.max(hit.r, b.right); hit.bottom = Math.max(hit.bottom, b.bottom); }
       else lines.push({ l: b.left, r: b.right, top: b.top, bottom: b.bottom });
     }
-    return lines.map((l) => ({ x1: l.l + sx(), x2: l.r + sx(), y: l.bottom + sy() - (l.bottom - l.top) * 0.12 }));
+    return lines.map((l) => ({ x1: l.l + sx(), x2: l.r + sx(), y: l.bottom + sy() - (l.bottom - l.top) * 0.12, top: l.top + sy(), bot: l.bottom + sy() }));
   }
   function stickyAncestor(el, stop) {
     for (let n = el, i = 0; n && n !== stop && i < 6; n = n.parentElement, i++) if (getComputedStyle(n).position === 'sticky') return n;
@@ -200,14 +201,47 @@
   // ---------------------------------------------------------------- jobs
   // A job is one piece of work for one cursor: travel to pts[0], then follow pts over dur ms.
   // onStart fires when the cursor begins working (that is when the DOM reveal starts, in sync).
-  const job = (pts, dur, o = {}) => ({ pts, dur, guide: o.guide === undefined ? 'line' : o.guide, onStart: o.onStart, onEnd: o.onEnd, pulse: o.pulse !== false, wait: o.wait || 0, live: o.live || null });
+  const job = (pts, dur, o = {}) => ({ pts, dur, guide: o.guide === undefined ? 'line' : o.guide, onStart: o.onStart, onEnd: o.onEnd, onFrame: o.onFrame, quick: o.quick, pulse: o.pulse !== false, wait: o.wait || 0, live: o.live || null });
   const ts = (ms, unit) => ms * timeScale() * (unit.tempo || 1);
 
   const hideable = (u) => !u.noHide;
   function mark(u, el, cls) { if (hideable(u) && el && !el.classList.contains('sw-go')) { el.classList.add(...cls.split(' ')); u.els.add(el); } }
 
-  // Heading: one or more cursors sweep the text baselines while a slanted wipe reveals the words.
-  function planHeading(u, h, tracks) {
+  // Writing: one cursor travels along each line of text and the words appear exactly where its tip has reached,
+  // with a quick carriage return to the next line. The reveal is a clip-path staircase driven by the cursor position.
+  function writeClip(el, er, L, i, x) {
+    const P = (a, b) => `${a.toFixed(1)}px ${b.toFixed(1)}px`;
+    // each line's band ends just under its descenders, so tight headlines do not leak the next line's ascenders
+    const edge = (k) => (k === L.length - 1 ? L[k].bot + 12 : L[k].bot - (L[k].bot - L[k].top) * 0.05 + 1) - er.y;
+    const left = -12, right = er.w + 12, T0 = L[0].top - er.y - 8;
+    const bi = edge(i);
+    let pts;
+    if (i === 0) pts = [P(left, T0), P(x, T0), P(x, bi), P(left, bi)];
+    else { const bp = edge(i - 1); pts = [P(left, T0), P(right, T0), P(right, bp), P(x, bp), P(x, bi), P(left, bi)]; }
+    el.style.clipPath = `polygon(${pts.join(', ')})`;
+  }
+  function writeJobs(u, el, speed, o = {}) {
+    const L = lineBoxes(el);
+    if (!L.length) return [];
+    const er = docRect(el);
+    const store = () => { if (!el.classList.contains('sw-wr')) { el.classList.remove('sw-t', 'sw-h'); el.classList.add('sw-wr'); u.els.add(el); } };
+    return L.map((l, i) => {
+      const w = l.x2 - l.x1;
+      const d = ts(clamp(w / speed, 110, 1150), u) * (o.f || 1);
+      return job([[l.x1 - 2, l.y], [l.x2 + 3, l.y]], d, {
+        wait: i === 0 ? (o.wait || 0) : 0, quick: i > 0, guide: o.guide === undefined ? 'line' : o.guide, pulse: i === L.length - 1,
+        onStart: () => { store(); writeClip(el, er, L, i, l.x1 - er.x - 2); },
+        onFrame: (t, c) => writeClip(el, er, L, i, i === L.length - 1 && t >= 1 ? er.w + 12 : c.x - er.x),
+        onEnd: i === L.length - 1 ? () => { el.style.removeProperty('clip-path'); el.classList.add('sw-done', 'sw-built'); after(400, () => settle(el)); } : null
+      });
+    });
+  }
+  const writable = (el) => { const L = lineBoxes(el); return L.length && L.length <= 6; };
+
+  // Heading: one cursor writes it line by line.
+  function planHeading(u, h, tracks, wait = 0) {
+    const jobs = hideable(u) ? writeJobs(u, h, 1.5, { wait }) : [];
+    if (jobs.length) { tracks.push(jobs); return; }
     const lines = lineBoxes(h);
     if (!lines.length) return;
     const total = lines.reduce((s, l) => s + (l.x2 - l.x1), 0);
@@ -220,10 +254,11 @@
       tracks.push([j]);
     });
   }
-  // Supporting text: a cursor marks the start with a short guide down the left edge, then the copy settles in.
+  // Supporting text: short paragraphs are written (fast); long ones get a margin mark and settle in.
   function planText(u, p, tracks, wait = 0) {
     const r = docRect(p);
     if (!r.h) return;
+    if (hideable(u) && writable(p)) { tracks.push(writeJobs(u, p, 3.2, { wait, guide: null })); return; }
     tracks.push([job([[r.x - 8, r.y + 2], [r.x - 8, r.y + Math.min(r.h, 90)]], ts(380, u), { wait, onStart: () => reveal(p, ts(560, u), 300) })]);
   }
   // Card: one cursor traces top and right edges, another the left and bottom, while the surface is drawn from
@@ -406,7 +441,7 @@
 
   function scope(u) {
     const d = u.data;
-    return { head: () => [d.h, ...d.texts], duo: () => [u.section], steps: () => [d.steps], phase: () => [d.ph], cards: () => d.items, frames: () => d.items, media: () => [d.m], rows: () => d.items, faq: () => [d.faq], ctas: () => d.items }[u.kind]?.() || [];
+    return { head: () => [d.h, ...d.texts], duo: () => [u.section], steps: () => [d.steps], phase: () => [d.ph], cards: () => d.items, frames: () => d.items, media: () => [d.m], rows: () => d.items, faq: () => [d.faq], ctas: () => d.items, intro: () => [u.section] }[u.kind]?.() || [];
   }
   const within = (u, t) => scope(u).some((el) => el && (el === t || el.contains(t)));
 
@@ -570,6 +605,7 @@
     u.state = 'done';
     u.els.forEach((el) => { if (el.isConnected) instant(el); });
     u.els.clear();
+    if (u.onDone) u.onDone();
     const i = active.indexOf(u);
     if (i >= 0) active.splice(i, 1);
     if (u.cursors) u.cursors.forEach((c) => { if (c.job && c.job.unit === u || c.queue.some((j) => j.unit === u)) { c.queue = []; c.job = null; goHome(c); } });
@@ -580,6 +616,7 @@
     if (u.state !== 'building') return;
     if (cursors.some((c) => (c.job && c.job.unit === u) || c.queue.some((j) => j.unit === u))) return;
     u.state = 'done';
+    if (u.onDone) u.onDone();
     after(1400, () => { u.els.forEach((el) => { if (el.classList.contains('sw-go')) settle(el); }); u.els.clear(); });
     const i = active.indexOf(u);
     if (i >= 0) active.splice(i, 1);
@@ -606,9 +643,9 @@
     const off = liveOffset(j);
     const to = [j.pts[0][0] + off[0], j.pts[0][1] + off[1]];
     const dist = Math.hypot(to[0] - c.x, to[1] - c.y);
-    c.tdur = clamp(dist / (isMobile() ? 2 : 1.7), 140, isMobile() ? 420 : 620);
+    c.tdur = j.quick ? clamp(dist / 4.5, 70, 200) : clamp(dist / (isMobile() ? 2 : 1.7), 140, isMobile() ? 420 : 620);
     c.waitUntil = c.t0 + c.tdur + j.wait;
-    c.bend = (Math.random() < 0.5 ? -1 : 1) * clamp(dist * 0.22, 10, 110);
+    c.bend = j.quick ? 6 : (Math.random() < 0.5 ? -1 : 1) * clamp(dist * 0.22, 10, 110);
     c.trail = [];
   }
   function goHome(c) {
@@ -667,6 +704,7 @@
       const t = clamp((clock - c.t0) / j.dur, 0, 1);
       const p = along(j.pts, easeS(t));
       c.x = p[0] + off[0]; c.y = p[1] + off[1];
+      if (j.onFrame) try { j.onFrame(t, c); } catch (e) { fail(e); }
       if (c.g) c.g.prog = easeS(t);
       if (t >= 1) {
         if (c.g) { c.g.fadeAt = clock + (degraded ? 120 : 380); c.g = null; }
@@ -772,59 +810,97 @@
   }
 
   // ---------------------------------------------------------------- hero and page intros
-  function intro() {
+  // The page header starts empty (hidden by CSS under html.sw-intro before first paint) and the swarm builds it
+  // from scratch: it writes every line of text, draws every button and card, sketches the wireframe and frames the
+  // real screen. Return visitors get the same build, faster. If the swarm is late or fails, everything is shown.
+  const HERO_TEXT = 'h1, .lead, .build__label, .build__note-text, .build__idea > p:not(.build__note-text), .build__caption, .crumbs, .status, .site-index li';
+  const HERO_BOX = '.btn, .build__idea, .build__frame';
+  function heroDone() { root.classList.add('sw-hero-done'); after(600, () => root.classList.remove('sw-intro')); }
+  async function intro() {
     const hero = document.querySelector('main > .hero, main > .page-hero');
-    if (!hero) { root.classList.remove('sw-intro'); return; }
-    const key = 'lx-sw:' + location.pathname;
-    let seenPage = false, seenEver = false;
-    try { seenPage = !!sessionStorage.getItem(key); seenEver = !!localStorage.getItem('lx-sw-seen'); sessionStorage.setItem(key, '1'); } catch (e) { /* storage blocked */ }
-    if (seenPage || hero.getBoundingClientRect().bottom < 0) { root.classList.remove('sw-intro'); return; }
-    const u = { section: hero, kind: 'intro', els: new Set(), tempo: 1, noHide: true, state: 'pending', data: {} };
+    if (!hero || !root.classList.contains('sw-intro')) { root.classList.remove('sw-intro'); return; }
+    root.classList.add('sw-live');                         // cancels the CSS failsafe: the swarm has arrived
+    if (performance.now() > 3300 || hero.getBoundingClientRect().bottom < 0) { heroDone(); return; }
+    try { if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 600))]); } catch (e) { /* ignore */ }
+    let quick = false;
+    try { quick = !!localStorage.getItem('lx-sw-seen'); localStorage.setItem('lx-sw-seen', '1'); } catch (e) { /* storage blocked */ }
+    const u = { section: hero, kind: 'intro', els: new Set(), tempo: quick ? 0.62 : 1, noHide: false, state: 'pending', data: {}, onDone: heroDone };
+    const f = 1;                                          // waits below are scaled by tempo through W()
+    const Wt = (ms) => ms * u.tempo * timeScale();
     const tracks = [];
-    const h1 = hero.querySelector('h1');
-    // guides only for the headline: it is the page's main content and must never be hidden
-    if (h1) lineBoxes(h1).forEach((l, i) => tracks.push([job([[l.x1 - 4, l.y + 6], [l.x2 + 4, l.y + 6]], ts(clamp(300 + (l.x2 - l.x1) * 0.5, 380, 900), u), { wait: 120 + i * 110 })]));
-    const lead = hero.querySelector('.lead');
-    if (lead) { const r = docRect(lead); tracks.push([job([[r.x - 10, r.y], [r.x - 10, r.y + r.h]], ts(520, u), { wait: 380 })]); }
-    const cta = hero.querySelector('.btn--primary');
-    if (cta) planButton(u, cta, tracks, 520);
-    const full = hero.classList.contains('hero') && root.classList.contains('sw-intro') && !seenEver && performance.now() < 2600;
-    if (full) {
-      // The idea, designed, built: trace the idea card, draw the wireframe piece by piece, frame the real screen
-      const idea = hero.querySelector('.build__idea');
-      if (idea) { const r = docRect(idea); tracks.push([job(rectPts(r, 'a'), ts(800, u), { wait: 500 })]); tracks.push([job(rectPts(r, 'b'), ts(800, u), { wait: 560 })]); }
-      const wires = [...hero.querySelectorAll('.wire > i, .wire .w-row i')];
-      const per = Math.ceil(wires.length / 4);
-      for (let g = 0; g < 4; g++) {
-        const t = wires.slice(g * per, g * per + per).map((w, i) => {
-          const r = docRect(w);
-          return job([[r.x, r.y + r.h / 2], [r.x + r.w, r.y + r.h / 2]], ts(clamp(160 + r.w * 0.9, 200, 420), u), { wait: i === 0 ? 380 + g * 90 : 30, guide: null, pulse: false, onStart: () => { w.style.setProperty('--sw-d', ts(clamp(160 + r.w * 0.9, 200, 420), u) + 'ms'); w.classList.add('sw-wgo'); } });
-        });
-        if (t.length) tracks.push(t);
+    const write = (el, speed, wait, o = {}) => (el ? writeJobs(u, el, speed, { wait: Wt(wait), ...o }) : []);
+    const box = (el, wait, order = 'a', o = {}) => {
+      if (!el) return [];
+      const r = docRect(el);
+      const d = Wt(o.d || clamp(380 + (r.w + r.h) * 0.3, 450, 900));
+      return [job(rectPts(r, order), d, { wait: Wt(wait), onStart: order === 'a' || order === 'full' ? () => { el.classList.add('sw-c'); u.els.add(el); reveal(el, d, 900); } : null })];
+    };
+    const isHome = hero.classList.contains('hero');
+    if (isHome) {
+      const q = (sel) => hero.querySelector(sel);
+      const h1 = q('h1'), lead = q('.lead');
+      tracks.push(write(h1, 1.15, 0));
+      tracks.push(write(lead, 3.1, 650, { guide: null }));
+      [...hero.querySelectorAll('.hero__meta .btn')].forEach((b, i) => tracks.push(box(b, 1050 + i * 160, 'full', { d: 520 })));
+      // the timeline rule that links the three stages, drawn left to right
+      const line = q('.build__line');
+      if (line && line.offsetWidth) {
+        const r = docRect(line), d = Wt(1500);
+        tracks.push([job([[r.x, r.y], [r.x + r.w, r.y]], d, { wait: Wt(520), guide: null, onStart: () => { line.style.setProperty('--sw-d', d + 'ms'); line.classList.add('sw-lgo', 'sw-m'); u.els.add(line); reveal(line, d, 900); } })]);
       }
-      const realPhone = hero.querySelector('.build__frame--real .phone');
-      if (realPhone) { const r = docRect(realPhone); tracks.push([job(rectPts(r, 'a'), ts(900, u), { wait: 1150 })]); tracks.push([job(rectPts(r, 'b'), ts(900, u), { wait: 1210 })]); }
-      after(4200, () => root.classList.remove('sw-intro'));
-      try { localStorage.setItem('lx-sw-seen', '1'); } catch (e) { /* ignore */ }
-    } else root.classList.remove('sw-intro');
-    u.data.tracks = tracks;
-    u.kind = 'intro';
+      tracks.push([...hero.querySelectorAll('.build__label')].flatMap((l, i) => write(l, 1.2, i ? 0 : 640, { guide: null })));
+      // The idea: card drawn, then its words written
+      const idea = q('.build__idea');
+      tracks.push([...box(idea, 720), ...write(q('.build__note-text'), 1.7, 0), ...write(q('.build__idea > p:not(.build__note-text)'), 2.8, 0, { guide: null })]);
+      tracks.push(box(idea, 780, 'b'));
+      // Designed: frame drawn, phone outlined, wireframe drawn piece by piece
+      const wireFrame = q('.build__frame--wire'), wirePhone = q('.build__frame--wire .phone');
+      tracks.push([...box(wireFrame, 950), ...(wirePhone ? [job(rectPts(docRect(wirePhone), 'full'), Wt(650), {})] : [])]);
+      tracks.push(box(wireFrame, 1010, 'b'));
+      const wires = [...hero.querySelectorAll('.wire > i, .wire .w-row i')];
+      const groups = isMobile() ? 2 : 4, per = Math.ceil(wires.length / groups);
+      for (let g = 0; g < groups; g++) {
+        tracks.push(wires.slice(g * per, g * per + per).map((w, i) => {
+          const r = docRect(w), d = Wt(clamp(150 + r.w * 0.9, 190, 420));
+          return job([[r.x, r.y + r.h / 2], [r.x + r.w, r.y + r.h / 2]], d, { wait: i === 0 ? Wt(1650 + g * 90) : 30, guide: null, pulse: false, onStart: () => { w.style.setProperty('--sw-d', d + 'ms'); w.classList.add('sw-wgo'); } });
+        }));
+      }
+      // Built: frame drawn, then the real screen rises into the phone
+      const realFrame = q('.build__frame--real'), phoneEl = q('.build__frame--real .phone');
+      const screenJob = phoneEl ? (() => { const r = docRect(phoneEl), d = Wt(900); return [job([[r.x, r.y + r.h], [r.x + r.w, r.y + r.h], [r.x + r.w, r.y + 6]], d, { onStart: () => { phoneEl.classList.add('sw-m', 'sw-m--up'); u.els.add(phoneEl); reveal(phoneEl, d, 700); } })]; })() : [];
+      tracks.push([...box(realFrame, 1250), ...screenJob]);
+      tracks.push(box(realFrame, 1310, 'b'));
+      tracks.push(write(q('.build__caption'), 3.4, 2300, { guide: null }));
+    } else {
+      tracks.push(write(hero.querySelector('.crumbs'), 2.2, 0, { guide: null }));
+      tracks.push(write(hero.querySelector('h1'), 1.25, 120));
+      const texts = [...hero.querySelectorAll('.lead, .status, .site-index li')];
+      texts.forEach((t, i) => tracks.push(write(t, t.matches('.lead') ? 3.1 : 1.6, 560 + i * 120, { guide: null })));
+      [...hero.querySelectorAll('.btn')].forEach((b, i) => tracks.push(box(b, 950 + i * 150, 'full', { d: 520 })));
+      [...hero.querySelectorAll('.page-hero__grid img')].forEach((im, i) => {
+        const r = docRect(im), d = Wt(700);
+        tracks.push([job(rectPts(r, 'a'), d, { wait: Wt(200 + i * 100), onStart: () => { im.classList.add('sw-m'); u.els.add(im); reveal(im, d, 600); } })]);
+      });
+    }
+    u.plan = () => tracks.filter((t) => t.length);
     units.push(u);
-    u.plan = () => tracks;
-    // start shortly after the page's own entrance begins
-    after(full ? 120 : 260, () => startIntro(u));
+    startIntro(u);
   }
   function startIntro(u) {
-    const tracks = u.plan();
+    let tracks = u.plan();
     u.state = 'building'; active.push(u);
-    const free = freeCursors();
+    const free = cursors.filter((c) => c.state === 'orbit' || c.state === 'return');   // the opening uses the whole swarm
+    if (!free.length) return finish(u);
+    if (tracks.length > free.length) {
+      const merged = Array.from({ length: free.length }, () => []);
+      tracks.forEach((t, i) => merged[i % free.length].push(...t));
+      tracks = merged.filter((t) => t.length);
+    }
     u.cursors = [];
-    tracks.slice(0, free.length).forEach((t, i) => {
+    tracks.forEach((t, i) => {
       const c = free[i]; u.cursors.push(c);
-      c.queue = t.map((j) => ({ ...j, unit: u })); c.releaseAt = clock + i * 55; next(c);
+      c.queue = t.map((j) => ({ ...j, unit: u })); c.releaseAt = clock + i * (isMobile() ? 30 : 40); next(c);
     });
-    // any wireframe pieces nobody was free to draw appear straight away
-    tracks.slice(free.length).forEach((t) => t.forEach((j) => j.onStart && j.onStart()));
     setState(); wake();
   }
 

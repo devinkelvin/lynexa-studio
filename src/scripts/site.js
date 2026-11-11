@@ -20,7 +20,12 @@
     document.body.appendChild(s);
   };
   if (!swarmOk()) root.classList.remove('sw-intro');
-  else {
+  else if (root.classList.contains('sw-intro')) {
+    // The page header is waiting to be built: load the swarm straight away (it was preloaded in <head>),
+    // and show everything if it has not arrived within 3.5 seconds.
+    loadSwarm();
+    setTimeout(() => { if (!window.LynexaSwarm) root.classList.remove('sw-intro'); }, 3500);
+  } else {
     const go = () => ('requestIdleCallback' in window ? requestIdleCallback(loadSwarm, { timeout: 900 }) : setTimeout(loadSwarm, 300));
     if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true });
   }
