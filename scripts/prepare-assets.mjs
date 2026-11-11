@@ -34,7 +34,10 @@ const jobs = [
   ['site-cv-desktop.png', 'site-cv-desktop', [720, 1440], 78],
   ['site-zengly-mobile.png', 'site-zengly-mobile', [390], 80],
   ['site-kelvin-mobile.png', 'site-kelvin-mobile', [390], 80],
-  ['site-cv-mobile.png', 'site-cv-mobile', [390], 80]
+  ['site-cv-mobile.png', 'site-cv-mobile', [390], 80],
+  ['venture-landlink.jpg', 'venture-landlink', [640, 1280], 72],
+  ['venture-sparkhive.jpg', 'venture-sparkhive', [640, 1280], 72],
+  ['venture-lexforum.jpg', 'venture-lexforum', [640, 1280], 72]
 ];
 
 for (const [file, name, widths, quality] of jobs) {

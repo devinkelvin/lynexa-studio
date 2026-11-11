@@ -1,7 +1,7 @@
 import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, founder, icon } from '../lib.mjs';
 import { PILLARS, svcBySlug } from '../content/services.mjs';
-import { PROJECTS } from '../content/work.mjs';
-import { PILLAR_ART, VENTURE_ART } from '../content/art.mjs';
+import { PROJECTS, VENTURE_PHOTO } from '../content/work.mjs';
+import { PILLAR_ART } from '../content/art.mjs';
 import { SITE } from '../site.mjs';
 
 const HOME_FAQ = [
@@ -124,7 +124,7 @@ export default function home() {
       <div class="showcase__ventures">
         <p class="showcase__list-title">Also in the studio</p>
         <ul class="vcards">
-          ${ventures.map((p) => `<li class="vcard"><span class="vcard__media">${VENTURE_ART[p.slug]}</span><span class="vcard__body"><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</span></li>`).join('')}
+          ${ventures.map((p) => `<li class="vcard"><span class="vcard__media">${img('venture-' + p.slug, VENTURE_PHOTO[p.slug].alt, { sizes: '(min-width: 900px) 30vw, (min-width: 700px) 220px, 92vw' })}<small class="photo-credit">Photo: ${VENTURE_PHOTO[p.slug].credit}</small></span><span class="vcard__body"><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</span></li>`).join('')}
         </ul>
       </div>
     </div>

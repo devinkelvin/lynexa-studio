@@ -176,14 +176,33 @@ ${ctaBand()}`;
 
 export function venturesPage() {
   const trail = [['/', 'Home'], ['/ventures/', 'Ventures']];
+  // [title, summary, detail, best for, payment, commitment, form value (null = project brief), icon]
   const models = [
-    ['Project engagement', 'You pay for a defined scope; you own everything we make.', 'The simplest arrangement and the one most clients use. Clear deliverables, timeline and price.', 'Founders and businesses with budget for the work.'],
-    ['Startup enablement', 'We help you get investor-ready on a reduced, focused scope.', 'Discovery, prototype and pitch materials sized to help you raise, so the full build can follow with funding.', 'Strong ideas at pre-seed that need proof before a raise.'],
-    ['Strategic product partnership', 'Lynexa acts as your long-term product and engineering team.', 'Continuity across releases, with shared planning and a deeper commitment than a single project.', 'Funded teams without an in-house product function yet.'],
-    ['Hybrid cash and equity', 'Part of our fee is paid in cash, part in equity.', 'Lowers the cash cost of the build while aligning us with the company’s long-term success.', 'Founders with some capital and a credible plan to grow.'],
-    ['Equity for service', 'Some or all of our work is exchanged for equity.', 'Rare and highly selective. We take on very few of these, and only when we believe strongly in the team and market.', 'Exceptional founders in markets we understand deeply.'],
-    ['Build, operate, transfer', 'We build and run the product, then hand it over.', 'Lynexa builds and operates the product for an agreed period, then transfers it to your team with documentation and support.', 'Organisations launching a new digital product without an existing team.']
+    ['Project engagement', 'You pay for a defined scope; you own everything we make.', 'Clear deliverables, timeline and price. The simplest arrangement and the one most clients use.', 'Founders and businesses with budget for the work.', 'Fixed fee', 'One project', null, '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11l2 2 4-4M9 17h6"/>'],
+    ['Startup enablement', 'We help you get investor-ready on a reduced, focused scope.', 'Discovery, prototype and pitch materials sized to help you raise, so the full build can follow with funding.', 'Strong ideas at pre-seed that need proof before a raise.', 'Reduced fee', 'Until you raise', 'Startup enablement', '<path d="M12 3c3 2 5 5.5 5 9.5L15 16H9l-2-3.5C7 8.5 9 5 12 3z"/><circle cx="12" cy="10" r="1.6"/><path d="M9 16l-2 4 3-1M15 16l2 4-3-1"/>'],
+    ['Strategic product partnership', 'Lynexa acts as your long-term product and engineering team.', 'Continuity across releases, with shared planning and a deeper commitment than a single project.', 'Funded teams without an in-house product function yet.', 'Ongoing fee', 'Release after release', 'Product partnership', '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 20c.6-3 2.6-5 5-5s4.4 2 5 5M11 20c.6-3 2.6-5 5-5s4.4 2 5 5"/>'],
+    ['Build, operate, transfer', 'We build and run the product, then hand it over.', 'Lynexa operates the product for an agreed period, then transfers it to your team with documentation and support.', 'Organisations launching a new digital product without an existing team.', 'Agreed in writing', 'A set period, then handover', 'Build, operate, transfer', '<path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/>'],
+    ['Hybrid cash and equity', 'Part of our fee is paid in cash, part in equity.', 'Lowers the cash cost of the build while aligning us with the company’s long-term success.', 'Founders with some capital and a credible plan to grow.', 'Cash and equity', 'Long term', 'Cash and equity', '<circle cx="12" cy="12" r="8"/><path d="M12 4v16"/><path d="M12 4a8 8 0 0 1 0 16" fill="currentColor" fill-opacity=".25" stroke="none"/>'],
+    ['Equity for service', 'Some or all of our work is exchanged for equity.', 'Rare and highly selective. We take on very few of these, and only when we believe strongly in the team and market.', 'Exceptional founders in markets we understand deeply.', 'Equity', 'Long term', 'Equity for service', '<path d="M5 20V10M10 20V6M15 20v-7M20 20V4"/><path d="M3 20h18"/>']
   ];
+  const mcard = ([t, s, d, w, pay, commit, val, ic], i) => `
+        <li class="vmodel${i === 0 ? ' vmodel--lead' : ''}">
+          <div class="vmodel__top">
+            <span class="vmodel__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ic}</svg></span>
+            ${i === 0 ? '<span class="vmodel__tag">Most clients start here</span>' : ''}${t === 'Equity for service' ? '<span class="vmodel__tag vmodel__tag--amber">Highly selective</span>' : ''}
+          </div>
+          <h3 class="vmodel__title">${t}</h3>
+          <p class="vmodel__sum">${s}</p>
+          <p class="vmodel__desc">${d}</p>
+          <dl class="vmodel__facts">
+            <div><dt>How it is paid</dt><dd>${pay}</dd></div>
+            <div><dt>Commitment</dt><dd>${commit}</dd></div>
+            <div class="vmodel__best"><dt>Best for</dt><dd>${w}</dd></div>
+          </dl>
+          ${val
+            ? `<a class="vmodel__cta" href="#apply" data-pick-model="${val}"><span>Apply with this model</span>${icon.arrow}</a>`
+            : `<a class="vmodel__cta" href="/start-a-project/"><span>Start a project brief</span>${icon.arrow}</a>`}
+        </li>`;
   const body = `
 <section class="page-hero">
   <div class="shell">
@@ -209,8 +228,18 @@ export function venturesPage() {
 <section class="sec" id="models" aria-labelledby="models-title">
   <div class="shell">
     ${head2('Ways we can work together', 'Each model suits a different stage and level of risk. We will recommend the one that fits, which is often the simplest.', { id: 'models-title' })}
-    <div class="cards cards--3">
-      ${models.map(([t, s, d, w]) => `<div class="card" style="display:grid;gap:.75rem;align-content:start"><h3 style="margin:0">${t}</h3><p style="color:var(--ink);font-weight:600">${s}</p><p>${d}</p><p style="font-size:.9rem;padding-top:.75rem;border-top:1px solid var(--line)"><b style="color:var(--ink)">Best for:</b> ${w}</p></div>`).join('')}
+    <div class="vmodels">
+      <div class="vmodels__group">
+        <div class="vmodels__label"><h3>Fee-based</h3><p>You pay for the work and own the result outright. Most engagements are one of these.</p></div>
+        <ul class="vmodels__list" role="list">${models.slice(0, 4).map(mcard).join('')}
+        </ul>
+      </div>
+      <div class="vmodels__group">
+        <div class="vmodels__label"><h3>Shared risk</h3><p>Lynexa takes equity in your company. Rare, selective and always agreed in writing with legal advice on both sides.</p></div>
+        <ul class="vmodels__list" role="list">${models.slice(4).map((m, i) => mcard(m, i + 4)).join('')}
+        </ul>
+      </div>
+      <p class="vmodels__unsure">Not sure which fits? <a class="link" href="#apply" data-pick-model="Not sure yet">Apply with “Not sure yet”${icon.arrow}</a> and we will recommend one.</p>
     </div>
   </div>
 </section>
