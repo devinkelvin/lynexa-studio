@@ -135,6 +135,7 @@ export function processPage() {
       <h1>Four phases. No guesswork.</h1>
       <p class="lead">Every phase ends with something concrete you can see, test or use. You always know what you are paying for and what happens next.</p>
     </div>
+    <p class="page-hero__more">${link('/mvp-planner/', 'Estimate a timeline for your product')}</p>
   </div>
 </section>
 <section class="sec sec--tight" aria-label="Phases">

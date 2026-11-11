@@ -11,6 +11,7 @@ import { workIndex, zenglyPage, swiftlyPage, websitesPage } from './src/pages/wo
 import { aboutPage, processPage, venturesPage } from './src/pages/studio.mjs';
 import { contactPage, startPage, thanksPages } from './src/pages/forms.mjs';
 import { privacyPage, termsPage, notFoundPage } from './src/pages/legal.mjs';
+import { plannerPage } from './src/pages/planner.mjs';
 
 const root = process.cwd();
 const out = join(root, 'dist');
@@ -23,7 +24,7 @@ await cp(join(root, 'public'), out, { recursive: true });
 // Fingerprinted CSS/JS
 const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10);
 const css = await readFile(join(root, 'src/styles/site.css'), 'utf8');
-const js = await readFile(join(root, 'src/scripts/site.js'), 'utf8');
+const js = (await readFile(join(root, 'src/scripts/site.js'), 'utf8')) + '\n' + (await readFile(join(root, 'src/scripts/wow.js'), 'utf8'));
 const swarm = await readFile(join(root, 'src/scripts/swarm.js'), 'utf8');
 const cssName = `site.${hash(css)}.css`;
 const jsName = `site.${hash(js)}.js`;
@@ -34,7 +35,7 @@ await writeFile(join(out, 'assets', swarmName), swarm);
 
 const pages = [
   home(), aboutPage(), servicesIndex(), ...SERVICES.map(servicePage),
-  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), venturesPage(),
+  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), plannerPage(), venturesPage(),
   contactPage(), startPage(), ...thanksPages(), privacyPage(), termsPage(), notFoundPage()
 ];
 

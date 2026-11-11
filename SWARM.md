@@ -106,7 +106,7 @@ To include a new component, add its selector to the matching list near "units" i
 
 ## Turning it down or off
 
-- **Per page.** Return `swarm: 'light'` (trace only, never hide) or `swarm: 'none'` (orbit only, no construction) from the page object in `src/pages/*.mjs`. The legal pages and the 404 page use `none`.
+- **Per page.** Return `swarm: 'light'` (trace only, never hide) or `swarm: 'none'` (orbit only, no construction) from the page object in `src/pages/*.mjs`. The legal pages use `none`.
 - **For visitors.** The footer's Motion control stores Full, Reduced or Off in `localStorage`. Reduced removes the swarm and shortens all transitions. Off removes all animation and the custom cursor. The system setting `prefers-reduced-motion` defaults to Reduced, and Save-Data skips the swarm.
 - **Site-wide.** Delete the `loadSwarm` call in `site.js`, or remove `data-swarm-src` from `layout()`. The site then behaves exactly as it did before the swarm.
 
@@ -118,3 +118,15 @@ To include a new component, add its selector to the matching list near "units" i
 - `LynexaSwarm.debug()` lists every unit and its state.
 - `LynexaSwarm.finishAll()` shows everything immediately.
 - `LynexaSwarm.destroy()` removes the swarm.
+
+## Interactive extras (`src/scripts/wow.js`, appended to `site.js` at build)
+
+- **On-demand builds.** `LynexaSwarm.build(items, { tempo })` builds new content with free cursors. Items are `{ el, type: 'text' | 'box' | 'wire' | 'media' | 'trace', lane, wait, speed, dur }`; items in the same lane are built in order by one cursor.
+- **Try it with your idea (home).** The visitor types one sentence; the build strip is rewritten as their concept (category, working name, wireframe, first screen) and the swarm builds it. "Turn this into a brief" opens Start a project with the description prefilled (`?idea=&name=`). Nothing is sent anywhere.
+- **The visitor joins the swarm.** A small "You" tag follows a mouse pointer for two seconds after it moves, and hovering a button calls up to three cursors over. Fine pointers on larger screens only; hidden over form fields, dialogs and the prototype.
+- **Page transitions.** Internal link clicks send the cursors off the right edge, and they fly in from the left on the next page (`sessionStorage lx-sweep`). Browsers that support cross-document view transitions also cross-fade. Off when motion is Reduced or Off.
+- **Zengly click-through** (`/work/zengly/`): the real design screens with hotspot buttons, a screen picker and a light/dark toggle.
+- **MVP timeline planner** (`/mvp-planner/`): indicative week ranges per phase. Changing an answer re-runs the swarm over the bars. The model lives in `wow.js` (`BASE`, `FEAT`). It never shows prices.
+- **Quick menu.** Ctrl/Cmd+K, or the search button in the header.
+- **404.** The swarm traces a dashed ring around a question mark.
+- **Footer.** Current time in Lagos and the honest reply time (two working days).

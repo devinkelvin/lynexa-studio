@@ -140,18 +140,20 @@ export function termsPage() {
 }
 
 export function notFoundPage() {
-  return { swarm: 'none',
+  return {
     path: '/404', title: 'Page not found', noindex: true, description: 'This page could not be found.',
     body: `
 <section class="center-page">
   <div class="shell">
-    <p class="muted" style="font-weight:600;margin-bottom:1rem">Error 404</p>
+    <div class="lost" aria-hidden="true"><span class="lost__q">?</span></div>
+    <p class="muted lost__code">Error 404</p>
     <h1>This page isn’t built yet. Or it moved.</h1>
-    <p class="lead">The link may be old, or the address may have a typo. Here are the places most people are looking for.</p>
+    <p class="lead">The swarm searched everywhere and came back empty-handed. The link may be old, or the address may have a typo. Here are the places most people are looking for.</p>
     <div class="actions">${btn('/', 'Go to the home page', 'primary')}${btn('/work/', 'See our work', 'secondary')}</div>
-    <ul style="display:grid;gap:.75rem;margin-top:2.5rem">
-      <li>${link('/services/', 'Services')}</li><li>${link('/start-a-project/', 'Start a project')}</li><li>${link('/contact/', 'Contact')}</li>
+    <ul class="lost__links">
+      <li>${link('/services/', 'Services')}</li><li>${link('/mvp-planner/', 'MVP timeline planner')}</li><li>${link('/start-a-project/', 'Start a project')}</li><li>${link('/contact/', 'Contact')}</li>
     </ul>
+    <p class="muted lost__tip">Tip: press <kbd>Ctrl</kbd> + <kbd>K</kbd> to jump to any page.</p>
   </div>
 </section>`
   };

@@ -98,6 +98,7 @@ export function projectForm() {
         <input type="hidden" name="services_needed" value="">
         <p class="error" id="${f}-help-err"></p>
       </fieldset>
+      <p class="note prefill-note" data-prefill-note hidden>We added your sketch or timeline below. Edit it as much as you like.</p>
       ${area('description', f, 'Tell us about it', { required: true, min: 30, hint: 'What are you building, who is it for, and where are you now?', msg: 'Tell us a little about the project.' })}`],
     ['Timing and budget', `
       ${pills('launch', f, 'When would you like to launch?', ['Within 3 months', '3 to 6 months', '6 to 12 months', 'No fixed date'], { required: true, msg: 'Choose a rough target, or “No fixed date”.' })}
@@ -188,6 +189,7 @@ export function startPage() {
       </div>
       <div class="note">Sharing something sensitive? Keep the brief high-level. We are happy to sign a mutual NDA before going into detail.</div>
       <p class="muted" style="font-size:.95rem">Prefer email? Write to <a class="link" href="mailto:${SITE.email}">${SITE.email}</a></p>
+      <p class="muted" style="font-size:.95rem">Not sure about timing yet? Try the <a class="link" href="/mvp-planner/">MVP timeline planner</a>.</p>
     </aside>
     ${projectForm()}
   </div>

@@ -174,6 +174,7 @@ const header = (path) => `
     <nav class="nav" aria-label="Main">
       <ul>${NAV.map((n) => `<li><a href="${n.href}"${path.startsWith(n.href) ? ' aria-current="page"' : ''}>${n.label}</a></li>`).join('')}</ul>
     </nav>
+    <button class="cmdk-open" type="button" data-cmdk-open aria-label="Quick menu (Ctrl K)" aria-keyshortcuts="Control+K Meta+K"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.2-4.2"/></svg><kbd aria-hidden="true">Ctrl K</kbd></button>
     <a class="btn btn--primary btn--sm header-cta" href="/start-a-project/"><span>Start a project</span></a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
       <span class="menu-toggle__bars" aria-hidden="true"><span></span><span></span></span>
@@ -203,14 +204,14 @@ const footer = () => `
         <a class="brand brand--light" href="/" aria-label="Lynexa home"><img src="/assets/img/lynexa-mark-64.png" width="32" height="32" alt=""><span>Lynexa</span></a>
         <p>We help founders and businesses turn ideas into products people actually use: strategy, design, engineering and launch, from one studio in Lagos.</p>
         <div class="pills">
-          <a class="pill" href="mailto:${SITE.email}">${SITE.email}</a>
+          <a class="pill" href="mailto:${SITE.email}" data-cmdk-item="Email ${SITE.email}">${SITE.email}</a>
           <a class="pill" href="tel:${SITE.phoneIntl}">${SITE.phoneDisplay}</a>
-          <a class="pill pill--wa" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
+          <a class="pill pill--wa" data-cmdk-item="Chat on WhatsApp" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
         </div>
       </div>
       <nav class="footer-cols" aria-label="Footer">
         <div><h2>Studio</h2><ul>
-          <li><a href="/about/">About</a></li><li><a href="/process/">Process</a></li><li><a href="/ventures/">Ventures</a></li><li><a href="/contact/">Contact</a></li>
+          <li><a href="/about/">About</a></li><li><a href="/process/">Process</a></li><li><a href="/mvp-planner/">MVP timeline planner</a></li><li><a href="/ventures/">Ventures</a></li><li><a href="/contact/">Contact</a></li>
         </ul></div>
         <div><h2>Work</h2><ul>
           <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="https://kelvinekuhoho.com/" target="_blank" rel="noopener noreferrer">Founder portfolio<span class="sr-only"> (opens in a new tab)</span></a></li>
@@ -226,6 +227,7 @@ const footer = () => `
       </nav>
     </div>
     <div class="footer-base">
+      <p class="lagos-clock">It is <time data-lagos-time>—</time> in Lagos. We normally reply within two working days.</p>
       <p>© ${new Date().getFullYear()} ${SITE.legalName}. Registered in Nigeria, ${SITE.rc}.</p>
       <div class="motion-pref" role="group" aria-label="Motion preference" data-motion-pref><span>Motion</span><button type="button" data-motion-set="full" aria-pressed="false">Full</button><button type="button" data-motion-set="reduced" aria-pressed="false">Reduced</button><button type="button" data-motion-set="off" aria-pressed="false">Off</button></div>
       <p><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></p>
