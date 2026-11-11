@@ -292,7 +292,8 @@ main:focus { outline: none; }
 
 .swiftly-media { display: grid; place-items: center; background: #0d2a63; }
 .swiftly-media img.logo { width: min(60%, 320px); position: relative; z-index: 1; }
-.swiftly-media .bg { opacity: .28 !important; }
+.swiftly-media .bg { opacity: .55 !important; }
+.swiftly-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,42,99,.15), rgba(13,42,99,.55)); pointer-events: none; }
 
 /* Filter */
 .filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
@@ -1005,3 +1006,81 @@ html:not(.js) .form__step + .form__step { padding-top: 1.75rem; border-top: 1px 
 .legal-contact .btn--primary { background: var(--violet); color: #fff; }
 .legal-contact .btn--primary::before { background: var(--bone); }
 .legal-contact .btn--primary:hover { color: var(--graphite); }
+
+/* ===================== Living Build System (swarm) =====================
+   Hidden states exist only under html.sw-on, which swarm.js adds and removes on failure.
+   Everything animates clip-path, opacity, translate, scale or stroke offsets: no layout shift. */
+.swarm { position: fixed; inset: 0; z-index: 45; pointer-events: none; contain: strict; }
+.sw-on { --sw-ease: cubic-bezier(.45, 0, .2, 1); }
+.sw-on .sw-h { clip-path: polygon(-6% -15%, -6% -15%, -14% 115%, -14% 115%); }
+.sw-on .sw-h.sw-go { clip-path: polygon(-6% -15%, 114% -15%, 106% 115%, -14% 115%); transition: clip-path var(--sw-d, 600ms) var(--sw-ease); }
+.sw-on .sw-t { opacity: 0; translate: 0 12px; }
+.sw-on .sw-t.sw-go { opacity: 1; translate: 0 0; transition: opacity var(--sw-d, 500ms) ease, translate var(--sw-d, 500ms) var(--sw-ease); }
+.sw-on .sw-c { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
+.sw-on .sw-c.sw-go { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transition: clip-path var(--sw-d, 700ms) var(--sw-ease); }
+.sw-on .sw-c > * { opacity: 0; translate: 0 10px; }
+.sw-on .sw-c.sw-go > * { opacity: 1; translate: 0 0; transition: opacity .5s ease calc(var(--sw-d, 700ms) * .55), translate .7s var(--sw-ease) calc(var(--sw-d, 700ms) * .5); }
+.sw-on .sw-m { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+.sw-on .sw-m--up { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); }
+.sw-on .sw-m.sw-go { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); transition: clip-path var(--sw-d, 800ms) var(--sw-ease); }
+.sw-on .sw-m img { scale: 1.06; }
+.sw-on .sw-m.sw-go img { scale: 1; transition: scale calc(var(--sw-d, 800ms) * 1.4) var(--sw-ease); }
+.sw-on .sw-p { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.sw-on .sw-p.sw-go { stroke-dashoffset: 0; transition: stroke-dashoffset var(--sw-d, 900ms) var(--sw-ease); }
+.sw-on .sw-f { opacity: 0; }
+.sw-on .sw-f.sw-go { opacity: 1; transition: opacity var(--sw-d, 500ms) ease var(--sw-k, 0ms); }
+.sw-now, .sw-now *, .sw-now img { transition: none !important; }
+/* First-visit hero: the wireframe is drawn by the swarm. A CSS failsafe shows it anyway if the swarm never arrives. */
+.sw-intro .wire > i, .sw-intro .wire .w-row i { scale: 0 1; transform-origin: left center; animation: sw-failsafe .4s ease 4.5s forwards; }
+.sw-intro .wire i.sw-wgo { scale: 1 1; transition: scale var(--sw-d, 300ms) var(--sw-ease, ease); }
+@keyframes sw-failsafe { to { scale: 1 1; } }
+/* Process: each phase's rule fills as you read through it, linking the stages */
+.sw-rail .phase { position: relative; }
+.sw-rail .phase::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--violet); transform-origin: left; transform: scaleX(var(--sw-rail, 0)); }
+@media print { .swarm { display: none; } .sw-on .sw-h, .sw-on .sw-t, .sw-on .sw-c, .sw-on .sw-c > *, .sw-on .sw-m, .sw-on .sw-f, .sw-intro .wire i { clip-path: none !important; opacity: 1 !important; translate: none !important; scale: none !important; } .sw-on .sw-p { stroke-dasharray: none !important; } }
+
+/* Motion preference (footer): Full / Reduced / Off */
+.motion-pref { display: inline-flex; align-items: center; gap: .15rem; padding: .2rem; border: 1px solid rgba(241, 238, 232, .2); border-radius: 999px; font-size: .8rem; }
+.motion-pref > span { padding: 0 .45rem 0 .6rem; opacity: .8; }
+.motion-pref button { min-height: 30px; padding: .25rem .75rem; border: 0; border-radius: 999px; background: none; color: inherit; font: inherit; font-weight: 600; cursor: pointer; }
+.motion-pref button:hover { background: rgba(241, 238, 232, .1); }
+.motion-pref button[aria-pressed="true"] { background: var(--bone); color: var(--graphite); }
+html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .12s !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+html[data-motion="reduced"] [data-reveal], html[data-motion="off"] [data-reveal] { clip-path: none !important; opacity: 1 !important; }
+html[data-motion="off"] .cursor { display: none !important; }
+
+/* Living Build System: page headers start empty and are built by the swarm (html.sw-intro is set before first
+   paint only when motion is Full). If the swarm has not arrived by 3.6s the failsafe shows everything. */
+.sw-on .sw-wr:not(.sw-done):not(.sw-go) { clip-path: polygon(0 0, 0 0, 0 0, 0 0); }
+html.sw-intro:not(.sw-hero-done) main > .hero :is(h1, .lead, .build__label, .build__note-text, .build__idea > p, .build__caption, .hero__meta .btn, .build__idea, .build__frame):not(.sw-built),
+html.sw-intro:not(.sw-hero-done) main > .center-page :is(h1, .lead, .next-steps p, .btn):not(.sw-built),
+html.sw-intro:not(.sw-hero-done) main > .page-hero :is(.crumbs, h1, .lead, .status, .site-index li, .btn, .page-hero__grid img):not(.sw-built) {
+  clip-path: polygon(0 0, 0 0, 0 0, 0 0); animation: sw-failsafe-clip 0s linear 3.6s forwards;
+}
+html.sw-intro:not(.sw-hero-done) main > .hero .build__line:not(.sw-built) { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); animation: sw-failsafe-clip 0s linear 3.6s forwards; }
+html.sw-intro:not(.sw-hero-done) main > .hero .build__frame--real .phone:not(.sw-built) { clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%); animation: sw-failsafe-clip 0s linear 3.6s forwards; }
+html.sw-intro.sw-live main :is(.hero, .page-hero, .center-page) * { animation: none; }
+html.sw-intro.sw-live main > .hero .wire i:not(.sw-wgo) { scale: 0 1; }
+@keyframes sw-failsafe-clip { to { clip-path: none; } }
+html.sw-intro .hero h1, html.sw-intro .hero__meta, html.sw-intro .build__stage { opacity: 1 !important; transform: none !important; }
+html.sw-intro:not(.sw-hero-done) .build__line::after { transform: scaleX(0) !important; transition: none !important; }
+html.sw-intro:not(.sw-hero-done) .build__line.sw-lgo::after { transform: scaleX(1) !important; transition: transform var(--sw-d, 1.2s) var(--sw-ease, ease) !important; }
+
+/* Founder card, text-led (no portrait): statement and signature on the left, story and facts on the right */
+.founder-card__panel { position: relative; overflow: hidden; align-content: start; }
+.founder-card__panel::before { content: "“"; position: absolute; right: clamp(-1rem, 2vw, 2rem); top: clamp(-4rem, -3vw, -2rem); font-size: clamp(14rem, 10rem + 14vw, 26rem); line-height: 1; font-weight: 800; color: rgba(255,255,255,.08); pointer-events: none; }
+.founder-card__intro, .founder-card__body { position: relative; display: grid; gap: 1.4rem; align-content: start; justify-items: start; }
+.founder-card__body > p { max-width: 36em; color: rgba(255,255,255,.88); font-size: 1.08rem; }
+.founder-card__sign { display: flex; align-items: center; gap: .9rem; margin-top: .5rem; }
+.founder-card__sign > span:last-child { display: grid; gap: .1rem; }
+.founder-card__sign b { font-size: 1.05rem; }
+.founder-card__sign > span:last-child > span { font-size: .875rem; color: rgba(255,255,255,.85); }
+.founder-card__mono { display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border-radius: 50%; background: #fff; color: var(--violet); font-weight: 800; letter-spacing: -.03em; }
+@media (min-width: 900px) {
+  .founder-card { grid-template-columns: 1fr; }
+  .founder-card__panel { grid-template-columns: 1fr 1.05fr; column-gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+}
+/* Before the swarm arrives, content below the header waits (so nothing on screen appears unbuilt). Failsafe: 3.6s. */
+html.sw-intro:not(.sw-live) main > :not(.hero):not(.page-hero):not(.center-page) { visibility: hidden; animation: sw-failsafe-vis 0s linear 3.6s forwards; }
+@keyframes sw-failsafe-vis { to { visibility: visible; } }

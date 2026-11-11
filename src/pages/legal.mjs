@@ -111,7 +111,7 @@ export function privacyPage() {
     ],
     other: ['/terms/', 'Read the terms of use']
   });
-  return { path: '/privacy/', title: 'Privacy Notice', description: 'How Lynexa Innovations Limited collects, uses and protects personal information shared through lynexa.co, and your rights under Nigerian data protection law.', body, jsonld: [crumbLd(trail)] };
+  return { swarm: 'none', path: '/privacy/', title: 'Privacy Notice', description: 'How Lynexa Innovations Limited collects, uses and protects personal information shared through lynexa.co, and your rights under Nigerian data protection law.', body, jsonld: [crumbLd(trail)] };
 }
 
 export function termsPage() {
@@ -136,11 +136,11 @@ export function termsPage() {
     ],
     other: ['/privacy/', 'Read the privacy notice']
   });
-  return { path: '/terms/', title: 'Terms of Use', description: 'Terms for using the Lynexa Innovations Limited website, lynexa.co.', body, jsonld: [crumbLd(trail)] };
+  return { swarm: 'none', path: '/terms/', title: 'Terms of Use', description: 'Terms for using the Lynexa Innovations Limited website, lynexa.co.', body, jsonld: [crumbLd(trail)] };
 }
 
 export function notFoundPage() {
-  return {
+  return { swarm: 'none',
     path: '/404', title: 'Page not found', noindex: true, description: 'This page could not be found.',
     body: `
 <section class="center-page">

@@ -95,7 +95,7 @@ export default function home() {
       </a>
       <a class="showcase__item" href="/work/swiftly/" data-cursor-text="View">
         <span class="showcase__media swiftly-media" data-reveal>
-          ${img('lagos-professionals', '', { cls: 'bg', sizes: '(min-width: 900px) 40vw, 100vw' })}
+          ${img('swiftly-danfo', '', { cls: 'bg', sizes: '(min-width: 900px) 40vw, 100vw' })}
           ${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}
         </span>
         <span class="showcase__meta">

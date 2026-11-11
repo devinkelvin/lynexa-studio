@@ -23,18 +23,19 @@ const DIMS = {
   'zengly-menu': [376, 820], 'zengly-vaniti-leaderboard': [376, 820], 'zengly-vaniti-sprayers': [376, 820],
   'zengly-vaniti-intro': [340, 529], 'zengly-sign': [1080, 1080], 'zengly-podium': [1080, 1080],
   'zengly-gift': [1080, 1080], 'zengly-friends': [1200, 1600], 'lagos-professionals': [1600, 1294],
-  'lagos-collaboration': [1600, 1067], 'lagos-strategy-session': [1600, 1067], 'kelvin-ekuhoho': [768, 1024],
+  'lagos-collaboration': [1600, 1067], 'lagos-strategy-session': [1600, 1067],
   'swiftly-logo': [383, 101], 'zengly-logo': [400, 121],
   'site-zengly-desktop': [1440, 900], 'site-kelvin-desktop': [1440, 900], 'site-cv-desktop': [1440, 900],
   'site-zengly-mobile': [390, 844], 'site-kelvin-mobile': [390, 844], 'site-cv-mobile': [390, 844],
-  'venture-landlink': [1280, 715], 'venture-sparkhive': [1280, 850], 'venture-lexforum': [1280, 957]
+  'venture-landlink': [1280, 854], 'venture-sparkhive': [1280, 720], 'venture-lexforum': [1280, 853],
+  'swiftly-danfo': [1600, 1066], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
 };
 const WIDTHS = {
   'zengly-sign': [540, 1080], 'zengly-podium': [540, 1080], 'zengly-gift': [540, 1080], 'zengly-friends': [600, 1200],
   'lagos-professionals': [800, 1600], 'lagos-collaboration': [800, 1600], 'lagos-strategy-session': [800, 1600],
-  'kelvin-ekuhoho': [480, 768],
   'site-zengly-desktop': [720, 1440], 'site-kelvin-desktop': [720, 1440], 'site-cv-desktop': [720, 1440],
-  'venture-landlink': [640, 1280], 'venture-sparkhive': [640, 1280], 'venture-lexforum': [640, 1280]
+  'venture-landlink': [640, 1280], 'venture-sparkhive': [640, 1280], 'venture-lexforum': [640, 1280],
+  'swiftly-danfo': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
 };
 export function img(name, alt, { sizes = '100vw', cls = '', eager = false } = {}) {
   const [w, h] = DIMS[name];
@@ -105,31 +106,32 @@ export const ctaBand = ({ title = 'Have an idea worth building?', text = 'Tell u
 // Founder feature, used on the home and About pages.
 export const founder = ({ id = 'founder-title', full = false } = {}) => `
   <div class="founder-card">
-    <figure class="founder-card__photo" data-reveal>
-      ${img('kelvin-ekuhoho', 'Kelvin Ekuhoho, founder and CEO of Lynexa', { sizes: '(min-width: 900px) 34vw, 100vw' })}
-      <figcaption><b>Kelvin Ekuhoho</b><span>Founder &amp; CEO, Lead Product Designer</span></figcaption>
-    </figure>
     <div class="founder-card__panel">
-      <p class="founder-card__kicker">Meet the founder</p>
-      <h2 id="${id}">“I build things people actually use.”</h2>
-      <p>Kelvin is a product designer and builder with more than seven years of experience, much of it designing digital banking and payment products at Nigerian banks. He started Lynexa so founders could get one senior team that turns an idea into a credible, working product, without burning a year and five vendors on the way.</p>
-      <dl class="founder-card__facts">
-        <div><dt>Experience</dt><dd>7+ years in product design</dd></div>
-        <div><dt>Background</dt><dd>Digital banking and payments at Sterling Bank and Polaris Bank</dd></div>
-        <div><dt>Leads</dt><dd>Product, design and venture building at Lynexa</dd></div>
-      </dl>
-      ${full ? `<details class="expand">
-          <summary>${icon.plus}Read the full biography</summary>
-          <div>
-            <p>Before founding Lynexa, Kelvin worked with financial institutions including Sterling Bank and Polaris Bank, contributing to digital banking platforms, electronic payment systems, lending products and customer-facing financial experiences. That work gave him a grounding in payment infrastructure, banking operations, regulatory requirements and the trust that technology for regulated industries has to earn.</p>
-            <p>He has also led product design in the energy and infrastructure technology sector: enterprise platforms, operational dashboards, customer applications and data tools that simplify complex workflows. His practice spans product strategy, user research, systems thinking, interaction design, design systems, web development and cross-functional delivery.</p>
-            <p>As founder and CEO of Lynexa, Kelvin leads a multidisciplinary team across product design, software engineering and business development, guiding products from research and concept through architecture, MVP, market positioning and commercial readiness. Under his leadership Lynexa is developing ventures across fintech, mobility, legal technology, property technology and digital productivity, including Zengly and Swiftly.</p>
-          </div>
-        </details>` : ''}
-      <div class="founder-card__links">
-        ${full ? '' : link('/about/', 'About Lynexa')}
-        ${link('https://kelvinekuhoho.com/', 'Portfolio')}
-        ${link(SITE.linkedin, 'LinkedIn')}
+      <div class="founder-card__intro">
+        <p class="founder-card__kicker">Meet the founder</p>
+        <h2 id="${id}">“I build things people actually use.”</h2>
+        <p class="founder-card__sign"><span class="founder-card__mono" aria-hidden="true">KE</span><span><b>Kelvin Ekuhoho</b><span>Founder &amp; CEO, Lead Product Designer</span></span></p>
+      </div>
+      <div class="founder-card__body">
+        <p>Kelvin is a product designer and builder with more than seven years of experience, much of it designing digital banking and payment products at Nigerian banks. He started Lynexa so founders could get one senior team that turns an idea into a credible, working product, without burning a year and five vendors on the way.</p>
+        <dl class="founder-card__facts">
+          <div><dt>Experience</dt><dd>7+ years in product design</dd></div>
+          <div><dt>Background</dt><dd>Digital banking and payments at Sterling Bank and Polaris Bank</dd></div>
+          <div><dt>Leads</dt><dd>Product, design and venture building at Lynexa</dd></div>
+        </dl>
+        ${full ? `<details class="expand">
+            <summary>${icon.plus}Read the full biography</summary>
+            <div>
+              <p>Before founding Lynexa, Kelvin worked with financial institutions including Sterling Bank and Polaris Bank, contributing to digital banking platforms, electronic payment systems, lending products and customer-facing financial experiences. That work gave him a grounding in payment infrastructure, banking operations, regulatory requirements and the trust that technology for regulated industries has to earn.</p>
+              <p>He has also led product design in the energy and infrastructure technology sector: enterprise platforms, operational dashboards, customer applications and data tools that simplify complex workflows. His practice spans product strategy, user research, systems thinking, interaction design, design systems, web development and cross-functional delivery.</p>
+              <p>As founder and CEO of Lynexa, Kelvin leads a multidisciplinary team across product design, software engineering and business development, guiding products from research and concept through architecture, MVP, market positioning and commercial readiness. Under his leadership Lynexa is developing ventures across fintech, mobility, legal technology, property technology and digital productivity, including Zengly and Swiftly.</p>
+            </div>
+          </details>` : ''}
+        <div class="founder-card__links">
+          ${full ? '' : link('/about/', 'About Lynexa')}
+          ${link('https://kelvinekuhoho.com/', 'Portfolio')}
+          ${link(SITE.linkedin, 'LinkedIn')}
+        </div>
       </div>
     </div>
   </div>`;
@@ -225,17 +227,22 @@ const footer = () => `
     </div>
     <div class="footer-base">
       <p>© ${new Date().getFullYear()} ${SITE.legalName}. Registered in Nigeria, ${SITE.rc}.</p>
+      <div class="motion-pref" role="group" aria-label="Motion preference" data-motion-pref><span>Motion</span><button type="button" data-motion-set="full" aria-pressed="false">Full</button><button type="button" data-motion-set="reduced" aria-pressed="false">Reduced</button><button type="button" data-motion-set="off" aria-pressed="false">Off</button></div>
       <p><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></p>
     </div>
   </div>
 </footer>`;
 
-export function layout({ path, title, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', bodyClass = '' }) {
+// Runs before first paint: marks JS, applies a saved motion preference, and (first visit, motion allowed)
+// asks the hero wireframe to wait for the swarm to draw it. Its hash is added to the CSP at build time.
+export const HEAD_SCRIPT = "(function(e){e.classList.add('js');try{var m=localStorage.getItem('lx-motion');if(m)e.setAttribute('data-motion',m);var r=matchMedia('(prefers-reduced-motion: reduce)').matches,c=navigator.connection;if((m==='full'||(!m&&!r))&&!(c&&c.saveData)&&e.getAttribute('data-swarm-mode')!=='none'){e.classList.add('sw-intro');var l=document.createElement('link');l.rel='preload';l.as='script';l.href=e.getAttribute('data-swarm-src');document.head.appendChild(l)}}catch(x){}})(document.documentElement)";
+
+export function layout({ path, title, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', bodyClass = '', swarm = 'full' }) {
   const canonical = SITE.url + path;
   const fullTitle = path === '/' ? title : `${title} | Lynexa`;
   const ld = [orgLd(), ...jsonld];
   return `<!doctype html>
-<html lang="en-NG">
+<html lang="en-NG" data-swarm-src="/assets/swarm.js?v=__BUILD__" data-swarm-mode="${swarm}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -260,10 +267,10 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="preload" href="/assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css?v=__BUILD__">
 <script type="application/ld+json">${JSON.stringify(ld.length === 1 ? ld[0] : ld)}</script>
-<script>document.documentElement.classList.add('js')</script>
+<script>${HEAD_SCRIPT}</script>
 <script src="/assets/site.js?v=__BUILD__" defer></script>
 </head>
-<body class="${bodyClass}">
+<body class="${bodyClass}" data-swarm="${swarm}">
 <a class="skip-link" href="#main">Skip to content</a>
 ${header(path)}
 <main id="main" tabindex="-1">

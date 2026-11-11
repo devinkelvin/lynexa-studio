@@ -2,7 +2,7 @@
 import { mkdir, rm, writeFile, readFile, cp } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
-import { layout } from './src/lib.mjs';
+import { layout, HEAD_SCRIPT } from './src/lib.mjs';
 import { SITE } from './src/site.mjs';
 import { SERVICES } from './src/content/services.mjs';
 import home from './src/pages/home.mjs';
@@ -24,10 +24,13 @@ await cp(join(root, 'public'), out, { recursive: true });
 const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10);
 const css = await readFile(join(root, 'src/styles/site.css'), 'utf8');
 const js = await readFile(join(root, 'src/scripts/site.js'), 'utf8');
+const swarm = await readFile(join(root, 'src/scripts/swarm.js'), 'utf8');
 const cssName = `site.${hash(css)}.css`;
 const jsName = `site.${hash(js)}.js`;
+const swarmName = `swarm.${hash(swarm)}.js`;
 await writeFile(join(out, 'assets', cssName), css);
 await writeFile(join(out, 'assets', jsName), js);
+await writeFile(join(out, 'assets', swarmName), swarm);
 
 const pages = [
   home(), aboutPage(), servicesIndex(), ...SERVICES.map(servicePage),
@@ -41,7 +44,8 @@ for (const p of pages) {
   seen.add(p.path);
   let html = layout(p)
     .replace('/assets/site.css?v=__BUILD__', `/assets/${cssName}`)
-    .replace('/assets/site.js?v=__BUILD__', `/assets/${jsName}`);
+    .replace('/assets/site.js?v=__BUILD__', `/assets/${jsName}`)
+    .replace('/assets/swarm.js?v=__BUILD__', `/assets/${swarmName}`);
   const file = p.path === '/404' ? join(out, '404.html') : join(out, p.path, 'index.html');
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, html);
@@ -77,7 +81,8 @@ await writeFile(join(out, '_redirects'), `# Legacy single-page site
 
 // Content-Security-Policy: production (and local builds) only. Netlify sets CONTEXT during builds;
 // on deploy previews and branch deploys it is omitted so the Netlify Drawer can load.
-const CSP = "default-src 'self'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests";
+const headHash = createHash('sha256').update(HEAD_SCRIPT).digest('base64');
+const CSP = "default-src 'self'; script-src 'self' 'sha256-" + headHash + "'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests";
 const context = process.env.CONTEXT || 'local';
 if (context === 'production' || context === 'local') {
   await writeFile(join(out, '_headers'), `/*\n  Content-Security-Policy: ${CSP}\n`);
