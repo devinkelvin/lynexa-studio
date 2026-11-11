@@ -900,3 +900,9 @@ html:not(.js) .form__step + .form__step { padding-top: 1.75rem; border-top: 1px 
 }
 .why__core, .why__step { z-index: 1; }
 .legend .status { white-space: nowrap; }
+.wa-float.is-away { transform: translateY(160%); }
+.btn { max-width: 100%; }
+.btn > span:not(.sr-only) { overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 380px) { .actions .btn { flex: 1 1 auto; } }
+@media (min-width: 600px) and (max-width: 899px) { .founder-card__photo { aspect-ratio: 4 / 3; } }
+@media (min-width: 700px) and (max-width: 899px) { .vcards { grid-template-columns: 1fr; } .vcard { grid-template-columns: 220px 1fr; } .vcard__media { aspect-ratio: auto; height: 100%; } }

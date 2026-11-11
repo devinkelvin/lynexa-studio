@@ -251,7 +251,7 @@ ${SITES.map((x, i) => `
         <p>${x.text}</p>
         <dl class="site-show__meta">${x.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
         <div class="actions">
-          <a class="btn btn--primary" href="${x.url}" target="_blank" rel="noopener noreferrer" data-magnetic><span>Visit ${x.host}</span><span class="sr-only"> (opens in a new tab)</span></a>
+          <a class="btn btn--primary" href="${x.url}" target="_blank" rel="noopener noreferrer" data-magnetic><span>Visit the site</span><span class="sr-only"> ${x.host}</span><span class="sr-only"> (opens in a new tab)</span></a>
           ${x.more ? btn(x.more[0], x.more[1], 'secondary') : ''}
         </div>
       </div>

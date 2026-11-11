@@ -8,6 +8,8 @@
 
   /* Header: border on scroll, hide on scroll-down (desktop pointer devices only) */
   const header = document.querySelector('[data-header]');
+  const waBtn = document.querySelector('.wa-float');
+  const narrow = window.matchMedia('(max-width: 699px)');
   let lastY = window.scrollY;
   const onScroll = () => {
     const y = window.scrollY;
@@ -16,6 +18,8 @@
     const focusInHeader = header.contains(document.activeElement);
     if (!menuOpen && !focusInHeader && y > 400 && y > lastY + 4) header.classList.add('is-hidden');
     else if (y < lastY - 4 || y < 400) header.classList.remove('is-hidden');
+    // On phones, slide the WhatsApp button away while reading downwards; bring it back on scroll up
+    if (waBtn && narrow.matches) waBtn.classList.toggle('is-away', y > 300 && y > lastY + 4 ? true : (y < lastY - 4 ? false : waBtn.classList.contains('is-away')));
     lastY = y;
   };
   window.addEventListener('scroll', onScroll, { passive: true });
