@@ -1,4 +1,4 @@
-import { btn, link, img, head2, faq, faqLd, status, ctaBand, icon } from '../lib.mjs';
+import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, founder, icon } from '../lib.mjs';
 import { PILLARS, svcBySlug } from '../content/services.mjs';
 import { PROJECTS } from '../content/work.mjs';
 import { SITE } from '../site.mjs';
@@ -15,7 +15,8 @@ const HOME_FAQ = [
 export default function home() {
   const zengly = PROJECTS.find((p) => p.slug === 'zengly');
   const swiftly = PROJECTS.find((p) => p.slug === 'swiftly');
-  const others = PROJECTS.filter((p) => !p.page);
+  const cv = PROJECTS.find((p) => p.slug === 'createmycvnow');
+  const ventures = PROJECTS.filter((p) => !p.page && !p.href);
 
   const body = `
 <section class="hero" id="top" aria-labelledby="hero-title">
@@ -23,7 +24,7 @@ export default function home() {
     <h1 id="hero-title">From a founder’s idea to a product people actually use.</h1>
     <div class="hero__meta">
       <p class="lead">Lynexa is a product design, engineering and venture studio in Lagos. We help you understand the idea, design it, build it and bring it to market, with one team accountable from the first conversation to launch.</p>
-      <div class="actions">${btn('/start-a-project/', 'Start a project', 'primary')}${btn('/work/', 'Explore our work', 'secondary')}</div>
+      <div class="actions">${btn('/start-a-project/', 'Start a project', 'primary', ' data-magnetic')}${btn('/work/', 'Explore our work', 'secondary', ' data-magnetic')}</div>
     </div>
 
     <div class="build" role="group" aria-label="How an idea becomes a product, shown with Zengly’s split-bill feature">
@@ -38,7 +39,7 @@ export default function home() {
       <div class="build__stage">
         <p class="build__label"><b>2</b>Designed</p>
         <div class="build__frame build__frame--wire" aria-hidden="true">
-          <div class="phone"><div class="wire">
+          <div class="phone"><span class="phone__island"></span><div class="wire">
             <i class="w-a"></i><i class="w-b"></i><i class="w-c"></i>
             <span class="w-row"><i></i><i></i><i></i></span><i class="w-d"></i><i class="w-d"></i><i class="w-e"></i>
           </div></div>
@@ -47,7 +48,7 @@ export default function home() {
       <div class="build__stage">
         <p class="build__label"><b>3</b>Built</p>
         <div class="build__frame build__frame--real">
-          <div class="phone">${img('zengly-split-bill', 'Zengly split-bill screen showing a “Divide expenses fairly” card and bill history', { sizes: '(min-width: 760px) 240px, 40vw', eager: true })}</div>
+          <div class="phone phone--dark"><span class="phone__island"></span>${img('zengly-split-bill', 'Zengly split-bill screen showing a “Divide expenses fairly” card and bill history', { sizes: '(min-width: 760px) 240px, 40vw', eager: true })}</div>
         </div>
       </div>
       <p class="build__caption">Zengly’s split-bill feature, from a sentence to a wireframe to the interface in the app. Zengly is in pre-launch.</p>
@@ -58,61 +59,66 @@ export default function home() {
 <section class="sec" id="services" aria-labelledby="what-title">
   <div class="shell">
     ${head2('Four things, done by one team.', 'We understand your idea, design it, build it and help bring it to market. Hire us for all four, or for the one you are missing.', { id: 'what-title' })}
-    <div class="pillars">
+    <ol class="scards">
       ${PILLARS.map((p, i) => `
-      <div class="pillar">
-        <p class="pillar__step">Step ${i + 1}</p>
-        <div><h3>${p.title}</h3><p style="margin-top:.75rem">${p.text}</p></div>
-        <ul>${p.links.map((s) => `<li><a href="/services/${s}/">${svcBySlug[s].name}</a></li>`).join('')}</ul>
-      </div>`).join('')}
-    </div>
-    <p style="margin-top:2rem">${link('/services/', 'See all services')}</p>
+      <li class="scard" style="--i:${i}">
+        <div class="scard__top"><h3>${p.title}</h3><span class="scard__n" aria-hidden="true">0${i + 1}</span></div>
+        <p>${p.text}</p>
+        <ul class="scard__links">${p.links.map((s) => `<li><a href="/services/${s}/">${svcBySlug[s].name}${icon.arrow}</a></li>`).join('')}</ul>
+      </li>`).join('')}
+    </ol>
+    <p class="center-cta">${btn('/services/', 'See all services', 'secondary', ' data-magnetic')}</p>
   </div>
 </section>
 
-<section class="sec surface-dark" id="work" aria-labelledby="work-title">
+<section class="sec surface-dark sheet" id="work" aria-labelledby="work-title">
   <div class="shell">
-    ${head2('Selected work, labelled honestly.', 'Products we have designed and engineered, and ventures we are building. Every project shows where it really is today.', { id: 'work-title' })}
-    <div class="work-grid">
-      <article class="work-feature">
-        <a class="work-feature__media" href="/work/zengly/" data-reveal aria-label="Zengly case study">
-          ${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 55vw, 100vw' })}
-          <span class="work-feature__screens">
-            ${img('zengly-home-dark', '', { sizes: '(min-width: 900px) 15vw, 28vw' })}
-            ${img('zengly-vaniti-leaderboard', '', { sizes: '(min-width: 900px) 15vw, 28vw' })}
-            ${img('zengly-menu', '', { sizes: '(min-width: 900px) 15vw, 28vw' })}
+    ${head2('Selected work', 'Products we have designed and engineered, and ventures we are building. Every project shows where it really is today.', { id: 'work-title' })}
+    <div class="showcase">
+      <a class="showcase__item showcase__item--wide" href="/work/zengly/" data-cursor-text="View">
+        <span class="showcase__media showcase__media--zengly" data-reveal>
+          ${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 60vw, 100vw' })}
+          <span class="showcase__phones">
+            ${phone('zengly-home-dark', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
+            ${phone('zengly-vaniti-leaderboard', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
           </span>
-        </a>
-        <div class="work-feature__body">
-          ${status(...zengly.status)}
-          <h3>Zengly</h3>
-          <p>${zengly.summary} We shaped the product, designed every screen, built the brand and launched the marketing site.</p>
-          <ul class="tags">${zengly.role.map((r) => `<li>${r}</li>`).join('')}</ul>
-          ${link('/work/zengly/', 'Read the Zengly case study')}
-        </div>
-      </article>
-      <article class="work-feature work-feature--flip">
-        <a class="work-feature__media swiftly-media" href="/work/swiftly/" data-reveal aria-label="Swiftly project page">
-          ${img('lagos-professionals', '', { cls: 'bg', sizes: '(min-width: 900px) 55vw, 100vw' })}
+        </span>
+        <span class="showcase__meta">
+          <span class="showcase__title">Zengly ${status(...zengly.status)}</span>
+          <span class="showcase__desc">${zengly.summary}</span>
+        </span>
+      </a>
+      <a class="showcase__item" href="/work/swiftly/" data-cursor-text="View">
+        <span class="showcase__media swiftly-media" data-reveal>
+          ${img('lagos-professionals', '', { cls: 'bg', sizes: '(min-width: 900px) 40vw, 100vw' })}
           ${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}
-        </a>
-        <div class="work-feature__body">
-          ${status(...swiftly.status)}
-          <h3>Swiftly</h3>
-          <p>${swiftly.summary} We wrote the product specification, researched real operator fares and prototyped the marketing site.</p>
-          <ul class="tags">${swiftly.role.map((r) => `<li>${r}</li>`).join('')}</ul>
-          ${link('/work/swiftly/', 'See the Swiftly concept')}
-        </div>
-      </article>
+        </span>
+        <span class="showcase__meta">
+          <span class="showcase__title">Swiftly ${status(...swiftly.status)}</span>
+          <span class="showcase__desc">${swiftly.summary}</span>
+        </span>
+      </a>
+      <a class="showcase__item" href="${cv.href}" target="_blank" rel="noopener noreferrer" data-cursor-text="Visit">
+        <span class="showcase__media showcase__media--site" data-reveal>
+          ${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnow.netlify.app', { sizes: '(min-width: 900px) 36vw, 90vw' })}
+        </span>
+        <span class="showcase__meta">
+          <span class="showcase__title">CreateMyCVNow ${status(...cv.status)}</span>
+          <span class="showcase__desc">${cv.summary}<span class="sr-only"> (opens in a new tab)</span></span>
+        </span>
+      </a>
+      <div class="showcase__item showcase__list">
+        <p class="showcase__list-title">Also in the studio</p>
+        <ul>
+          ${ventures.map((p) => `<li><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</li>`).join('')}
+        </ul>
+      </div>
     </div>
-    <div class="ventures-list">
-      ${others.map((p) => `<div class="ventures-list__row"><h3>${p.name}</h3><p>${p.summary}</p>${status(...p.status)}</div>`).join('')}
-    </div>
-    <p style="margin-top:2.5rem" class="actions">${btn('/work/', 'View all work', 'light')}${btn('/websites/', 'Websites we’ve designed', 'ghost-light')}</p>
+    <p class="center-cta">${btn('/work/', 'View all work', 'ghost-light', ' data-magnetic')}${btn('/websites/', 'Websites we’ve built', 'ghost-light', ' data-magnetic')}</p>
   </div>
 </section>
 
-<section class="sec" aria-labelledby="craft-title">
+<section class="sec sheet" aria-labelledby="craft-title">
   <div class="shell split split--wide-left">
     <div>
       <h2 id="craft-title" style="font-size:var(--fs-h2);max-width:14ch">Designers who ship. Engineers who care how it feels.</h2>
@@ -129,7 +135,7 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec surface-paper" aria-labelledby="why-title">
+<section class="sec surface-paper sheet" aria-labelledby="why-title">
   <div class="shell">
     ${head2('Why founders choose a studio over a string of freelancers.', '', { id: 'why-title', cls: 'sec-head--stack' })}
     <div class="reasons">
@@ -141,7 +147,7 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec" id="method" aria-labelledby="process-title">
+<section class="sec sheet" id="method" aria-labelledby="process-title">
   <div class="shell">
     ${head2('How a project moves.', 'Four phases with a clear output at the end of each, so you always know what you are paying for and what comes next.', { id: 'process-title' })}
     <ol class="steps steps--4">
@@ -156,7 +162,7 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec surface-dark spotlight" id="zengly" aria-labelledby="zengly-title">
+<section class="sec surface-dark sheet spotlight" id="zengly" aria-labelledby="zengly-title">
   <div class="shell">
     <div class="spotlight__top">
       <div>
@@ -169,15 +175,15 @@ export default function home() {
       </div>
     </div>
     <ul class="screens" tabindex="0" aria-label="Zengly interface screens, scrollable">
-      <li><figure>${img('zengly-home-light', 'Zengly home screen in light mode with balance and quick actions', { sizes: '(min-width: 1200px) 20vw, 260px' })}<figcaption><b>Everyday money</b>Home, light mode</figcaption></figure></li>
-      <li><figure>${img('zengly-split-bill', 'Zengly split bill screen with bill history', { sizes: '(min-width: 1200px) 20vw, 260px' })}<figcaption><b>Shared costs</b>Split bill</figcaption></figure></li>
-      <li><figure>${img('zengly-vaniti-leaderboard', 'Zengly Vaniti leaderboard showing the top sprayers at an event', { sizes: '(min-width: 1200px) 20vw, 260px' })}<figcaption><b>Celebration</b>Vaniti leaderboard</figcaption></figure></li>
-      <li><figure>${img('zengly-vaniti-sprayers', 'Zengly Vaniti community screen listing sprayers', { sizes: '(min-width: 1200px) 20vw, 260px' })}<figcaption><b>Community</b>Vaniti sprayers</figcaption></figure></li>
+      <li>${phone('zengly-home-light', 'Zengly home screen in light mode with balance and quick actions', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Everyday money</b>Home, light mode' })}</li>
+      <li>${phone('zengly-split-bill', 'Zengly split bill screen with bill history', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Shared costs</b>Split bill' })}</li>
+      <li>${phone('zengly-vaniti-leaderboard', 'Zengly Vaniti leaderboard showing the top sprayers at an event', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Celebration</b>Vaniti leaderboard' })}</li>
+      <li>${phone('zengly-vaniti-sprayers', 'Zengly Vaniti community screen listing sprayers', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Community</b>Vaniti sprayers' })}</li>
     </ul>
   </div>
 </section>
 
-<section class="sec surface-paper" aria-labelledby="ventures-title">
+<section class="sec surface-paper sheet" aria-labelledby="ventures-title">
   <div class="shell split">
     <div>
       <h2 id="ventures-title" style="font-size:var(--fs-h2);max-width:13ch">Some ideas need a partner, not a vendor.</h2>
@@ -190,19 +196,11 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec" id="studio" aria-labelledby="founder-title">
-  <div class="shell founder">
-    <div class="founder__photo" data-reveal>${img('kelvin-ekuhoho', 'Kelvin Ekuhoho, founder and CEO of Lynexa', { sizes: '(min-width: 900px) 40vw, 100vw' })}</div>
-    <div class="founder__body">
-      <h2 id="founder-title">Founder-led, from Lagos.</h2>
-      <p>Lynexa was founded by <span class="founder__name">Kelvin Ekuhoho</span>, a product designer and builder with more than seven years of experience, including digital banking and payments work at Sterling Bank and Polaris Bank.</p>
-      <p>He started Lynexa to give founders what he wished more of them had: one senior team that can turn an idea into a credible, working product without burning a year and five vendors on the way.</p>
-      ${link('/about/', 'About Lynexa')}
-    </div>
-  </div>
+<section class="sec sheet" id="studio">
+  <div class="shell">${founder({ id: 'founder-title' })}</div>
 </section>
 
-<section class="sec surface-paper" aria-labelledby="engage-title">
+<section class="sec surface-paper sheet" aria-labelledby="engage-title">
   <div class="shell">
     ${head2('Three ways to work with us.', 'Pick the shape that fits where you are. We will tell you honestly if a different one would serve you better.', { id: 'engage-title' })}
     <div class="models">
@@ -225,14 +223,21 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec" aria-labelledby="faq-title">
-  <div class="shell faq-wrap">
-    ${head2('Questions founders ask first.', `Something else? Email <a class="link" href="mailto:${SITE.email}">${SITE.email}</a>.`, { id: 'faq-title' })}
+<section class="sec sheet" aria-labelledby="faq-title">
+  <div class="shell faq-block">
+    ${head2('Questions founders ask first', '', { id: 'faq-title', cls: 'sec-head--stack' })}
     ${faq(HOME_FAQ)}
+    <div class="faq-contact">
+      <p>Still have a question? Ask the founder directly.</p>
+      <div class="actions">
+        <a class="btn btn--secondary btn--sm" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}<span>WhatsApp</span><span class="sr-only"> (opens in a new tab)</span></a>
+        <a class="btn btn--secondary btn--sm" href="mailto:${SITE.email}"><span>${SITE.email}</span></a>
+      </div>
+    </div>
   </div>
 </section>
 
-${ctaBand()}
+${ctaBand({ title: 'Have a product to build or rethink?' })}
 `;
 
   return {

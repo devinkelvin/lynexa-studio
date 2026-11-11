@@ -33,6 +33,7 @@ scripts/prepare-assets.mjs  Generates WebP images, favicons and font files into 
 - **Change contact details:** `src/site.mjs`. Every page, the footer, structured data and the privacy notice update from there.
 - **Edit or add a service:** add or edit an entry in `src/content/services.mjs`. A new entry automatically gets a page, a sitemap entry and a place on /services/.
 - **Add a project:** add it to `src/content/work.mjs`. Use a truthful `status` (`live`, `progress` or `concept`). Projects with `page: true` need a template in `src/pages/work.mjs`.
+- **Add a website to /websites/:** take 1440×900 and 390×844 screenshots, save them as `assets/site-<name>-desktop.png` and `-mobile.png`, add them to `scripts/prepare-assets.mjs` and `DIMS`/`WIDTHS`, then add an entry to `SITES` in `src/pages/work.mjs`.
 - **Add or replace an image:** put the original in `assets/`, add it to the job list in `scripts/prepare-assets.mjs` and to `DIMS`/`WIDTHS` in `src/lib.mjs`, then run `npm run assets` and commit the generated files.
 
 ## Design system
@@ -41,6 +42,9 @@ scripts/prepare-assets.mjs  Generates WebP images, favicons and font files into 
 - **Colour:** graphite `#18171C`, bone `#F1EEE8`, paper `#FBFAF7`, stone `#625E68`, Lynexa violet `#5A35FE` (from the mark), amber `#E8962A` for in-progress status. All text pairs meet WCAG AA.
 - **Surfaces:** light bone surfaces for reading, graphite surfaces for product work.
 - **Status labels:** green dot = live, amber = in progress or pre-launch, outlined violet = concept. Keep these truthful.
+- **Mockups:** every mobile screenshot uses the `phone()` helper (CSS device frame) and every desktop site screenshot uses `browser()`, both in `src/lib.mjs`.
+- **Sheets:** coloured sections carry the `sheet` class, which gives them rounded top shoulders that overlap the section above.
+- **Pointer:** on mouse/trackpad devices a small custom cursor grows over links and shows “View”/“Visit” over work; `data-magnetic` buttons drift toward the pointer. Both are off on touch and under reduced motion.
 - **Motion:** one orchestrated hero sequence; menu, accordion and button feedback respond to the user; media reveals on scroll. Everything is disabled under `prefers-reduced-motion`. View transitions between pages use the native browser API.
 
 ## Forms
@@ -53,7 +57,9 @@ Three Netlify Forms, detected from the static HTML at deploy time:
 | `venture-application` | /ventures/ | /application-received/ |
 | `general-message` | /contact/ | /message-received/ |
 
-Spam protection: Netlify honeypot (`bot-field`) plus Netlify's built-in spam filtering. Client-side validation enhances the forms; they still submit without JavaScript.
+The project brief and venture application are **staged**: three short steps with a progress bar, validated step by step. Without JavaScript all steps show and the form submits as one page. Spam protection: Netlify honeypot (`bot-field`) plus Netlify's built-in spam filtering.
+
+**WhatsApp:** the floating chat button, footer pill, contact channel and closing CTA all use `SITE.whatsappUrl` in `src/site.mjs` (wa.me link with a prefilled greeting). Change the number there.
 
 **Email notifications** are configured in the Netlify dashboard: Project configuration → Notifications → Form submission notifications → add an email notification to `hello@lynexa.co` for each form.
 

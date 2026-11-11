@@ -30,7 +30,7 @@ export function servicesIndex() {
     </div>
   </div>
 </section>
-<section class="sec surface-paper" aria-labelledby="map-title">
+<section class="sec surface-paper sheet" aria-labelledby="map-title">
   <div class="shell">
     ${head2('Not sure which service you need?', 'Most projects follow the same arc. Find where you are, and start there.', { id: 'map-title' })}
     <ol class="steps steps--4">
@@ -70,7 +70,7 @@ export function servicePage(s) {
   </div>
 </section>
 
-<section class="sec sec--tight surface-paper" aria-labelledby="problem-title">
+<section class="sec sec--tight surface-paper sheet" aria-labelledby="problem-title">
   <div class="shell split">
     <h2 id="problem-title" style="font-size:1rem;letter-spacing:0;color:var(--stone);font-weight:600">The problem we solve</h2>
     <p class="svc-problem">${s.problem}</p>
@@ -86,7 +86,7 @@ export function servicePage(s) {
   </div>
 </section>
 
-<section class="sec surface-dark" aria-labelledby="del-title">
+<section class="sec surface-dark sheet" aria-labelledby="del-title">
   <div class="shell split">
     <div>
       <h2 id="del-title" style="font-size:var(--fs-h2);max-width:12ch">What you walk away with</h2>
@@ -107,7 +107,7 @@ export function servicePage(s) {
   </div>
 </section>
 
-<section class="sec surface-paper" aria-labelledby="fit-title">
+<section class="sec surface-paper sheet" aria-labelledby="fit-title">
   <div class="shell">
     ${head2('Is this right for you?', '', { id: 'fit-title', cls: 'sec-head--stack' })}
     <div class="fit">
@@ -128,7 +128,7 @@ ${projects.length ? `
 </section>` : ''}
 
 <section class="sec${projects.length ? ' surface-paper' : ''}" aria-labelledby="faq-title">
-  <div class="shell faq-wrap">
+  <div class="shell faq-block">
     ${head2('Questions', '', { id: 'faq-title' })}
     ${faq(s.faqs)}
   </div>

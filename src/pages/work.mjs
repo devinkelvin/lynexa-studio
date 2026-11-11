@@ -1,4 +1,4 @@
-import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, status, icon } from '../lib.mjs';
+import { btn, link, img, phone, browser, head2, breadcrumbs, crumbLd, ctaBand, status, icon } from '../lib.mjs';
 import { PROJECTS, CATEGORIES } from '../content/work.mjs';
 
 const ZENGLY_SITE = 'https://zenglypay.com/';
@@ -6,14 +6,18 @@ const ZENGLY_SITE = 'https://zenglypay.com/';
 export function workIndex() {
   const trail = [['/', 'Home'], ['/work/', 'Work']];
   const used = CATEGORIES.filter(([k]) => PROJECTS.some((p) => p.cats.includes(k)));
+  const media = (p) => {
+    if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly">${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}<span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
+    if (p.slug === 'swiftly') return `<span class="showcase__media swiftly-media">${img('lagos-collaboration', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`;
+    if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnow.netlify.app', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
+    return '';
+  };
   const card = (p) => {
-    const media = p.slug === 'zengly'
-      ? `<span class="work-feature__media" style="aspect-ratio:16/11">${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}<span class="work-feature__screens">${img('zengly-home-dark', '', { sizes: '14vw' })}${img('zengly-split-bill', '', { sizes: '14vw' })}${img('zengly-vaniti-leaderboard', '', { sizes: '14vw' })}</span></span>`
-      : p.slug === 'swiftly'
-        ? `<span class="work-feature__media swiftly-media" style="aspect-ratio:16/11">${img('lagos-collaboration', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`
-        : '';
-    const inner = `${media}<div class="work-card__body">${status(...p.status)}<h2>${p.name}</h2><p class="muted" style="font-size:.95rem">${p.sector}</p><p>${p.summary}</p>${p.page ? `<span class="link">View project${icon.arrow}</span>` : '<p class="muted" style="font-size:.9rem">A detailed case study will follow when there is more to share publicly.</p>'}</div>`;
-    return `<li data-work-item data-cats="${p.cats.join(' ')}" class="work-card${p.page ? '' : ' work-card--text'}">${p.page ? `<a href="/work/${p.slug}/">${inner}</a>` : `<div>${inner}</div>`}</li>`;
+    const m = media(p);
+    const action = p.page ? `<span class="link">View case study${icon.arrow}</span>` : p.href ? `<span class="link">Visit the live product${icon.external}</span>` : '<p class="muted" style="font-size:.9rem">A detailed case study will follow when there is more to share publicly.</p>';
+    const inner = `${m}<div class="work-card__body">${status(...p.status)}<h2>${p.name}</h2><p class="muted" style="font-size:.95rem">${p.sector}</p><p>${p.summary}</p>${action}</div>`;
+    const wrap = p.page ? `<a href="/work/${p.slug}/" data-cursor-text="View">${inner}</a>` : p.href ? `<a href="${p.href}" target="_blank" rel="noopener noreferrer" data-cursor-text="Visit">${inner}<span class="sr-only"> (opens in a new tab)</span></a>` : `<div>${inner}</div>`;
+    return `<li data-work-item data-cats="${p.cats.join(' ')}" class="work-card${m ? '' : ' work-card--text'}">${wrap}</li>`;
   };
   const body = `
 <section class="page-hero">
@@ -25,7 +29,7 @@ export function workIndex() {
     </div>
   </div>
 </section>
-<section class="sec sec--tight surface-dark" aria-labelledby="list-title">
+<section class="sec surface-dark sheet" aria-labelledby="list-title">
   <div class="shell">
     <h2 id="list-title" class="sr-only">Projects</h2>
     <div class="filter" data-filter role="group" aria-label="Filter projects by category">
@@ -35,19 +39,20 @@ export function workIndex() {
     <p class="sr-only" aria-live="polite" data-filter-status></p>
     <ul class="work-list">${PROJECTS.map(card).join('')}</ul>
     <div class="legend">
+      <p>${status('live', 'Live')} Available to use today</p>
       <p>${status('progress', 'In progress')} Designed and in development or pre-launch</p>
       <p>${status('concept', 'Concept')} Proposed or early-stage venture</p>
     </div>
   </div>
 </section>
-<section class="sec sec--tight" aria-labelledby="sites-title">
+<section class="sec sheet" aria-labelledby="sites-title">
   <div class="shell split">
     <h2 id="sites-title" style="font-size:var(--fs-h2);max-width:12ch">Looking for websites?</h2>
-    <div style="display:grid;gap:1.25rem;justify-items:start;align-content:end"><p class="lead">See the marketing and product sites we have designed and engineered, separately from the products themselves.</p>${btn('/websites/', 'Websites we’ve designed', 'secondary')}</div>
+    <div style="display:grid;gap:1.25rem;justify-items:start;align-content:end"><p class="lead">See the marketing and product sites we have designed and engineered, separately from the products themselves.</p>${btn('/websites/', 'Websites we’ve built', 'secondary')}</div>
   </div>
 </section>
 ${ctaBand()}`;
-  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app, CreateMyCVNow, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
 }
 
 const chapter = (title, html) => `<div class="chapter"><h2>${title}</h2><div class="chapter__body">${html}</div></div>`;
@@ -88,7 +93,7 @@ export function zenglyPage() {
   </div>
 </section>
 
-<section class="sec surface-dark" aria-labelledby="pillars-title">
+<section class="sec surface-dark sheet" aria-labelledby="pillars-title">
   <div class="shell">
     <h2 id="pillars-title" class="sr-only">Product architecture</h2>
     <div class="pillars4">
@@ -111,17 +116,17 @@ export function zenglyPage() {
   </div>
 </section>
 
-<section class="sec surface-dark" aria-labelledby="screens-title">
+<section class="sec surface-dark sheet" aria-labelledby="screens-title">
   <div class="shell">
     ${head2('Selected screens', 'Interface designs from the Zengly app. Shown as designed for pre-launch.', { id: 'screens-title' })}
-    <div class="gallery">
-      <figure>${img('zengly-home-dark', 'Zengly home screen in dark mode with balance, quick actions and recent transactions', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Home, dark mode</figcaption></figure>
-      <figure>${img('zengly-home-light', 'Zengly home screen in light mode', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Home, light mode</figcaption></figure>
-      <figure>${img('zengly-vaniti-leaderboard', 'Vaniti leaderboard with a podium of top sprayers', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Vaniti leaderboard</figcaption></figure>
-      <figure>${img('zengly-menu', 'Zengly services menu', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Services menu</figcaption></figure>
-      <figure>${img('zengly-split-bill', 'Split bill screen with bill history', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Split bill</figcaption></figure>
-      <figure>${img('zengly-vaniti-sprayers', 'Vaniti community screen listing sprayers', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Vaniti community</figcaption></figure>
-      <figure>${img('zengly-vaniti-intro', 'Vaniti feature introduction screen', { sizes: '(min-width: 900px) 22vw, 45vw' })}<figcaption>Vaniti introduction</figcaption></figure>
+    <div class="gallery gallery--phones">
+      ${phone('zengly-home-dark', 'Zengly home screen in dark mode with balance, quick actions and recent transactions', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Home, dark mode' })}
+      ${phone('zengly-home-light', 'Zengly home screen in light mode', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Home, light mode' })}
+      ${phone('zengly-vaniti-leaderboard', 'Vaniti leaderboard with a podium of top sprayers', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Vaniti leaderboard' })}
+      ${phone('zengly-menu', 'Zengly services menu', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Services menu' })}
+      ${phone('zengly-split-bill', 'Split bill screen with bill history', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Split bill' })}
+      ${phone('zengly-vaniti-sprayers', 'Vaniti community screen listing sprayers', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Vaniti community' })}
+      ${phone('zengly-vaniti-intro', 'Vaniti feature introduction screen', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Vaniti introduction', cls: 'device--contain' })}
     </div>
   </div>
 </section>
@@ -134,7 +139,7 @@ export function zenglyPage() {
   </div>
 </section>
 
-<section class="sec sec--tight surface-paper" aria-labelledby="next-title">
+<section class="sec sec--tight surface-paper sheet" aria-labelledby="next-title">
   <div class="shell split">
     <h2 id="next-title" style="font-size:var(--fs-h2)">Next project</h2>
     <a class="card" href="/work/swiftly/" style="text-decoration:none;display:grid;gap:.8rem;justify-items:start">${status('concept', 'Proposed venture, internal prototype')}<h3 style="font-size:1.8rem;margin:0">Swiftly</h3><p>How Africa moves and gathers.</p><span class="link">View project${icon.arrow}</span></a>
@@ -179,7 +184,7 @@ export function swiftlyPage() {
     ${chapter('What happens next', `<p>Swiftly is being developed as a studio venture. We are open to conversations with transport operators, event organisers and partners who want to help shape it.</p><div class="note">Swiftly is not a live product, and nothing on this page should be read as a commercial offer or launch date.</div><p>${link('/contact/', 'Talk to us about Swiftly')}</p>`)}
   </div>
 </section>
-<section class="sec sec--tight surface-paper" aria-labelledby="next-title">
+<section class="sec sec--tight surface-paper sheet" aria-labelledby="next-title">
   <div class="shell split">
     <h2 id="next-title" style="font-size:var(--fs-h2)">Next project</h2>
     <a class="card" href="/work/zengly/" style="text-decoration:none;display:grid;gap:.8rem;justify-items:start">${status('progress', 'App in pre-launch')}<h3 style="font-size:1.8rem;margin:0">Zengly</h3><p>Money that moves the way friends do.</p><span class="link">View case study${icon.arrow}</span></a>
@@ -189,6 +194,28 @@ ${ctaBand({ title: 'Have a venture idea of your own?', primary: ['/ventures/', '
   return { path: '/work/swiftly/', title: 'Swiftly: Mobility & Experience Commerce Venture', description: 'Swiftly is a proposed Lynexa studio venture for travel, tickets and experiences in Nigeria. See the strategy, specification and prototypes behind it.', body, jsonld: [crumbLd(trail)] };
 }
 
+const SITES = [
+  {
+    name: 'Zengly', host: 'zenglypay.com', url: 'https://zenglypay.com/', shot: 'zengly', status: ['live', 'Live'],
+    tone: 'warm',
+    text: 'Marketing site for a Nigerian social-finance app. It tells the product story, introduces Vaniti and collects early-access sign-ups, in English and other languages.',
+    meta: [['Type', 'Product marketing site'], ['Our role', 'Messaging, design, engineering'], ['Built with', 'Next.js on Netlify']],
+    more: ['/work/zengly/', 'Read the Zengly case study']
+  },
+  {
+    name: 'CreateMyCVNow', host: 'createmycvnow.netlify.app', url: 'https://createmycvnow.netlify.app/', shot: 'cv', status: ['live', 'Live'],
+    tone: 'mint',
+    text: 'A web app, not just a website: Nigerian job seekers upload a CV, get an ATS score and export a stronger version. Payments and AI processing run server-side.',
+    meta: [['Type', 'AI web application'], ['Our role', 'Product, design, engineering'], ['Built with', 'React, Vite, Netlify Functions']]
+  },
+  {
+    name: 'Kelvin Ekuhoho', host: 'kelvinekuhoho.com', url: 'https://kelvinekuhoho.com/', shot: 'kelvin', status: ['live', 'Live'],
+    tone: 'night',
+    text: 'Personal portfolio for our founder: an editorial, dark-mode site with a cinematic intro, selected work and a direct line for project enquiries.',
+    meta: [['Type', 'Portfolio site'], ['Our role', 'Art direction, design, engineering'], ['Built with', 'Hand-built static site on Netlify']]
+  }
+];
+
 export function websitesPage() {
   const trail = [['/', 'Home'], ['/websites/', 'Websites']];
   const body = `
@@ -197,57 +224,76 @@ export function websitesPage() {
     ${breadcrumbs(trail)}
     <div class="page-hero__grid">
       <h1>Websites we’ve designed and built.</h1>
-      <p class="lead">For many companies the website is the first product anyone touches. We design and engineer marketing and product sites with the same care as the apps behind them.</p>
+      <div>
+        <p class="lead" style="margin-top:0">For many companies the website is the first product anyone touches. We design and engineer sites with the same care as the apps behind them, and test every one on a phone first.</p>
+        <ul class="site-index" aria-label="Jump to a website">${SITES.map((x, i) => `<li><a href="#site-${i + 1}">${x.name}</a></li>`).join('')}<li><a href="#site-lynexa">Lynexa</a></li></ul>
+      </div>
     </div>
   </div>
 </section>
-<section class="sec sec--tight" aria-label="Websites">
+${SITES.map((x, i) => `
+<section class="sec site-show ${i % 2 ? 'surface-paper' : ''} sheet" id="site-${i + 1}" aria-labelledby="site-${i + 1}-title">
   <div class="shell">
-    <article class="site-card">
-      <a class="site-card__media" href="${ZENGLY_SITE}" target="_blank" rel="noopener noreferrer" aria-label="Zengly website (opens in a new tab)" style="background:#efe1c7">${img('zengly-sign', 'Zengly campaign artwork used on the marketing site', { sizes: '(min-width: 900px) 55vw, 100vw' })}</a>
-      <div class="site-card__body">
-        ${status('live', 'Live')}
-        <h2>Zengly</h2>
-        <p>Marketing site for a Nigerian social-finance app: product story, feature architecture, scroll-driven motion and early-access sign-up.</p>
-        <ul class="tags"><li>Messaging</li><li>Web design</li><li>Front-end engineering</li><li>Motion</li></ul>
-        ${link(ZENGLY_SITE, 'Visit zenglypay.com')}
+    <div class="site-show__stage site-show__stage--${x.tone}" data-reveal>
+      ${browser(`site-${x.shot}-desktop`, `${x.name} website on desktop`, x.host, { sizes: '(min-width: 1100px) 900px, 88vw' })}
+      ${phone(`site-${x.shot}-mobile`, `${x.name} website on a phone`, { sizes: '(min-width: 900px) 200px, 28vw', cls: 'site-show__phone' })}
+    </div>
+    <div class="site-show__info">
+      <div>
+        <p class="site-show__n">${String(i + 1).padStart(2, '0')} / ${String(SITES.length).padStart(2, '0')}</p>
+        <h2 id="site-${i + 1}-title">${x.name}</h2>
+        ${status(...x.status)}
       </div>
-    </article>
-    <article class="site-card">
-      <div class="site-card__media swiftly-media">${img('lagos-collaboration', '', { cls: 'bg', sizes: '(min-width: 900px) 55vw, 100vw' }).replace('class="bg"', 'class="bg" style="position:absolute;inset:0;opacity:.28"')}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</div>
-      <div class="site-card__body">
-        ${status('concept', 'Internal prototype')}
-        <h2>Swiftly</h2>
-        <p>Marketing site prototype for a proposed mobility and experience-commerce venture, including a fare comparison module. Not publicly launched.</p>
-        <ul class="tags"><li>Product specification</li><li>Web design</li><li>Fare comparison</li></ul>
-        ${link('/work/swiftly/', 'About Swiftly')}
+      <div class="site-show__body">
+        <p>${x.text}</p>
+        <dl class="site-show__meta">${x.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+        <div class="actions">
+          <a class="btn btn--primary" href="${x.url}" target="_blank" rel="noopener noreferrer" data-magnetic><span>Visit ${x.host}</span><span class="sr-only"> (opens in a new tab)</span></a>
+          ${x.more ? btn(x.more[0], x.more[1], 'secondary') : ''}
+        </div>
       </div>
-    </article>
-    <article class="site-card">
-      <div class="site-card__media" style="background:var(--graphite)"><span style="color:var(--bone);font-size:clamp(2.2rem,6vw,4.5rem);font-weight:750;letter-spacing:-.05em;display:flex;gap:1rem;align-items:center"><img src="/assets/img/lynexa-mark-64.png" width="64" height="64" alt="">lynexa.co</span></div>
-      <div class="site-card__body">
-        ${status('live', 'Live')}
-        <h2>Lynexa</h2>
-        <p>The site you are on: a fast, accessible multi-page studio site, hand-built without a front-end framework, with structured data and working enquiry forms.</p>
-        <ul class="tags"><li>Information architecture</li><li>Design system</li><li>Static site engineering</li><li>SEO</li></ul>
-      </div>
-    </article>
+    </div>
+  </div>
+</section>`).join('')}
+
+<section class="sec surface-dark sheet" id="site-lynexa" aria-labelledby="lynexa-site-title">
+  <div class="shell split">
+    <div>
+      <h2 id="lynexa-site-title" style="font-size:var(--fs-h2);max-width:12ch">And this one.</h2>
+      ${status('live', 'Live')}
+    </div>
+    <div style="display:grid;gap:1.25rem;align-content:end">
+      <p class="lead">lynexa.co is a fast, accessible multi-page studio site, hand-built without a front-end framework, with structured data, staged enquiry forms and a design system shared across every page.</p>
+      <ul class="tags"><li>Information architecture</li><li>Design system</li><li>Static site engineering</li><li>SEO and accessibility</li></ul>
+    </div>
   </div>
 </section>
-<section class="sec surface-paper" aria-labelledby="svc-title">
+
+<section class="sec sheet" aria-labelledby="dev-title">
+  <div class="shell">
+    <h2 id="dev-title" style="font-size:1.6rem">In development</h2>
+    <div class="ventures-list" style="margin-top:1.5rem">
+      <div class="ventures-list__row"><h3>Swiftly</h3><p>Marketing site prototype for a proposed mobility venture, including a fare comparison module. Not publicly launched.</p>${status('concept', 'Internal prototype')}</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec surface-paper sheet" aria-labelledby="svc-title">
   <div class="shell">
     ${head2('What every website includes', 'Each project is scoped to what the site needs to do. These are our defaults.', { id: 'svc-title' })}
-    <div class="cards cards--3">
-      <div class="card"><h3>Messaging first</h3><p>What to say, to whom and in what order, settled before the design starts.</p></div>
-      <div class="card"><h3>Mobile treated as equal</h3><p>Every page designed and tested at phone widths, not just squeezed down.</p></div>
-      <div class="card"><h3>Speed and accessibility</h3><p>Optimised images and fonts, minimal JavaScript, contrast and keyboard access checked.</p></div>
-      <div class="card"><h3>Search foundations</h3><p>Metadata, structured data, sitemaps and redirects for any old pages.</p></div>
-      <div class="card"><h3>Working lead capture</h3><p>Forms that actually reach your inbox, with spam protection.</p></div>
-      <div class="card"><h3>Clean handoff</h3><p>Hosting set up on your accounts, with notes on how to edit and maintain the site.</p></div>
-    </div>
-    <p style="margin-top:2rem">${link('/services/web-design-development/', 'About our web design and development service')}</p>
+    <ol class="scards scards--grid">
+      ${[
+        ['Messaging first', 'What to say, to whom and in what order, settled before the design starts.'],
+        ['Phone first', 'Every page designed and tested at phone widths, not squeezed down from desktop.'],
+        ['Speed and accessibility', 'Optimised images and fonts, minimal JavaScript, contrast and keyboard access checked.'],
+        ['Search foundations', 'Metadata, structured data, sitemaps and redirects for any old pages.'],
+        ['Working lead capture', 'Forms and chat that actually reach your inbox, with spam protection.'],
+        ['Clean handoff', 'Hosting set up on your accounts, with notes on how to edit and maintain the site.']
+      ].map(([t, d], i) => `<li class="scard"><div class="scard__top"><h3>${t}</h3><span class="scard__n" aria-hidden="true">0${i + 1}</span></div><p>${d}</p></li>`).join('')}
+    </ol>
+    <p class="center-cta">${btn('/services/web-design-development/', 'About our website service', 'secondary', ' data-magnetic')}</p>
   </div>
 </section>
 ${ctaBand({ title: 'Have a site that deserves better?', primary: ['/start-a-project/?service=web-design-development', 'Start a website project'] })}`;
-  return { path: '/websites/', title: 'Websites We’ve Designed and Built', description: 'Marketing and product websites designed and engineered by Lynexa, including Zengly and the Swiftly prototype. Fast, accessible, mobile-first sites.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/websites/', title: 'Websites We’ve Designed and Built', description: 'Websites and web apps designed and engineered by Lynexa: Zengly, CreateMyCVNow and kelvinekuhoho.com. Fast, accessible, phone-first sites.', body, jsonld: [crumbLd(trail)] };
 }

@@ -5,19 +5,46 @@ import { SERVICES } from '../content/services.mjs';
 // Forms post natively to Netlify Forms (detected at deploy from this static HTML).
 // Client-side validation enhances them; they still work without JavaScript.
 
-const wrap = (name, action, inner, submitLabel) => `
-<form class="form" name="${name}" method="POST" action="${action}" data-netlify="true" netlify-honeypot="bot-field" data-validate novalidate>
-  <input type="hidden" name="form-name" value="${name}">
-  <p class="hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-  <div class="form-summary" role="alert" tabindex="-1"></div>
-  ${inner}
+const consent = (name) => `
   <div class="field" data-field data-msg="Please agree to the privacy notice so we can store and reply to your message.">
     <label class="consent"><input type="checkbox" name="privacy_consent" value="Agreed" required aria-describedby="${name}-consent-err"><span>I agree that Lynexa may store the details I send and use them to reply to me, as described in the <a href="/privacy/">privacy notice</a>.</span></label>
     <p class="error" id="${name}-consent-err"></p>
-  </div>
+  </div>`;
+
+const open = (name, action, extra = '') => `
+<form class="form" name="${name}" method="POST" action="${action}" data-netlify="true" netlify-honeypot="bot-field" data-validate novalidate${extra}>
+  <input type="hidden" name="form-name" value="${name}">
+  <p class="hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+  <div class="form-summary" role="alert" tabindex="-1"></div>`;
+
+// Single-page form (short forms such as the contact message).
+const wrap = (name, action, inner, submitLabel) => `${open(name, action)}
+  ${inner}
+  ${consent(name)}
   <div class="form__foot">
     <button class="btn btn--primary" type="submit"><span>${submitLabel}</span></button>
     <p>We reply within two working days.</p>
+  </div>
+</form>`;
+
+// Staged form: one short step at a time. Without JavaScript every step shows and it submits as one form.
+const stepped = (name, action, steps, submitLabel) => `${open(name, action, ' data-stepper')}
+  <div class="stepper" aria-hidden="true">
+    <ol class="stepper__list">${steps.map(([t], i) => `<li data-step-tab="${i}"><span>${i + 1}</span>${t}</li>`).join('')}</ol>
+    <div class="stepper__bar"><span data-step-bar></span></div>
+  </div>
+  <p class="sr-only" aria-live="polite" data-step-status></p>
+  ${steps.map(([t, html], i) => `
+  <div class="form__step" role="group" aria-labelledby="${name}-step-${i}" data-step="${i}">
+    <h3 class="form__step-title" id="${name}-step-${i}" tabindex="-1"><span class="sr-only">Step ${i + 1} of ${steps.length}: </span>${t}</h3>
+    ${html}
+    ${i === steps.length - 1 ? consent(name) : ''}
+  </div>`).join('')}
+  <div class="form__nav">
+    <button class="btn btn--secondary" type="button" data-prev hidden>${icon.back}<span>Back</span></button>
+    <button class="btn btn--primary" type="button" data-next><span>Continue</span></button>
+    <button class="btn btn--primary" type="submit" data-submit><span>${submitLabel}</span></button>
+    <p>Takes about two minutes. We reply within two working days.</p>
   </div>
 </form>`;
 
@@ -58,51 +85,41 @@ const pills = (name, form, label, options, { required = false, msg = '', hint = 
 export function projectForm() {
   const f = 'project';
   const help = [...SERVICES.map((s) => [s.slug, s.nav]), ['not-sure', 'Not sure yet']];
-  return wrap('project-enquiry', '/project-received/', `
-  <div class="form__group"><h3 class="form__group-title"><span aria-hidden="true">1</span>About you</h3>
-  <div class="form__row">
-    ${text('name', f, 'Full name', { required: true, auto: 'name', msg: 'Enter your name so we know who to reply to.' })}
-    ${text('email', f, 'Email address', { type: 'email', required: true, auto: 'email', msg: 'Enter your email address so we can reply.' })}
-  </div>
-  <div class="form__row">
-    ${text('company', f, 'Company or startup name', { auto: 'organization' })}
-    ${text('phone', f, 'Contact number', { type: 'tel', auto: 'tel' })}
-  </div></div>
-  <div class="form__group"><h3 class="form__group-title"><span aria-hidden="true">2</span>The project</h3>
-  <fieldset class="field" data-field data-group data-required data-msg="Choose at least one option, or “Not sure yet”." aria-describedby="${f}-help-err">
-    <legend>What do you need help with?</legend>
-    <p class="hint">Choose all that apply.</p>
-    <div class="choices">${help.map(([v, l]) => `<label class="choice"><input type="checkbox" name="help_with" value="${v}"><span>${l}</span></label>`).join('')}</div>
-    <input type="hidden" name="services_needed" value="">
-    <p class="error" id="${f}-help-err"></p>
-  </fieldset>
-  ${area('description', f, 'Tell us about the project', { required: true, min: 30, hint: 'What are you building, who is it for, and what do you need from us?', msg: 'Tell us a little about the project.' })}
-  ${pills('stage', f, 'Current stage', ['Just an idea', 'Researching and validating', 'Designing', 'Building', 'Live and growing', 'Existing business, new product'], { required: true, msg: 'Choose the stage closest to where you are.' })}
-  </div>
-  <div class="form__group"><h3 class="form__group-title"><span aria-hidden="true">3</span>Timing and budget</h3>
-  ${pills('launch', f, 'Target launch', ['Within 3 months', '3 to 6 months', '6 to 12 months', 'Over a year', 'No fixed date'], { required: true, msg: 'Choose a rough target, or “No fixed date”.' })}
-  ${pills('budget', f, 'Expected budget', ['Under $10k', '$10k to $25k', '$25k to $50k', 'Over $50k', 'Not sure yet', 'Venture partnership'], { hint: 'Approximate, in US dollars or the naira equivalent.' })}
-  ${select('source', f, 'How did you hear about Lynexa?', ['Search engine', 'LinkedIn', 'Referral from someone', 'Social media', 'Event', 'Our work on another product', 'Other'])}
-  </div>`, 'Send project brief');
+  return stepped('project-enquiry', '/project-received/', [
+    ['About you', `
+      ${text('name', f, 'Full name', { required: true, auto: 'name', msg: 'Enter your name so we know who to reply to.' })}
+      ${text('email', f, 'Email address', { type: 'email', required: true, auto: 'email', msg: 'Enter your email address so we can reply.' })}
+      ${text('company', f, 'Company or startup name', { auto: 'organization' })}`],
+    ['The project', `
+      <fieldset class="field" data-field data-group data-required data-msg="Choose at least one option, or “Not sure yet”." aria-describedby="${f}-help-err">
+        <legend>What do you need help with?</legend>
+        <p class="hint">Choose all that apply.</p>
+        <div class="choices">${help.map(([v, l]) => `<label class="choice"><input type="checkbox" name="help_with" value="${v}"><span>${l}</span></label>`).join('')}</div>
+        <input type="hidden" name="services_needed" value="">
+        <p class="error" id="${f}-help-err"></p>
+      </fieldset>
+      ${area('description', f, 'Tell us about it', { required: true, min: 30, hint: 'What are you building, who is it for, and where are you now?', msg: 'Tell us a little about the project.' })}`],
+    ['Timing and budget', `
+      ${pills('launch', f, 'When would you like to launch?', ['Within 3 months', '3 to 6 months', '6 to 12 months', 'No fixed date'], { required: true, msg: 'Choose a rough target, or “No fixed date”.' })}
+      ${pills('budget', f, 'Expected budget', ['Under $10k', '$10k to $25k', '$25k to $50k', 'Over $50k', 'Not sure yet', 'Venture partnership'], { hint: 'Approximate, in US dollars or the naira equivalent.' })}`]
+  ], 'Send project brief');
 }
 
 export function ventureForm() {
   const f = 'venture';
-  return wrap('venture-application', '/application-received/', `
-  <div class="form__row">
-    ${text('name', f, 'Your name', { required: true, auto: 'name', msg: 'Enter your name.' })}
-    ${text('email', f, 'Email address', { type: 'email', required: true, auto: 'email', msg: 'Enter your email address so we can reply.' })}
-  </div>
-  <div class="form__row">
-    ${text('venture', f, 'Venture or working name', { required: true, msg: 'Give your idea a name, even a working one.' })}
-    ${text('website', f, 'Website or deck link', { type: 'url', auto: 'url' })}
-  </div>
-  ${text('one_liner', f, 'Your idea in one sentence', { required: true, msg: 'Describe the idea in one sentence.' })}
-  ${area('details', f, 'The problem, the customer and where you are today', { required: true, min: 50, hint: 'Who has the problem, how they solve it now, what you have done so far, and who is on the team.', msg: 'Tell us more about the idea and where you are.' })}
-  <div class="form__row">
-    ${select('model', f, 'What kind of partnership interests you?', ['Startup enablement', 'Strategic product partnership', 'Hybrid cash and equity', 'Equity for service', 'Build, operate, transfer', 'Not sure yet'], { required: true, msg: 'Choose the closest option, or “Not sure yet”.' })}
-    ${select('stage', f, 'Stage', ['Idea', 'Validated with customers', 'Prototype', 'Early product', 'Revenue'], { required: true, msg: 'Choose your current stage.' })}
-  </div>`, 'Submit idea');
+  return stepped('venture-application', '/application-received/', [
+    ['About you', `
+      ${text('name', f, 'Your name', { required: true, auto: 'name', msg: 'Enter your name.' })}
+      ${text('email', f, 'Email address', { type: 'email', required: true, auto: 'email', msg: 'Enter your email address so we can reply.' })}`],
+    ['The idea', `
+      ${text('venture', f, 'Venture or working name', { required: true, msg: 'Give your idea a name, even a working one.' })}
+      ${text('one_liner', f, 'Your idea in one sentence', { required: true, msg: 'Describe the idea in one sentence.' })}
+      ${area('details', f, 'The problem, the customer and where you are today', { required: true, min: 50, hint: 'Who has the problem, how they solve it now, what you have done so far, and who is on the team.', msg: 'Tell us more about the idea and where you are.' })}`],
+    ['Partnership', `
+      ${pills('stage', f, 'Stage', ['Idea', 'Validated with customers', 'Prototype', 'Early product', 'Revenue'], { required: true, msg: 'Choose your current stage.' })}
+      ${pills('model', f, 'What kind of partnership interests you?', ['Startup enablement', 'Product partnership', 'Cash and equity', 'Equity for service', 'Build, operate, transfer', 'Not sure yet'], { required: true, msg: 'Choose the closest option, or “Not sure yet”.' })}
+      ${text('website', f, 'Website or deck link', { type: 'url', auto: 'url' })}`]
+  ], 'Submit idea');
 }
 
 export function messageForm() {
@@ -133,6 +150,7 @@ export function contactPage() {
       <p style="font-weight:700;font-size:1.2rem;margin-bottom:1rem">${SITE.legalName}</p>
       <div class="channels">
         <div class="channel"><span class="channel__icon">${icon.mail}</span><div><h2>Email</h2><a href="mailto:${SITE.email}">${SITE.email}</a><small>Main enquiries</small><p style="margin-top:.75rem"><a href="mailto:${SITE.emailSecondary}" style="font-size:1rem">${SITE.emailSecondary}</a></p><small>Alternative address</small></div></div>
+        <div class="channel"><span class="channel__icon channel__icon--wa">${icon.whatsapp}</span><div><h2>WhatsApp</h2><a href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">Chat with us on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a><small>Quickest for short questions</small></div></div>
         <div class="channel"><span class="channel__icon">${icon.phone}</span><div><h2>Phone</h2><a href="tel:${SITE.phoneIntl}">${SITE.phoneDisplay}</a><small>International: +234 703 827 1812</small></div></div>
         <div class="channel"><span class="channel__icon">${icon.pin}</span><div><h2>Address</h2><address>${SITE.address.lines.join('<br>')}</address>${link(SITE.mapsUrl, 'Get directions in Google Maps')}</div></div>
       </div>

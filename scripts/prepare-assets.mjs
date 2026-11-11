@@ -28,7 +28,13 @@ const jobs = [
   ['lagos-strategy-session.jpg', 'lagos-strategy-session', [800, 1600], 72],
   ['kelvin.jpg', 'kelvin-ekuhoho', [480, 768], 80],
   ['swiftly-full-logo.png', 'swiftly-logo', [383], 90],
-  ['zengly_text_logo.png', 'zengly-logo', [400], 90]
+  ['zengly_text_logo.png', 'zengly-logo', [400], 90],
+  ['site-zengly-desktop.png', 'site-zengly-desktop', [720, 1440], 78],
+  ['site-kelvin-desktop.png', 'site-kelvin-desktop', [720, 1440], 78],
+  ['site-cv-desktop.png', 'site-cv-desktop', [720, 1440], 78],
+  ['site-zengly-mobile.png', 'site-zengly-mobile', [390], 80],
+  ['site-kelvin-mobile.png', 'site-kelvin-mobile', [390], 80],
+  ['site-cv-mobile.png', 'site-cv-mobile', [390], 80]
 ];
 
 for (const [file, name, widths, quality] of jobs) {

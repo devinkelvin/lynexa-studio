@@ -11,7 +11,9 @@ export const icon = {
   phone: svg('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>'),
   pin: svg('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'),
   plus: svg('<path d="M12 5v14M5 12h14"/>'),
-  check: svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>')
+  check: svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+  back: svg('<path d="M19 12H5M11 6l-6 6 6 6"/>'),
+  whatsapp: '<svg class="icon icon--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>'
 };
 
 // ---------- Images ----------
@@ -22,12 +24,15 @@ const DIMS = {
   'zengly-vaniti-intro': [340, 529], 'zengly-sign': [1080, 1080], 'zengly-podium': [1080, 1080],
   'zengly-gift': [1080, 1080], 'zengly-friends': [1200, 1600], 'lagos-professionals': [1600, 1294],
   'lagos-collaboration': [1600, 1067], 'lagos-strategy-session': [1600, 1067], 'kelvin-ekuhoho': [768, 1024],
-  'swiftly-logo': [383, 101], 'zengly-logo': [400, 121]
+  'swiftly-logo': [383, 101], 'zengly-logo': [400, 121],
+  'site-zengly-desktop': [1440, 900], 'site-kelvin-desktop': [1440, 900], 'site-cv-desktop': [1440, 900],
+  'site-zengly-mobile': [390, 844], 'site-kelvin-mobile': [390, 844], 'site-cv-mobile': [390, 844]
 };
 const WIDTHS = {
   'zengly-sign': [540, 1080], 'zengly-podium': [540, 1080], 'zengly-gift': [540, 1080], 'zengly-friends': [600, 1200],
   'lagos-professionals': [800, 1600], 'lagos-collaboration': [800, 1600], 'lagos-strategy-session': [800, 1600],
-  'kelvin-ekuhoho': [480, 768]
+  'kelvin-ekuhoho': [480, 768],
+  'site-zengly-desktop': [720, 1440], 'site-kelvin-desktop': [720, 1440], 'site-cv-desktop': [720, 1440]
 };
 export function img(name, alt, { sizes = '100vw', cls = '', eager = false } = {}) {
   const [w, h] = DIMS[name];
@@ -36,6 +41,24 @@ export function img(name, alt, { sizes = '100vw', cls = '', eager = false } = {}
   const src = `/assets/img/${name}-${ws[ws.length - 1]}.webp`;
   return `<img class="${cls}" src="${src}" srcset="${srcset}" sizes="${sizes}" width="${w}" height="${h}" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
 }
+
+// ---------- Device mockups ----------
+// Phone frame for any mobile screenshot. Purely CSS; the screenshot sits in the screen area.
+export const phone = (name, alt, { sizes = '(min-width: 900px) 22vw, 60vw', cls = '', eager = false, caption = '' } = {}) => `
+  <figure class="device ${cls}">
+    <div class="device__frame">
+      <span class="device__island" aria-hidden="true"></span>
+      <div class="device__screen">${img(name, alt, { sizes, eager })}</div>
+    </div>
+    ${caption ? `<figcaption>${caption}</figcaption>` : ''}
+  </figure>`;
+
+// Browser window for desktop website screenshots.
+export const browser = (name, alt, host, { sizes = '(min-width: 900px) 60vw, 100vw' } = {}) => `
+  <div class="browser">
+    <div class="browser__bar" aria-hidden="true"><span class="browser__dots"><i></i><i></i><i></i></span><span class="browser__url">${host}</span></div>
+    <div class="browser__screen">${img(name, alt, { sizes })}</div>
+  </div>`;
 
 // ---------- Small components ----------
 export const btn = (href, label, variant = 'primary', attrs = '') =>
@@ -65,16 +88,49 @@ export const breadcrumbs = (trail) => `
     ${trail.map(([href, label], i) => i === trail.length - 1 ? `<li><span aria-current="page">${label}</span></li>` : `<li><a href="${href}">${label}</a></li>`).join('')}
   </ol></nav>`;
 
-export const ctaBand = ({ title = 'Have an idea worth building?', text = 'Tell us what you are working on. We reply within two working days with an honest view of whether, and how, we can help.', primary = ['/start-a-project/', 'Start a project'], secondary = ['/contact/', 'Other ways to reach us'] } = {}) => `
-  <section class="cta-band surface-dark" id="contact" aria-labelledby="cta-title">
+export const ctaBand = ({ title = 'Have an idea worth building?', text = 'Tell us what you are working on. We reply within two working days with an honest view of whether, and how, we can help.', primary = ['/start-a-project/', 'Start a project'], secondary = null } = {}) => `
+  <section class="cta-band surface-dark sheet" id="contact" aria-labelledby="cta-title">
     <div class="shell cta-band__inner">
       <h2 id="cta-title">${title}</h2>
-      <div class="cta-band__side">
-        <p>${text}</p>
-        <div class="actions">${btn(primary[0], primary[1], 'light')}${btn(secondary[0], secondary[1], 'ghost-light')}</div>
+      <p>${text}</p>
+      <div class="actions">
+        ${btn(primary[0], primary[1], 'light', ' data-magnetic')}
+        ${secondary ? btn(secondary[0], secondary[1], 'ghost-light') : `<a class="btn btn--ghost-light" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}<span>Chat on WhatsApp</span><span class="sr-only"> (opens in a new tab)</span></a>`}
       </div>
     </div>
   </section>`;
+
+// Founder feature, used on the home and About pages.
+export const founder = ({ id = 'founder-title', full = false } = {}) => `
+  <div class="founder-card">
+    <figure class="founder-card__photo" data-reveal>
+      ${img('kelvin-ekuhoho', 'Kelvin Ekuhoho, founder and CEO of Lynexa', { sizes: '(min-width: 900px) 34vw, 100vw' })}
+      <figcaption><b>Kelvin Ekuhoho</b><span>Founder &amp; CEO, Lead Product Designer</span></figcaption>
+    </figure>
+    <div class="founder-card__panel">
+      <p class="founder-card__kicker">Meet the founder</p>
+      <h2 id="${id}">“I build things people actually use.”</h2>
+      <p>Kelvin is a product designer and builder with more than seven years of experience, much of it designing digital banking and payment products at Nigerian banks. He started Lynexa so founders could get one senior team that turns an idea into a credible, working product, without burning a year and five vendors on the way.</p>
+      <dl class="founder-card__facts">
+        <div><dt>Experience</dt><dd>7+ years in product design</dd></div>
+        <div><dt>Background</dt><dd>Digital banking and payments at Sterling Bank and Polaris Bank</dd></div>
+        <div><dt>Leads</dt><dd>Product, design and venture building at Lynexa</dd></div>
+      </dl>
+      ${full ? `<details class="expand">
+          <summary>${icon.plus}Read the full biography</summary>
+          <div>
+            <p>Before founding Lynexa, Kelvin worked with financial institutions including Sterling Bank and Polaris Bank, contributing to digital banking platforms, electronic payment systems, lending products and customer-facing financial experiences. That work gave him a grounding in payment infrastructure, banking operations, regulatory requirements and the trust that technology for regulated industries has to earn.</p>
+            <p>He has also led product design in the energy and infrastructure technology sector: enterprise platforms, operational dashboards, customer applications and data tools that simplify complex workflows. His practice spans product strategy, user research, systems thinking, interaction design, design systems, web development and cross-functional delivery.</p>
+            <p>As founder and CEO of Lynexa, Kelvin leads a multidisciplinary team across product design, software engineering and business development, guiding products from research and concept through architecture, MVP, market positioning and commercial readiness. Under his leadership Lynexa is developing ventures across fintech, mobility, legal technology, property technology and digital productivity, including Zengly and Swiftly.</p>
+          </div>
+        </details>` : ''}
+      <div class="founder-card__links">
+        ${full ? '' : link('/about/', 'About Lynexa')}
+        ${link('https://kelvinekuhoho.com/', 'Portfolio')}
+        ${link(SITE.linkedin, 'LinkedIn')}
+      </div>
+    </div>
+  </div>`;
 
 // ---------- JSON-LD ----------
 export const orgLd = () => ({
@@ -142,21 +198,24 @@ const footer = () => `
       <div class="footer-brand">
         <a class="brand brand--light" href="/" aria-label="Lynexa home"><img src="/assets/img/lynexa-mark-64.png" width="32" height="32" alt=""><span>Lynexa</span></a>
         <p>We help founders and businesses turn ideas into products people actually use: strategy, design, engineering and launch, from one studio in Lagos.</p>
-        ${btn('/start-a-project/', 'Start a project', 'light')}
+        <div class="pills">
+          <a class="pill" href="mailto:${SITE.email}">${SITE.email}</a>
+          <a class="pill" href="tel:${SITE.phoneIntl}">${SITE.phoneDisplay}</a>
+          <a class="pill pill--wa" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
       </div>
       <nav class="footer-cols" aria-label="Footer">
         <div><h2>Studio</h2><ul>
           <li><a href="/about/">About</a></li><li><a href="/process/">Process</a></li><li><a href="/ventures/">Ventures</a></li><li><a href="/contact/">Contact</a></li>
         </ul></div>
         <div><h2>Work</h2><ul>
-          <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li>
+          <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="https://kelvinekuhoho.com/" target="_blank" rel="noopener noreferrer">Founder portfolio<span class="sr-only"> (opens in a new tab)</span></a></li>
         </ul></div>
         <div><h2>Services</h2><ul>
           <li><a href="/services/product-design/">Product design</a></li><li><a href="/services/mvp-development/">MVP development</a></li><li><a href="/services/web-design-development/">Websites</a></li><li><a href="/services/brand-identity/">Brand identity</a></li><li><a href="/services/">All services</a></li>
         </ul></div>
         <div><h2>Contact</h2><ul>
-          <li><a href="mailto:${SITE.email}">${SITE.email}</a></li>
-          <li><a href="tel:${SITE.phoneIntl}">${SITE.phoneDisplay}</a></li>
+          <li><a href="/start-a-project/">Start a project</a></li>
           <li><a href="${SITE.mapsUrl}" target="_blank" rel="noopener noreferrer">Ikorodu, Lagos<span class="sr-only"> (directions open in a new tab)</span></a></li>
           <li><a href="${SITE.linkedin}" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a></li>
         </ul></div>
@@ -209,6 +268,8 @@ ${header(path)}
 ${body}
 </main>
 ${footer()}
+<aside aria-label="Quick contact"><a class="wa-float" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer" aria-label="Chat with Lynexa on WhatsApp (opens in a new tab)">${icon.whatsapp}<span class="wa-float__label">Chat on WhatsApp</span></a></aside>
+<div class="cursor" aria-hidden="true" data-cursor><span class="cursor__label" data-cursor-label></span></div>
 </body>
 </html>`;
 }

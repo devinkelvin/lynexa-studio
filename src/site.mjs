@@ -26,6 +26,8 @@ export const SITE = {
   founder: 'Kelvin Ekuhoho'
 };
 
+SITE.whatsapp = '2347038271812';
+SITE.whatsappUrl = 'https://wa.me/' + SITE.whatsapp + '?text=' + encodeURIComponent('Hello Lynexa, I would like to talk about a project.');
 SITE.mapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(SITE.address.full);
 
 export const NAV = [

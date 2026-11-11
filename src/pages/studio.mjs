@@ -1,4 +1,4 @@
-import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd } from '../lib.mjs';
+import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 import { ventureForm } from './forms.mjs';
 
@@ -30,7 +30,7 @@ export function aboutPage() {
     </div>
   </div>
 </section>
-<section class="sec surface-paper" aria-labelledby="mv-title">
+<section class="sec surface-paper sheet" aria-labelledby="mv-title">
   <div class="shell">
     <h2 id="mv-title" class="sr-only">Vision and mission</h2>
     <div class="reasons">
@@ -50,7 +50,7 @@ export function aboutPage() {
     </div>
   </div>
 </section>
-<section class="sec surface-dark" aria-labelledby="diff-title">
+<section class="sec surface-dark sheet" aria-labelledby="diff-title">
   <div class="shell split">
     <div>
       <h2 id="diff-title" style="font-size:var(--fs-h2);max-width:12ch">Committed to early-stage founders</h2>
@@ -64,30 +64,10 @@ export function aboutPage() {
     </ul>
   </div>
 </section>
-<section class="sec" id="founder" aria-labelledby="founder-title">
-  <div class="shell founder">
-    <div class="founder__photo" data-reveal>${img('kelvin-ekuhoho', 'Portrait of Kelvin Ekuhoho', { sizes: '(min-width: 900px) 40vw, 100vw' })}</div>
-    <div class="founder__body">
-      <h2 id="founder-title">Kelvin Ekuhoho</h2>
-      <p class="muted" style="margin-top:-.5rem">Founder &amp; CEO, Lead Product Designer</p>
-      <div class="bio">
-        <p>Kelvin is a product designer, technology entrepreneur and venture builder working where finance, design and software meet. He has more than seven years of experience across financial services, enterprise technology and product development.</p>
-        <p>Before founding Lynexa, he worked with financial institutions including Sterling Bank and Polaris Bank, contributing to digital banking platforms, electronic payment systems, lending products and customer-facing financial experiences.</p>
-        <details class="expand">
-          <summary>${icon.plus}Read the full biography</summary>
-          <div>
-            <p>That work gave him a grounding in payment infrastructure, banking operations, regulatory requirements and the trust that technology for regulated industries has to earn.</p>
-            <p>He has also led product design in the energy and infrastructure technology sector: enterprise platforms, operational dashboards, customer applications and data tools that simplify complex workflows. His practice spans product strategy, user research, systems thinking, interaction design, design systems, web development and cross-functional delivery.</p>
-            <p>As founder and CEO of Lynexa, Kelvin leads a multidisciplinary team across product design, software engineering and business development, guiding products from research and concept through architecture, MVP, market positioning and commercial readiness. Under his leadership Lynexa is developing ventures across fintech, mobility, legal technology, property technology and digital productivity, including Zengly and Swiftly.</p>
-            <p>His approach combines the discipline of financial systems with human-centred design and a startup operator’s commercial sense, with a particular focus on products that respond to real African behaviour while meeting the standards investors and institutions expect.</p>
-          </div>
-        </details>
-      </div>
-      ${link(SITE.linkedin, 'Kelvin on LinkedIn')}
-    </div>
-  </div>
+<section class="sec sheet" id="founder">
+  <div class="shell">${founder({ id: 'founder-title', full: true })}</div>
 </section>
-<section class="sec surface-paper" aria-labelledby="collab-title">
+<section class="sec surface-paper sheet" aria-labelledby="collab-title">
   <div class="shell">
     ${head2('Working with clients and partners', 'What you can expect from the first message onward.', { id: 'collab-title' })}
     <div class="cards cards--3">
@@ -155,7 +135,7 @@ export function processPage() {
     </article>`).join('')}
   </div>
 </section>
-<section class="sec surface-dark" aria-labelledby="start-title">
+<section class="sec surface-dark sheet" aria-labelledby="start-title">
   <div class="shell">
     ${head2('How a project starts', 'From first message to kick-off.', { id: 'start-title' })}
     <ol class="steps steps--4">
@@ -167,7 +147,7 @@ export function processPage() {
   </div>
 </section>
 <section class="sec" aria-labelledby="faq-title">
-  <div class="shell faq-wrap">${head2('Process questions', '', { id: 'faq-title' })}${faq(FAQ)}</div>
+  <div class="shell faq-block">${head2('Process questions', '', { id: 'faq-title' })}${faq(FAQ)}</div>
 </section>
 ${ctaBand()}`;
   return { path: '/process/', title: 'Our Process: Discover, Design, Build, Launch', description: 'How Lynexa takes a product from idea to launch in four phases, each ending with a concrete output: discovery brief, tested prototype, working product, live launch.', body, jsonld: [crumbLd(trail), faqLd(FAQ)] };
@@ -196,7 +176,7 @@ export function venturesPage() {
     </div>
   </div>
 </section>
-<section class="sec sec--tight surface-paper" aria-labelledby="studio-v-title">
+<section class="sec sec--tight surface-paper sheet" aria-labelledby="studio-v-title">
   <div class="shell split">
     <h2 id="studio-v-title" style="font-size:var(--fs-h2);max-width:12ch">We build our own ventures too.</h2>
     <div style="display:grid;gap:1rem;align-content:end;justify-items:start">
@@ -213,7 +193,7 @@ export function venturesPage() {
     </div>
   </div>
 </section>
-<section class="sec surface-dark" aria-labelledby="expect-title">
+<section class="sec surface-dark sheet" aria-labelledby="expect-title">
   <div class="shell split">
     <div>
       <h2 id="expect-title" style="font-size:var(--fs-h2);max-width:12ch">What we look for</h2>
@@ -239,7 +219,7 @@ export function venturesPage() {
     <div class="note" style="margin-top:2.5rem;max-width:52rem"><b>Please note:</b> Lynexa venture partnerships are not a funding programme or an offer of investment. Submitting an idea does not create any obligation on either side. Any partnership, equity or payment arrangement applies only once both parties have signed a written agreement. We recommend you take independent legal and financial advice before agreeing to any equity arrangement.</div>
   </div>
 </section>
-<section class="sec surface-paper" id="apply" aria-labelledby="apply-title">
+<section class="sec surface-paper sheet" id="apply" aria-labelledby="apply-title">
   <div class="shell contact-grid">
     <div>
       <h2 id="apply-title" style="font-size:var(--fs-h2);max-width:12ch">Submit your startup idea</h2>
