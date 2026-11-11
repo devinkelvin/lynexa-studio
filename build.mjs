@@ -1,76 +1,92 @@
-import { cp, mkdir, rm, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+// Lynexa static site build. Zero runtime dependencies: node build.mjs → dist/
+import { mkdir, rm, writeFile, readFile, cp } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { dirname, join } from 'node:path';
+import { layout } from './src/lib.mjs';
+import { SITE } from './src/site.mjs';
+import { SERVICES } from './src/content/services.mjs';
+import home from './src/pages/home.mjs';
+import { servicesIndex, servicePage } from './src/pages/services.mjs';
+import { workIndex, zenglyPage, swiftlyPage, websitesPage } from './src/pages/work.mjs';
+import { aboutPage, processPage, venturesPage } from './src/pages/studio.mjs';
+import { contactPage, startPage, thanksPages } from './src/pages/forms.mjs';
+import { privacyPage, termsPage, notFoundPage } from './src/pages/legal.mjs';
 
 const root = process.cwd();
-const client = join(root, 'dist', 'client');
-const server = join(root, 'dist', 'server');
-const files = [
-  'index.html',
-  'websites.html',
-  'style.css',
-  'script.js',
-  'motion.js',
-  'robots.txt',
-  'sitemap.xml',
-  'IMAGE_CREDITS.md',
-  'THIRD_PARTY_NOTICES.md'
-];
-const assets = [
-  'kelvin.jpg',
-  'lagos-collaboration.jpg',
-  'lagos-professionals.jpg',
-  'lagos-strategy-session.jpg',
-  'lynexa-full-official.png',
-  'lynexa-mark-official.png',
-  'swiftly-full-logo.png',
-  'zengly_text_logo.png',
-  'zengly-podium.png',
-  'zengly-sign.png',
-  'zengly-home-dark.png',
-  'zengly-home-light.png',
-  'zengly-menu.png',
-  'zengly-split-bill-group.jpg',
-  'zengly-vaniti-intro.png',
-  'zengly-vaniti-leaderboard.png',
-  'zengly-vaniti-sprayers.png'
+const out = join(root, 'dist');
+await rm(out, { recursive: true, force: true });
+await mkdir(join(out, 'assets'), { recursive: true });
+
+// Static files (images, fonts, icons)
+await cp(join(root, 'public'), out, { recursive: true });
+
+// Fingerprinted CSS/JS
+const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10);
+const css = await readFile(join(root, 'src/styles/site.css'), 'utf8');
+const js = await readFile(join(root, 'src/scripts/site.js'), 'utf8');
+const cssName = `site.${hash(css)}.css`;
+const jsName = `site.${hash(js)}.js`;
+await writeFile(join(out, 'assets', cssName), css);
+await writeFile(join(out, 'assets', jsName), js);
+
+const pages = [
+  home(), aboutPage(), servicesIndex(), ...SERVICES.map(servicePage),
+  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), venturesPage(),
+  contactPage(), startPage(), ...thanksPages(), privacyPage(), termsPage(), notFoundPage()
 ];
 
-await rm(join(root, 'dist'), { recursive: true, force: true });
-await mkdir(client, { recursive: true });
-await mkdir(server, { recursive: true });
+const seen = new Set();
+for (const p of pages) {
+  if (seen.has(p.path)) throw new Error(`Duplicate route ${p.path}`);
+  seen.add(p.path);
+  let html = layout(p)
+    .replace('/assets/site.css?v=__BUILD__', `/assets/${cssName}`)
+    .replace('/assets/site.js?v=__BUILD__', `/assets/${jsName}`);
+  const file = p.path === '/404' ? join(out, '404.html') : join(out, p.path, 'index.html');
+  await mkdir(dirname(file), { recursive: true });
+  await writeFile(file, html);
+}
 
-for (const file of files) await cp(join(root, file), join(client, file));
-await mkdir(join(client, 'assets'), { recursive: true });
-for (const asset of assets) await cp(join(root, 'assets', asset), join(client, 'assets', asset));
-await cp(join(root, 'assets', 'vendor'), join(client, 'assets', 'vendor'), { recursive: true });
+// Sitemap (indexable pages only)
+const today = new Date().toISOString().slice(0, 10);
+const indexable = pages.filter((p) => !p.noindex);
+await writeFile(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${indexable.map((p) => `  <url><loc>${SITE.url}${p.path}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
+</urlset>
+`);
+await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /project-received/\nDisallow: /application-received/\nDisallow: /message-received/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 
-const worker = `const securityHeaders = {
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'SAMEORIGIN',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
-};
+// Redirects for old URLs and likely mistypes. Netlify serves /path/ for /path automatically.
+await writeFile(join(out, '_redirects'), `# Legacy single-page site
+/index.html            /                  301
+/websites.html         /websites/         301
+# Projects without a public case study yet
+/work/landlink         /work/             302
+/work/sparkhive        /work/             302
+/work/lexforum         /work/             302
+# Friendly aliases
+/contact-us            /contact/          301
+/start                 /start-a-project/  301
+/brief                 /start-a-project/  301
+/privacy-policy        /privacy/          301
+/terms-of-use          /terms/            301
+/portfolio             /work/             301
+/case-studies          /work/             301
+`);
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    if (url.pathname === '/') url.pathname = '/index.html';
-    else if (!url.pathname.split('/').pop().includes('.')) url.pathname += '.html';
+// Content-Security-Policy: production (and local builds) only. Netlify sets CONTEXT during builds;
+// on deploy previews and branch deploys it is omitted so the Netlify Drawer can load.
+const CSP = "default-src 'self'; script-src 'self' 'sha256-Du+OJKJSbdUgz5nrHeWWINvez6XKDDU/tyj/5c2uvwo='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests";
+const context = process.env.CONTEXT || 'local';
+if (context === 'production' || context === 'local') {
+  await writeFile(join(out, '_headers'), `/*\n  Content-Security-Policy: ${CSP}\n`);
+}
 
-    let response = await env.ASSETS.fetch(new Request(url, request));
-    if (response.status === 404 && url.pathname.endsWith('.html')) {
-      const fallback = new URL('/index.html', url);
-      response = await env.ASSETS.fetch(new Request(fallback, request));
-    }
+await writeFile(join(out, 'site.webmanifest'), JSON.stringify({
+  name: SITE.legalName, short_name: 'Lynexa', start_url: '/', display: 'browser',
+  background_color: '#F1EEE8', theme_color: '#18171C',
+  icons: [{ src: '/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }]
+}, null, 2));
 
-    const headers = new Headers(response.headers);
-    for (const [name, value] of Object.entries(securityHeaders)) headers.set(name, value);
-    if (/\\.(?:css|js|png|jpe?g)$/i.test(url.pathname)) headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-    else headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
-    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
-  }
-};
-`;
-
-await writeFile(join(server, 'index.js'), worker, 'utf8');
-console.log('Built Lynexa for Sites');
+console.log(`Built ${pages.length} pages → dist/ (${cssName}, ${jsName})`);

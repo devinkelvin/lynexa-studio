@@ -1,5 +1,6 @@
-audit/
+node_modules/
 dist/
+audit/
 *.tar.gz
 lynexa_website.zip
 
