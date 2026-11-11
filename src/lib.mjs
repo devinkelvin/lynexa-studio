@@ -225,17 +225,22 @@ const footer = () => `
     </div>
     <div class="footer-base">
       <p>© ${new Date().getFullYear()} ${SITE.legalName}. Registered in Nigeria, ${SITE.rc}.</p>
+      <div class="motion-pref" role="group" aria-label="Motion preference" data-motion-pref><span>Motion</span><button type="button" data-motion-set="full" aria-pressed="false">Full</button><button type="button" data-motion-set="reduced" aria-pressed="false">Reduced</button><button type="button" data-motion-set="off" aria-pressed="false">Off</button></div>
       <p><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></p>
     </div>
   </div>
 </footer>`;
 
-export function layout({ path, title, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', bodyClass = '' }) {
+// Runs before first paint: marks JS, applies a saved motion preference, and (first visit, motion allowed)
+// asks the hero wireframe to wait for the swarm to draw it. Its hash is added to the CSP at build time.
+export const HEAD_SCRIPT = "(function(e){e.classList.add('js');try{var m=localStorage.getItem('lx-motion');if(m)e.setAttribute('data-motion',m);var r=matchMedia('(prefers-reduced-motion: reduce)').matches;if((m==='full'||(!m&&!r))&&!localStorage.getItem('lx-sw-seen')&&!sessionStorage.getItem('lx-sw:/'))e.classList.add('sw-intro')}catch(x){}})(document.documentElement)";
+
+export function layout({ path, title, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', bodyClass = '', swarm = 'full' }) {
   const canonical = SITE.url + path;
   const fullTitle = path === '/' ? title : `${title} | Lynexa`;
   const ld = [orgLd(), ...jsonld];
   return `<!doctype html>
-<html lang="en-NG">
+<html lang="en-NG" data-swarm-src="/assets/swarm.js?v=__BUILD__">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -260,10 +265,10 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="preload" href="/assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css?v=__BUILD__">
 <script type="application/ld+json">${JSON.stringify(ld.length === 1 ? ld[0] : ld)}</script>
-<script>document.documentElement.classList.add('js')</script>
+<script>${HEAD_SCRIPT}</script>
 <script src="/assets/site.js?v=__BUILD__" defer></script>
 </head>
-<body class="${bodyClass}">
+<body class="${bodyClass}" data-swarm="${swarm}">
 <a class="skip-link" href="#main">Skip to content</a>
 ${header(path)}
 <main id="main" tabindex="-1">

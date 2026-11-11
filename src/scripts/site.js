@@ -1,7 +1,43 @@
 /* Lynexa site behaviour. No dependencies. Everything degrades to plain HTML. */
 (() => {
   const root = document.documentElement;
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Motion: the footer control (Full / Reduced / Off) overrides the system setting when chosen */
+  const sysReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const motionMode = () => root.dataset.motion || (sysReduce.matches ? 'reduced' : 'full');
+  const reduce = motionMode() !== 'full';
+
+  /* Living Build System: loaded after the page has settled, only when motion is Full */
+  const swarmOk = () => motionMode() === 'full' && 'IntersectionObserver' in window && window.CSS && CSS.supports('clip-path', 'polygon(0 0, 1px 0, 1px 1px)') &&
+    !(navigator.connection && navigator.connection.saveData);
+  let swarmLoading = false;
+  const loadSwarm = () => {
+    if (swarmLoading || window.LynexaSwarm || !swarmOk()) return;
+    swarmLoading = true;
+    const s = document.createElement('script');
+    s.src = root.dataset.swarmSrc; s.async = true;
+    s.onerror = () => root.classList.remove('sw-intro');
+    s.onload = () => { swarmLoading = false; };
+    document.body.appendChild(s);
+  };
+  if (!swarmOk()) root.classList.remove('sw-intro');
+  else {
+    const go = () => ('requestIdleCallback' in window ? requestIdleCallback(loadSwarm, { timeout: 900 }) : setTimeout(loadSwarm, 300));
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true });
+  }
+  const motionButtons = document.querySelectorAll('[data-motion-set]');
+  const syncMotion = () => motionButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.motionSet === motionMode())));
+  syncMotion();
+  motionButtons.forEach((b) => b.addEventListener('click', () => {
+    const m = b.dataset.motionSet;
+    root.dataset.motion = m;
+    try { localStorage.setItem('lx-motion', m); } catch (e) { /* storage blocked: applies to this page only */ }
+    syncMotion();
+    if (m === 'full') loadSwarm(); else if (window.LynexaSwarm) window.LynexaSwarm.destroy();
+  }));
+  sysReduce.addEventListener && sysReduce.addEventListener('change', () => {
+    syncMotion();
+    if (motionMode() !== 'full' && window.LynexaSwarm) window.LynexaSwarm.destroy();
+  });
 
   /* Hero entrance (one orchestrated moment) */
   requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('is-ready')));

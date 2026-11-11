@@ -36,6 +36,10 @@ scripts/prepare-assets.mjs  Generates WebP images, favicons and font files into 
 - **Add a website to /websites/:** take 1440×900 and 390×844 screenshots, save them as `assets/site-<name>-desktop.png` and `-mobile.png`, add them to `scripts/prepare-assets.mjs` and `DIMS`/`WIDTHS`, then add an entry to `SITES` in `src/pages/work.mjs`.
 - **Add or replace an image:** put the original in `assets/`, add it to the job list in `scripts/prepare-assets.mjs` and to `DIMS`/`WIDTHS` in `src/lib.mjs`, then run `npm run assets` and commit the generated files.
 
+## Motion: the Living Build System
+
+The cursor swarm that builds each section as you scroll lives in `src/scripts/swarm.js`. How it works, how to configure it and how to switch it off are in [SWARM.md](SWARM.md).
+
 ## Design system
 
 - **Type:** Plus Jakarta Sans (variable, self-hosted), one family throughout.
