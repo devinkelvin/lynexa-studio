@@ -1,4 +1,4 @@
-import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder } from '../lib.mjs';
+import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder, teamSection, testimonialsSection, TZ_LONG } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 import { ventureForm } from './forms.mjs';
 
@@ -12,13 +12,9 @@ export function aboutPage() {
     <p class="lead">Lynexa Innovations Limited is a product design, engineering and venture-building studio based in Lagos. We work with founders and businesses in Nigeria, across Africa and further afield.</p>
   </div>
 </section>
-<section class="sec sec--tight" aria-label="Studio photography">
+<section class="sec sec--tight" id="team" aria-labelledby="team-title">
   <div class="shell">
-    <div class="photo-band">
-      <div data-reveal>${img('about-team-lagos', 'Three Nigerian tech professionals in a Lagos office reviewing a product on a laptop together', { sizes: '(min-width: 900px) 58vw, 100vw' })}</div>
-      <div data-reveal>${img('about-team-nesa', 'Two Nigerian software engineers pair-programming at a shared desk in a busy tech workspace', { sizes: '(min-width: 900px) 40vw, 100vw' })}</div>
-    </div>
-    <p class="credit">Photography via Unsplash: Ninthgrid, Lagos (left); NESA by Makers, Nigeria (right). Representative of the people and places we work with.</p>
+    ${teamSection({ id: 'team-title', title: 'Meet the team.', text: 'A small, senior team across product design, engineering and brand. The people you meet in the first call are the people who design and build your product.' })}
   </div>
 </section>
 <section class="sec surface-dark sheet why" aria-labelledby="why-title">
@@ -92,7 +88,7 @@ export function aboutPage() {
   <div class="shell">
     ${head2('Working with clients and partners', 'What you can expect from the first message onward.', { id: 'collab-title' })}
     <div class="cards cards--3">
-      <div class="card"><h3>A reply within two working days</h3><p>With an honest view of whether we are the right team, and if not, who might be.</p></div>
+      <div class="card"><h3>A reply within 24 hours on working days</h3><p>With an honest view of whether we are the right team, and if not, who might be.</p></div>
       <div class="card"><h3>Everything in writing</h3><p>Scope, deliverables, timeline and price agreed before work starts. No surprises.</p></div>
       <div class="card"><h3>Regular, visible progress</h3><p>Work you can see and try at each step, and a direct line to the people doing it.</p></div>
     </div>
@@ -102,12 +98,14 @@ export function aboutPage() {
   <div class="shell split">
     <h2 id="origin-title" style="font-size:var(--fs-h2);max-width:12ch">Nigerian roots, global standards.</h2>
     <div style="display:grid;gap:1rem;align-content:end">
-      <p class="lead">We are registered in Nigeria (${SITE.rc}) and based in Ikorodu, Lagos. Our products are designed first for African customers, and built to the standards of any market in the world. We work remotely with clients in other countries and time zones.</p>
+      <p class="lead">We are registered in Nigeria (${SITE.rc}) and based in Ikorodu, Lagos. Our products are designed first for African customers, and built to the standards of any market in the world.</p>
+      <p>${TZ_LONG}</p>
     </div>
   </div>
 </section>
+${testimonialsSection() ? `<section class="sec sheet" aria-label="Testimonials"><div class="shell">${testimonialsSection()}</div></section>` : ''}
 ${ctaBand()}`;
-  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a founder-led product design, engineering and venture studio in Lagos, Nigeria. Meet the studio and founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
+  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a product design, engineering and venture studio in Lagos, Nigeria. Meet the team led by founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
 }
 
 export function processPage() {
@@ -161,7 +159,7 @@ export function processPage() {
   <div class="shell">
     ${head2('How a project starts', 'From first message to kick-off.', { id: 'start-title' })}
     <ol class="steps steps--4">
-      <li class="step"><span class="step__n" aria-hidden="true">1</span><h3>You get in touch</h3><p>Send a short brief through the project form or email. We reply within two working days.</p></li>
+      <li class="step"><span class="step__n" aria-hidden="true">1</span><h3>You get in touch</h3><p>Send a short brief through the project form or email. We reply within 24 hours on working days.</p></li>
       <li class="step"><span class="step__n" aria-hidden="true">2</span><h3>First conversation</h3><p>A call about the idea, audience and timing. We tell you honestly whether we can help.</p></li>
       <li class="step"><span class="step__n" aria-hidden="true">3</span><h3>Written scope</h3><p>Deliverables, timeline and price on paper. An NDA first if you need one.</p></li>
       <li class="step"><span class="step__n" aria-hidden="true">4</span><h3>Kick-off</h3><p>Agreement signed, team introduced, discovery begins.</p></li>

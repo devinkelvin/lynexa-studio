@@ -43,7 +43,7 @@ export const SERVICES = [
       ['Developer handoff', 'Annotated specs, states and motion notes your engineers can build from without guessing.']
     ],
     deliverables: ['Research summary and product principles', 'User flows covering happy and failure paths', 'High-fidelity UI in Figma', 'Component library and design tokens', 'Clickable prototype', 'Handoff specification for engineering'],
-    work: ['zengly'],
+    work: ['zengly', 'createmycvnow'],
     fitYes: ['You are building a consumer app, fintech product or internal tool and want it to feel considered', 'You have engineers but no senior product designer', 'You need a prototype to test with users or show investors'],
     fitNo: ['You only need a logo or social graphics', 'You need final screens within a few days with no time for flows'],
     faqs: [
@@ -70,7 +70,7 @@ export const SERVICES = [
       ['Handover', 'Repositories, documentation and design files transferred so your future team can take over.']
     ],
     deliverables: ['Written MVP scope and release plan', 'Designed and tested product flows', 'Working mobile and/or web application', 'Backend, database and integrations', 'Deployment and monitoring setup', 'Code, documentation and design files'],
-    work: ['zengly', 'swiftly'],
+    work: ['createmycvnow', 'zengly', 'swiftly'],
     fitYes: ['You have a validated problem and a clear first customer', 'You need design and engineering from one accountable team', 'You want to show investors a working product rather than slides'],
     fitNo: ['You want every feature on the roadmap in version one', 'You are still deciding what problem to solve (start with venture strategy instead)'],
     faqs: [
@@ -97,7 +97,7 @@ export const SERVICES = [
       ['Forms and launch', 'Working lead capture, analytics if you want it, domain and hosting set up on Netlify, Vercel or your stack.']
     ],
     deliverables: ['Sitemap and page-by-page messaging', 'Desktop and mobile designs', 'Production website deployed to your domain', 'Working enquiry forms', 'SEO metadata, sitemap and redirects', 'Editing and maintenance notes'],
-    work: ['zengly'],
+    work: ['createmycvnow', 'zengly'],
     fitYes: ['You are launching, raising or rebranding and the current site no longer fits', 'You need a product site that explains something complex simply', 'You care about speed and how the site works on a phone'],
     fitNo: ['You need a large e-commerce catalogue (we will point you to a specialist platform)'],
     faqs: [
@@ -148,7 +148,7 @@ export const SERVICES = [
       ['Reliability and maintenance', 'Monitoring, error handling, performance work and ongoing support after release.']
     ],
     deliverables: ['Architecture and risk assessment', 'Integration designs and implementation', 'Shipped features with tests', 'Monitoring and alerting setup', 'Technical documentation'],
-    work: ['zengly'],
+    work: ['createmycvnow', 'zengly'],
     fitYes: ['You have a live or nearly-live product that needs new capability', 'You are integrating money movement or identity verification', 'You want to add AI features without creating new risks'],
     fitNo: ['You need a hardware or embedded systems team'],
     faqs: [
@@ -222,7 +222,7 @@ export const SERVICES = [
       ['Technical input', 'A product view on architecture decisions, vendors and integrations.']
     ],
     deliverables: ['Agreed cadence of reviews and workshops', 'Roadmap and prioritisation notes', 'Design quality reviews', 'Hiring support materials'],
-    work: [],
+    work: ['zengly'],
     fitYes: ['You have recently raised and are growing the team', 'Your designers or PMs need senior support', 'The product is drifting and needs a single point of view'],
     fitNo: ['You need full-time, on-site staff (we can help you hire instead)'],
     faqs: [

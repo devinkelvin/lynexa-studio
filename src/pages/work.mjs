@@ -1,5 +1,6 @@
 import { btn, link, img, phone, browser, head2, breadcrumbs, crumbLd, ctaBand, status, icon } from '../lib.mjs';
-import { PROJECTS, CATEGORIES, VENTURE_PHOTO } from '../content/work.mjs';
+import { SITE } from '../site.mjs';
+import { PROJECTS, CATEGORIES, VENTURE_MOCK } from '../content/work.mjs';
 
 const ZENGLY_SITE = 'https://zenglypay.com/';
 
@@ -8,10 +9,10 @@ export function workIndex() {
   const used = CATEGORIES.filter(([k]) => PROJECTS.some((p) => p.cats.includes(k)));
   const media = (p) => {
     if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly">${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}<span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
-    if (p.slug === 'swiftly') return `<span class="showcase__media swiftly-media">${img('swiftly-danfo', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</span>`;
-    if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnownow.netlify.app', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
+    if (p.slug === 'swiftly') return `<span class="showcase__media showcase__media--cover">${img('mock-swiftly', VENTURE_MOCK.swiftly.alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Concept design</small></span>`;
+    if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'CreateMyCVNow', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
     if (p.slug === 'kelvinekuhoho') return `<span class="showcase__media showcase__media--site showcase__media--night">${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
-    if (VENTURE_PHOTO[p.slug]) return `<span class="showcase__media showcase__media--cover">${img('venture-' + p.slug, VENTURE_PHOTO[p.slug].alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Photo: ${VENTURE_PHOTO[p.slug].credit}</small></span>`;
+    if (VENTURE_MOCK[p.slug]) return `<span class="showcase__media showcase__media--cover">${img('mock-' + p.slug, VENTURE_MOCK[p.slug].alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Concept design</small></span>`;
     return '';
   };
   const card = (p) => {
@@ -34,11 +35,11 @@ export function workIndex() {
 <section class="sec surface-dark sheet" aria-labelledby="list-title">
   <div class="shell">
     <h2 id="list-title" class="sr-only">Projects</h2>
-    <div class="filter" data-filter role="group" aria-label="Filter projects by category">
+    ${PROJECTS.length >= 8 ? `<div class="filter" data-filter role="group" aria-label="Filter projects by category">
       <button type="button" data-cat="all" aria-pressed="true">All<span class="count" aria-hidden="true">${PROJECTS.length}</span></button>
       ${used.map(([k, l]) => `<button type="button" data-cat="${k}" aria-pressed="false">${l}<span class="count" aria-hidden="true">${PROJECTS.filter((p) => p.cats.includes(k)).length}</span></button>`).join('')}
     </div>
-    <p class="sr-only" aria-live="polite" data-filter-status></p>
+    <p class="sr-only" aria-live="polite" data-filter-status></p>` : ''}
     <ul class="work-list">${PROJECTS.map(card).join('')}</ul>
     <div class="legend">
       <p>${status('live', 'Live')} Available to use today</p>
@@ -54,7 +55,7 @@ export function workIndex() {
   </div>
 </section>
 ${ctaBand()}`;
-  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app, CreateMyCVNow, kelvinekuhoho.com, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app (launching December 2026), CreateMyCVNow, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
 }
 
 const chapter = (title, html) => `<div class="chapter"><h2>${title}</h2><div class="chapter__body">${html}</div></div>`;
@@ -71,7 +72,7 @@ export function zenglyPage() {
         <h1>Money that moves the way friends do.</h1>
       </div>
       <div style="display:grid;gap:1.25rem;justify-items:start">
-        ${status('progress', 'App in pre-launch')}
+        ${status('progress', 'App launching December 2026')} ${status('live', 'Website live at zenglypay.com')}
         <p class="lead" style="margin:0">Zengly is a social-finance app for young Nigerians. It treats money the way people here actually use it: shared, celebrated and planned together. Lynexa shaped the product and leads its design, brand and marketing site.</p>
       </div>
     </div>
@@ -79,7 +80,7 @@ export function zenglyPage() {
       <div><dt>Sector</dt><dd>Fintech, social finance</dd></div>
       <div><dt>Audience</dt><dd>Gen Z and millennial Nigerians</dd></div>
       <div><dt>Platforms</dt><dd>iOS and Android app, marketing website</dd></div>
-      <div><dt>Status</dt><dd>App in pre-launch; marketing site live</dd></div>
+      <div><dt>Status</dt><dd>App launching December 2026 on iOS and Android; website live at <a href="https://zenglypay.com/" target="_blank" rel="noopener noreferrer">zenglypay.com<span class="sr-only"> (opens in a new tab)</span></a></dd></div>
     </dl>
     <div class="case-hero__media" data-reveal>${img('zengly-friends', 'Four friends at a restaurant table, each using their phone', { sizes: '(min-width: 1320px) 1320px, 100vw' }).replace('<img ', '<img style="width:100%;aspect-ratio:21/9;object-fit:cover" ')}</div>
     <p class="credit">Photo: BlackBoy Joy via Pexels.</p>
@@ -90,7 +91,7 @@ export function zenglyPage() {
   <div class="shell proto">
     <div class="proto__intro">
       <h2 id="proto-title">Tap through Zengly</h2>
-      <p>These are Zengly’s real design screens, linked into a small click-through. Tap the highlighted areas on the phone, or jump straight to a screen. Zengly is in pre-launch, so this is the design, not the live app.</p>
+      <p>These are Zengly’s real design screens, linked into a small click-through. Tap the highlighted areas on the phone, or jump straight to a screen. The app launches in December 2026, so this is the design, not the live app.</p>
       <div class="proto__nav" role="group" aria-label="Jump to a screen">
         <button type="button" data-proto-go="home" aria-pressed="true">Home</button>
         <button type="button" data-proto-go="menu" aria-pressed="false">All services</button>
@@ -152,7 +153,7 @@ export function zenglyPage() {
 
 <section class="sec surface-dark sheet" aria-labelledby="screens-title">
   <div class="shell">
-    ${head2('Selected screens', 'Interface designs from the Zengly app. Shown as designed for pre-launch.', { id: 'screens-title' })}
+    ${head2('Selected screens', 'Interface designs from the Zengly app, ahead of its December 2026 launch.', { id: 'screens-title' })}
     <div class="gallery gallery--phones">
       ${phone('zengly-home-dark', 'Zengly home screen in dark mode with balance, quick actions and recent transactions', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Home, dark mode' })}
       ${phone('zengly-home-light', 'Zengly home screen in light mode', { sizes: '(min-width: 900px) 22vw, 45vw', caption: 'Home, light mode' })}
@@ -169,7 +170,7 @@ export function zenglyPage() {
   <div class="shell">
     ${chapter('Engineering contribution', `<p>Design and build are handled by the same team. We produced detailed Flutter handoff specifications covering states, animations and edge cases, and maintain a documented screen library so the mobile build matches the design.</p><p>We also designed and built the marketing website, with scroll-driven motion and an early-access sign-up, along with the business requirements, execution plan and investor materials behind the product.</p>`)}
     ${chapter('Challenges', `<p><strong>Making celebration feel real.</strong> Spraying money is loud, physical and joyful. Translating that to a phone without it feeling like a game took several rounds of prototyping.</p><p><strong>Earning trust early.</strong> Young users are quick to try apps and quick to leave. Clear verification, honest error messages and a calm visual system carry a lot of that work.</p>`)}
-    ${chapter('Where it stands', `<p>The Zengly app is in pre-launch, with the core experience designed and in development. The marketing site is live and collecting early-access sign-ups. We are not publishing usage or financial figures until the product is publicly available.</p><p>${link(ZENGLY_SITE, 'Visit the Zengly website')}</p>`)}
+    ${chapter('Where it stands', `<p>The Zengly mobile app is in development and launches on iOS and Android in December 2026. The website at zenglypay.com is live and collecting early-access sign-ups. We will share usage and outcomes here after launch; we do not publish figures before the product is publicly available.</p><p>${link(ZENGLY_SITE, 'Visit the Zengly website')}</p>`)}
   </div>
 </section>
 
@@ -182,7 +183,7 @@ export function zenglyPage() {
 ${ctaBand({ title: 'Building something people will use with friends?' })}`;
   return {
     path: '/work/zengly/', title: 'Zengly: Social-Finance App Case Study',
-    description: 'How Lynexa shaped and designed Zengly, a pre-launch social-finance app for young Nigerians: product strategy, UX/UI, brand, design system and marketing site.',
+    description: 'How Lynexa shaped and designed Zengly, a social-finance app for young Nigerians launching in December 2026: product strategy, UX/UI, brand, design system and marketing site.',
     body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'CreativeWork', name: 'Zengly case study', about: 'Zengly social-finance app', creator: { '@id': 'https://lynexa.co/#organization' }, url: 'https://lynexa.co/work/zengly/' }]
   };
 }
@@ -206,8 +207,8 @@ export function swiftlyPage() {
       <div><dt>Lynexa’s role</dt><dd>Venture strategy, specification, prototypes</dd></div>
       <div><dt>Status</dt><dd>Concept with internal prototype</dd></div>
     </dl>
-    <div class="case-hero__media swiftly-media" style="aspect-ratio:21/9;position:relative" data-reveal>${img('swiftly-danfo', '', { cls: 'bg', sizes: '100vw' }).replace('class="bg"', 'class="bg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"')}${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}</div>
-    <p class="credit">Photo: Sheyi Owolabi via Unsplash, Lagos danfo buses.</p>
+    <div class="case-hero__media" style="aspect-ratio:16/10;position:relative" data-reveal>${img('mock-swiftly', VENTURE_MOCK.swiftly.alt, { sizes: '(min-width: 1200px) 1200px, 100vw' })}</div>
+    <p class="credit">Concept design: these screens show the proposed product. Swiftly has not launched.</p>
   </div>
 </section>
 <section class="sec" aria-label="Venture overview">
@@ -221,7 +222,7 @@ export function swiftlyPage() {
 <section class="sec sec--tight surface-paper sheet" aria-labelledby="next-title">
   <div class="shell split">
     <h2 id="next-title" style="font-size:var(--fs-h2)">Next project</h2>
-    <a class="card" href="/work/zengly/" style="text-decoration:none;display:grid;gap:.8rem;justify-items:start">${status('progress', 'App in pre-launch')}<h3 style="font-size:1.8rem;margin:0">Zengly</h3><p>Money that moves the way friends do.</p><span class="link">View case study${icon.arrow}</span></a>
+    <a class="card" href="/work/zengly/" style="text-decoration:none;display:grid;gap:.8rem;justify-items:start">${status('progress', 'App launching December 2026')}<h3 style="font-size:1.8rem;margin:0">Zengly</h3><p>Money that moves the way friends do.</p><span class="link">View case study${icon.arrow}</span></a>
   </div>
 </section>
 ${ctaBand({ title: 'Have a venture idea of your own?', primary: ['/ventures/', 'Explore venture partnerships'], secondary: ['/start-a-project/', 'Start a project'] })}`;
@@ -237,7 +238,7 @@ const SITES = [
     more: ['/work/zengly/', 'Read the Zengly case study']
   },
   {
-    name: 'CreateMyCVNow', host: 'createmycvnownow.netlify.app', url: 'https://createmycvnownow.netlify.app/', shot: 'cv', status: ['live', 'Live'],
+    name: 'CreateMyCVNow', host: 'CreateMyCVNow', url: SITE.cvUrl, shot: 'cv', status: ['live', 'Live'],
     tone: 'mint',
     text: 'A web app, not just a website: Nigerian job seekers upload a CV, get an ATS score and export a stronger version. Payments and AI processing run server-side.',
     meta: [['Type', 'AI web application'], ['Our role', 'Product, design, engineering'], ['Built with', 'React, Vite, Netlify Functions']]
@@ -274,7 +275,7 @@ ${SITES.map((x, i) => `
     </div>
     <div class="site-show__info">
       <div>
-        <p class="site-show__n">${String(i + 1).padStart(2, '0')} / ${String(SITES.length).padStart(2, '0')}</p>
+        <p class="site-show__n">${String(i + 1).padStart(2, '0')} / ${String(SITES.length + 1).padStart(2, '0')}</p>
         <h2 id="site-${i + 1}-title">${x.name}</h2>
         ${status(...x.status)}
       </div>
@@ -293,6 +294,7 @@ ${SITES.map((x, i) => `
 <section class="sec surface-dark sheet" id="site-lynexa" aria-labelledby="lynexa-site-title">
   <div class="shell split">
     <div>
+      <p class="site-show__n">${String(SITES.length + 1).padStart(2, '0')} / ${String(SITES.length + 1).padStart(2, '0')}</p>
       <h2 id="lynexa-site-title" style="font-size:var(--fs-h2);max-width:12ch">And this one.</h2>
       ${status('live', 'Live')}
     </div>

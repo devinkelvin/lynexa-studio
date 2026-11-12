@@ -56,7 +56,7 @@ function legal({ kind, title, intro, summary, sections, other }) {
       <aside class="legal-contact" aria-label="Contact about this ${kind === 'privacy' ? 'notice' : 'page'}">
         <div>
           <h2>Questions about this?</h2>
-          <p>Write to us and a person will reply, normally within two working days.</p>
+          <p>Write to us and a person will reply, normally within 24 hours on working days.</p>
           <div class="actions">${btn(`mailto:${SITE.email}`, SITE.email, 'primary')}${btn('/contact/', 'Other ways to reach us', 'secondary')}</div>
         </div>
         <address>

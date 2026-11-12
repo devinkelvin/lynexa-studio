@@ -21,3 +21,8 @@ The founder portrait has been removed from the site.
 Optimised WebP versions are generated into `public/assets/img/` by `npm run assets`.
 
 The Zengly interface screens and campaign artwork, including `assets/zengly-split-bill.png`, official Lynexa marks, Swiftly logo, and founder portrait were supplied by Lynexa Innovations Limited for this website. `assets/african_founders.png` remains retained in the local project archive but is not included in the live build.
+
+## Concept designs (studio-made, no credit needed)
+
+- `assets/mock-landlink.png`, `assets/mock-sparkhive.png`, `assets/mock-lexforum.png`, `assets/mock-swiftly.png`: concept interface designs made by Lynexa for studio ventures. They replace the earlier stock photos on venture cards and the Swiftly page, and are labelled "Concept design" wherever they appear.
+- The Unsplash photos `venture-*`, `swiftly-danfo` and `about-team-*` remain in `assets/` but are no longer used on the site.

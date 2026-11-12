@@ -57,6 +57,6 @@ export function plannerPage() {
     </ul>
   </div>
 </section>
-${ctaBand({ title: 'Want a real timeline?', text: 'Send us a short brief and we reply within two working days with an honest view of scope and timing.' })}`;
+${ctaBand({ title: 'Want a real timeline?', text: 'Send us a short brief and we reply within 24 hours on working days with an honest view of scope and timing.' })}`;
   return { path: '/mvp-planner/', title: 'MVP Timeline Planner', description: 'Estimate an indicative timeline for your website, web app or mobile app MVP, phase by phase, based on how Lynexa projects usually run.', body, jsonld: [crumbLd(trail)] };
 }

@@ -1,4 +1,6 @@
 import { SITE, NAV } from './site.mjs';
+import { TEAM } from './content/team.mjs';
+import { TESTIMONIALS } from './content/testimonials.mjs';
 
 export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -6,6 +8,8 @@ export const esc = (s = '') => String(s).replace(/&/g, '&amp;').replace(/</g, '&
 const svg = (path, cls = '') => `<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${path}</svg>`;
 export const icon = {
   arrow: svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  calendar: svg('<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),
+  globe: svg('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.5 5.4 3.5 8.5s-1 5.9-3.5 8.5c-2.5-2.6-3.5-5.4-3.5-8.5s1-5.9 3.5-8.5z"/>'),
   external: svg('<path d="M7 17 17 7M8 7h9v9"/>'),
   mail: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'),
   phone: svg('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/>'),
@@ -28,14 +32,14 @@ const DIMS = {
   'site-zengly-desktop': [1440, 900], 'site-kelvin-desktop': [1440, 900], 'site-cv-desktop': [1440, 900],
   'site-zengly-mobile': [390, 844], 'site-kelvin-mobile': [390, 844], 'site-cv-mobile': [390, 844],
   'venture-landlink': [1280, 854], 'venture-sparkhive': [1280, 720], 'venture-lexforum': [1280, 853],
-  'swiftly-danfo': [1600, 1066], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
+  'swiftly-danfo': [1600, 1066], 'mock-landlink': [1280, 800], 'mock-sparkhive': [1280, 800], 'mock-lexforum': [1280, 800], 'mock-swiftly': [1600, 1000], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
 };
 const WIDTHS = {
   'zengly-sign': [540, 1080], 'zengly-podium': [540, 1080], 'zengly-gift': [540, 1080], 'zengly-friends': [600, 1200],
   'lagos-professionals': [800, 1600], 'lagos-collaboration': [800, 1600], 'lagos-strategy-session': [800, 1600],
   'site-zengly-desktop': [720, 1440], 'site-kelvin-desktop': [720, 1440], 'site-cv-desktop': [720, 1440],
   'venture-landlink': [640, 1280], 'venture-sparkhive': [640, 1280], 'venture-lexforum': [640, 1280],
-  'swiftly-danfo': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
+  'swiftly-danfo': [800, 1600], 'mock-landlink': [640, 1280], 'mock-sparkhive': [640, 1280], 'mock-lexforum': [640, 1280], 'mock-swiftly': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
 };
 export function img(name, alt, { sizes = '100vw', cls = '', eager = false } = {}) {
   const [w, h] = DIMS[name];
@@ -91,17 +95,54 @@ export const breadcrumbs = (trail) => `
     ${trail.map(([href, label], i) => i === trail.length - 1 ? `<li><span aria-current="page">${label}</span></li>` : `<li><a href="${href}">${label}</a></li>`).join('')}
   </ol></nav>`;
 
-export const ctaBand = ({ title = 'Have an idea worth building?', text = 'Tell us what you are working on. We reply within two working days with an honest view of whether, and how, we can help.', primary = ['/start-a-project/', 'Start a project'], secondary = null } = {}) => `
+export const ctaBand = ({ title = 'Have an idea worth building?', text = 'Tell us what you are working on. We reply within 24 hours on working days with an honest view of whether, and how, we can help.', primary = ['/start-a-project/', 'Start a project'], secondary = null } = {}) => `
   <section class="cta-band surface-dark sheet" id="contact" aria-labelledby="cta-title">
     <div class="shell cta-band__inner">
       <h2 id="cta-title">${title}</h2>
       <p>${text}</p>
       <div class="actions">
         ${btn(primary[0], primary[1], 'light', ' data-magnetic')}
-        ${secondary ? btn(secondary[0], secondary[1], 'ghost-light') : `<a class="btn btn--ghost-light" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}<span>Chat on WhatsApp</span><span class="sr-only"> (opens in a new tab)</span></a>`}
+        ${secondary ? btn(secondary[0], secondary[1], 'ghost-light') : bookBtn('ghost-light')}
       </div>
+      <p class="cta-band__alt">Prefer chat? <a href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">Message us on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>. ${TZ_SHORT}</p>
     </div>
   </section>`;
+
+// Time-zone overlap, stated once and reused. Lagos is UTC+1 all year (no daylight saving).
+export const TZ_SHORT = 'Lagos is on GMT+1 all year, within an hour of London and Central Europe.';
+export const TZ_LONG = 'Lagos is on GMT+1 all year. That puts us within an hour of London and Central Europe, so we share your whole working day. US East Coast teams get their mornings with us, which are our afternoons, and Gulf teams get our mornings.';
+
+// "Book a call": a Cal.com/Calendly link when SITE.bookingUrl is set, otherwise a WhatsApp message asking for a call.
+export const bookBtn = (variant = 'secondary', label = 'Book a 20-minute call') => `<a class="btn btn--${variant}" href="${SITE.bookingHref}" target="_blank" rel="noopener noreferrer" data-book>${icon.calendar}<span>${label}</span><span class="sr-only"> (opens in a new tab)</span></a>`;
+
+const initials = (n) => n.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+
+// The studio team. Portraits appear when a `photo` is set in content/team.mjs; otherwise a monogram.
+export const teamSection = ({ id = 'team-title', title = 'The people who build it.', text = 'A small senior team. The people you meet in the first call are the people who design and build your product.' } = {}) => `
+  <div class="team">
+    <div class="sec-head">
+      <h2 id="${id}">${title}</h2>
+      <p>${text}</p>
+    </div>
+    <ul class="team__grid">
+      ${TEAM.map((m, i) => `<li class="team__member">
+        <span class="team__avatar team__avatar--${i % 5}" aria-hidden="true">${m.photo ? img(m.photo, '', { sizes: '96px' }) : initials(m.name)}</span>
+        <h3>${m.name}</h3>
+        <p class="team__role">${m.role}</p>
+        <p class="team__focus">${m.focus}</p>
+      </li>`).join('')}
+    </ul>
+  </div>`;
+
+// Testimonials: real quotes only (content/testimonials.mjs). Empty list = an honest invitation instead of quotes.
+export const testimonialsSection = ({ id = 'voices-title' } = {}) => TESTIMONIALS.length ? `
+  <div class="voices">
+    <h2 id="${id}" class="voices__title">What people say about working with us.</h2>
+    <ul class="voices__list">
+      ${TESTIMONIALS.map((t) => `<li class="voice"><blockquote><p>“${t.quote}”</p></blockquote><p class="voice__who"><b>${t.name}</b><span>${t.role}${t.project ? `, ${t.project}` : ''}</span></p></li>`).join('')}
+    </ul>
+  </div>` : '';
+export const HAS_TESTIMONIALS = TESTIMONIALS.length > 0;
 
 // Founder feature, used on the home and About pages.
 export const founder = ({ id = 'founder-title', full = false } = {}) => `
@@ -206,28 +247,32 @@ const footer = () => `
         <div class="pills">
           <a class="pill" href="mailto:${SITE.email}" data-cmdk-item="Email ${SITE.email}">${SITE.email}</a>
           <a class="pill" href="tel:${SITE.phoneIntl}">${SITE.phoneDisplay}</a>
+          <a class="pill" href="${SITE.bookingHref}" target="_blank" rel="noopener noreferrer" data-cmdk-item="Book a 20-minute call">Book a call<span class="sr-only"> (opens in a new tab)</span></a>
           <a class="pill pill--wa" data-cmdk-item="Chat on WhatsApp" href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">${icon.whatsapp}WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
         </div>
       </div>
       <nav class="footer-cols" aria-label="Footer">
         <div><h2>Studio</h2><ul>
-          <li><a href="/about/">About</a></li><li><a href="/process/">Process</a></li><li><a href="/mvp-planner/">MVP timeline planner</a></li><li><a href="/ventures/">Ventures</a></li><li><a href="/contact/">Contact</a></li>
+          <li><a href="/about/">About and team</a></li><li><a href="/process/">Process</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/insights/">Insights</a></li><li><a href="/ventures/">Ventures</a></li>
         </ul></div>
         <div><h2>Work</h2><ul>
-          <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="https://kelvinekuhoho.com/" target="_blank" rel="noopener noreferrer">Founder portfolio<span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="/fintech/">Fintech</a></li><li><a href="/feedback/">Share feedback</a></li>
         </ul></div>
         <div><h2>Services</h2><ul>
           <li><a href="/services/product-design/">Product design</a></li><li><a href="/services/mvp-development/">MVP development</a></li><li><a href="/services/web-design-development/">Websites</a></li><li><a href="/services/brand-identity/">Brand identity</a></li><li><a href="/services/">All services</a></li>
         </ul></div>
         <div><h2>Contact</h2><ul>
           <li><a href="/start-a-project/">Start a project</a></li>
+          <li><a href="${SITE.bookingHref}" target="_blank" rel="noopener noreferrer">Book a call<span class="sr-only"> (opens in a new tab)</span></a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/mvp-planner/">MVP timeline planner</a></li>
           <li><a href="${SITE.mapsUrl}" target="_blank" rel="noopener noreferrer">Ikorodu, Lagos<span class="sr-only"> (directions open in a new tab)</span></a></li>
           <li><a href="${SITE.linkedin}" target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a></li>
         </ul></div>
       </nav>
     </div>
     <div class="footer-base">
-      <p class="lagos-clock">It is <time data-lagos-time>—</time> in Lagos. We normally reply within two working days.</p>
+      <p class="lagos-clock">Based in Lagos, GMT+1<span data-lagos-wrap hidden>, where it is <time data-lagos-time></time></span>. We reply within 24 hours on working days.</p>
       <p>© ${new Date().getFullYear()} ${SITE.legalName}. Registered in Nigeria, ${SITE.rc}.</p>
       <div class="motion-pref" role="group" aria-label="Motion preference" data-motion-pref><span>Motion</span><button type="button" data-motion-set="full" aria-pressed="false">Full</button><button type="button" data-motion-set="reduced" aria-pressed="false">Reduced</button><button type="button" data-motion-set="off" aria-pressed="false">Off</button></div>
       <p><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></p>

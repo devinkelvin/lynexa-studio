@@ -38,6 +38,10 @@ const jobs = [
   ['venture-sparkhive.jpg', 'venture-sparkhive', [640, 1280], 72],
   ['venture-lexforum.jpg', 'venture-lexforum', [640, 1280], 72],
   ['swiftly-danfo.jpg', 'swiftly-danfo', [800, 1600], 72],
+  ['mock-landlink.png', 'mock-landlink', [640, 1280], 80],
+  ['mock-sparkhive.png', 'mock-sparkhive', [640, 1280], 80],
+  ['mock-lexforum.png', 'mock-lexforum', [640, 1280], 80],
+  ['mock-swiftly.png', 'mock-swiftly', [800, 1600], 80],
   ['about-team-lagos.jpg', 'about-team-lagos', [800, 1600], 74],
   ['about-team-nesa.jpg', 'about-team-nesa', [800, 1600], 74]
 ];

@@ -1,13 +1,16 @@
-import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, founder, icon } from '../lib.mjs';
+import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, icon, bookBtn, teamSection, testimonialsSection } from '../lib.mjs';
+import { PACKAGES } from '../content/pricing.mjs';
+import { pack } from './pricing.mjs';
 import { PILLARS, svcBySlug } from '../content/services.mjs';
-import { PROJECTS, VENTURE_PHOTO } from '../content/work.mjs';
+import { PROJECTS, VENTURE_MOCK } from '../content/work.mjs';
 import { PILLAR_ART } from '../content/art.mjs';
 import { SITE } from '../site.mjs';
 
 const HOME_FAQ = [
   ['What kind of companies do you work with?', 'Founders at the idea or early stage, startups that need a product or website built properly, and established businesses launching a new digital product. Most of our work so far is in fintech, mobility and consumer products for African markets, and we work with clients anywhere.'],
   ['Can you take a project from idea to launch?', 'Yes. Strategy, product design, brand, engineering, website and investor materials can all sit with one team. You can also bring us in for a single part, such as design or a website.'],
-  ['How much does a project cost?', 'It depends on scope. After a first conversation we send a written scope with deliverables, timeline and price, so you know the commitment before any work starts.'],
+  ['How much does a project cost?', 'Most projects start from $1,500 for a website, $2,500 for a product sprint and $12,000 for an MVP build. After a first conversation we send a written scope with deliverables, timeline and a fixed price, so you know the commitment before any work starts. <a href="/pricing/">See starting prices</a>.'],
+  ['Do you work with clients outside Nigeria?', 'Yes. We work remotely with clients anywhere, quote in US dollars or naira, and are on GMT+1 all year, so UK and European teams share our full working day and US East Coast teams get their mornings with us.'],
   ['Who owns the work?', 'You do. Code, design files and brand assets created for your project are transferred to you as set out in our agreement.'],
   ['Will you sign an NDA?', 'Yes. We are happy to sign a mutual NDA before you share anything sensitive.'],
   ['Do you invest in startups?', 'Occasionally, through selective venture partnerships where Lynexa contributes design and engineering. These are case-by-case and never automatic. <a href="/ventures/">Read how venture partnerships work</a>.']
@@ -17,7 +20,6 @@ export default function home() {
   const zengly = PROJECTS.find((p) => p.slug === 'zengly');
   const swiftly = PROJECTS.find((p) => p.slug === 'swiftly');
   const cv = PROJECTS.find((p) => p.slug === 'createmycvnow');
-  const kp = PROJECTS.find((p) => p.slug === 'kelvinekuhoho');
   const ventures = PROJECTS.filter((p) => !p.page && !p.href);
 
   const body = `
@@ -53,7 +55,7 @@ export default function home() {
           <div class="phone phone--dark"><span class="phone__island"></span>${img('zengly-split-bill', 'Zengly split-bill screen showing a “Divide expenses fairly” card and bill history', { sizes: '(min-width: 760px) 240px, 40vw', eager: true })}</div>
         </div>
       </div>
-      <p class="build__caption">Zengly’s split-bill feature, from a sentence to a wireframe to the interface in the app. Zengly is in pre-launch.</p>
+      <p class="build__caption">Zengly’s split-bill feature, from a sentence to a wireframe to the interface in the app. Zengly launches in December 2026.</p>
     </div>
     <form class="pitch" data-pitch novalidate>
       <label class="pitch__label" for="pitch-idea">Try it with your idea</label>
@@ -64,6 +66,18 @@ export default function home() {
       <p class="pitch__hint" id="pitch-hint">Describe it in one sentence. We sketch a first screen above, right here in your browser. Nothing is sent until you choose to send a brief.</p>
       <p class="sr-only" aria-live="polite" data-pitch-live></p>
     </form>
+  </div>
+</section>
+
+<section class="sec sec--tight proof-sec" aria-label="Lynexa in brief">
+  <div class="shell">
+    <ul class="proof">
+      <li><b>7+ years</b><span>designing banking and payment products at Sterling Bank and Polaris Bank</span></li>
+      <li><b>December 2026</b><span>Zengly, our social-finance app, launches on iOS and Android</span></li>
+      <li><b>24 hours</b><span>to a reply on working days, from the people who will do the work</span></li>
+      <li><b>GMT+1</b><span>all year, sharing the working day with London and Europe</span></li>
+    </ul>
+    ${testimonialsSection()}
   </div>
 </section>
 
@@ -81,7 +95,7 @@ export default function home() {
         <div class="scard__art">${PILLAR_ART[p.key]}</div>
       </li>`).join('')}
     </ol>
-    <p class="center-cta">${btn('/services/', 'See all services', 'secondary', ' data-magnetic')}</p>
+    <p class="center-cta">${btn('/services/', 'See all services', 'secondary', ' data-magnetic')}${btn('/process/', 'How a project runs', 'secondary', ' data-magnetic')}</p>
   </div>
 </section>
 
@@ -99,13 +113,13 @@ export default function home() {
         </span>
         <span class="showcase__meta">
           <span class="showcase__title">Zengly ${status(...zengly.status)}</span>
-          <span class="showcase__desc">${zengly.summary}</span>
+          <span class="showcase__desc">${zengly.summary} The mobile app launches in December 2026; the website at zenglypay.com is live and taking early-access sign-ups.</span>
         </span>
       </a>
       <a class="showcase__item" href="/work/swiftly/" data-cursor-text="View">
-        <span class="showcase__media swiftly-media" data-reveal>
-          ${img('swiftly-danfo', '', { cls: 'bg', sizes: '(min-width: 900px) 40vw, 100vw' })}
-          ${img('swiftly-logo', 'Swiftly', { cls: 'logo', sizes: '320px' })}
+        <span class="showcase__media showcase__media--cover" data-reveal>
+          ${img('mock-swiftly', VENTURE_MOCK.swiftly.alt, { sizes: '(min-width: 900px) 40vw, 100vw' })}
+          <small class="photo-credit">Concept design</small>
         </span>
         <span class="showcase__meta">
           <span class="showcase__title">Swiftly ${status(...swiftly.status)}</span>
@@ -114,47 +128,21 @@ export default function home() {
       </a>
       <a class="showcase__item" href="${cv.href}" target="_blank" rel="noopener noreferrer" data-cursor-text="Visit">
         <span class="showcase__media showcase__media--site" data-reveal>
-          ${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'createmycvnownow.netlify.app', { sizes: '(min-width: 900px) 36vw, 90vw' })}
+          ${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'CreateMyCVNow', { sizes: '(min-width: 900px) 36vw, 90vw' })}
         </span>
         <span class="showcase__meta">
           <span class="showcase__title">CreateMyCVNow ${status(...cv.status)}</span>
           <span class="showcase__desc">${cv.summary}<span class="sr-only"> (opens in a new tab)</span></span>
         </span>
       </a>
-      <a class="showcase__item" href="${kp.href}" target="_blank" rel="noopener noreferrer" data-cursor-text="Visit">
-        <span class="showcase__media showcase__media--site showcase__media--night" data-reveal>
-          ${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 36vw, 90vw' })}
-        </span>
-        <span class="showcase__meta">
-          <span class="showcase__title">kelvinekuhoho.com ${status(...kp.status)}</span>
-          <span class="showcase__desc">${kp.summary}<span class="sr-only"> (opens in a new tab)</span></span>
-        </span>
-      </a>
       <div class="showcase__ventures">
         <p class="showcase__list-title">Also in the studio</p>
         <ul class="vcards">
-          ${ventures.map((p) => `<li class="vcard"><span class="vcard__media">${img('venture-' + p.slug, VENTURE_PHOTO[p.slug].alt, { sizes: '(min-width: 900px) 30vw, (min-width: 700px) 220px, 92vw' })}<small class="photo-credit">Photo: ${VENTURE_PHOTO[p.slug].credit}</small></span><span class="vcard__body"><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</span></li>`).join('')}
+          ${ventures.map((p) => `<li class="vcard"><span class="vcard__media">${img('mock-' + p.slug, VENTURE_MOCK[p.slug].alt, { sizes: '(min-width: 900px) 30vw, (min-width: 700px) 220px, 92vw' })}<small class="photo-credit">Concept design</small></span><span class="vcard__body"><b>${p.name}</b><span>${p.summary}</span>${status(...p.status)}</span></li>`).join('')}
         </ul>
       </div>
     </div>
     <p class="center-cta">${btn('/work/', 'View all work', 'ghost-light', ' data-magnetic')}${btn('/websites/', 'Websites we’ve built', 'ghost-light', ' data-magnetic')}</p>
-  </div>
-</section>
-
-<section class="sec sheet" aria-labelledby="craft-title">
-  <div class="shell split split--wide-left">
-    <div>
-      <h2 id="craft-title" style="font-size:var(--fs-h2);max-width:14ch">Designers who ship. Engineers who care how it feels.</h2>
-      <p class="lead" style="margin-top:1.5rem">Design and engineering sit in the same room at Lynexa. The person who designed the payment flow is there when it is built, so the failed-transfer screen gets as much care as the home screen.</p>
-    </div>
-    <dl class="stack">
-      <div><dt>Mobile</dt><dd>Flutter and React Native for iOS and Android</dd></div>
-      <div><dt>Web</dt><dd>React, Next.js and fast hand-built static sites</dd></div>
-      <div><dt>Backend</dt><dd>Node.js and Python services, APIs and databases</dd></div>
-      <div><dt>Money and identity</dt><dd>Paystack, Flutterwave and Mono integrations; BVN and NIN verification</dd></div>
-      <div><dt>Design</dt><dd>Figma prototypes, design systems and motion</dd></div>
-      <div><dt>AI</dt><dd>Assistants and automation built into real product flows</dd></div>
-    </dl>
   </div>
 </section>
 
@@ -170,79 +158,20 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec sheet" id="method" aria-labelledby="process-title">
+<section class="sec sheet" id="studio" aria-labelledby="team-title">
   <div class="shell">
-    ${head2('How a project moves.', 'Four phases with a clear output at the end of each, so you always know what you are paying for and what comes next.', { id: 'process-title' })}
-    <ol class="steps steps--4">
-      ${[
-        ['Discover', 'We dig into the idea, the customer and the market, then agree what the first version must do.', 'Discovery brief and scope'],
-        ['Design', 'Flows, interfaces and brand come together in a prototype you can test with real people.', 'Tested, clickable prototype'],
-        ['Build', 'We engineer the product in short cycles, with a demo you can try at each step.', 'Working product, ready to release'],
-        ['Launch', 'Release, website, investor story and a plan for what to learn next.', 'Live product and next-phase plan']
-      ].map(([t, d, o], i) => `<li class="step"><span class="step__n" aria-hidden="true">${i + 1}</span><h3>${t}</h3><p>${d}</p><ul><li>${o}</li></ul></li>`).join('')}
-    </ol>
-    <p style="margin-top:2rem">${link('/process/', 'See the full process')}</p>
+    ${teamSection({ id: 'team-title', text: 'Led by Kelvin Ekuhoho, a product designer with seven years in Nigerian digital banking. The people you meet in the first call are the people who design and build your product.' })}
+    <p style="margin-top:2rem">${link('/about/', 'More about the studio')}</p>
   </div>
 </section>
 
-<section class="sec surface-dark sheet spotlight" id="zengly" aria-labelledby="zengly-title">
+<section class="sec surface-paper sheet" aria-labelledby="price-title">
   <div class="shell">
-    <div class="spotlight__top">
-      <div>
-        ${img('zengly-logo', 'Zengly', { cls: 'logo', sizes: '150px' })}
-        <h2 id="zengly-title">Money that moves the way friends do.</h2>
-      </div>
-      <div style="display:grid;gap:1.5rem;justify-items:start">
-        <p>Zengly brings transfers, bill payments, split bills and Vaniti, a social cash-spraying experience for celebrations, into one app designed around Nigerian social life. Lynexa leads its product, design, brand and marketing site.</p>
-        ${link('/work/zengly/', 'Read the case study')}
-      </div>
+    ${head2('Clear starting prices.', 'Every project gets a written scope and fixed price before work starts. These are where most engagements begin, in US dollars.', { id: 'price-title' })}
+    <div class="packs packs--teaser">
+      ${PACKAGES.filter((x) => ['sprint', 'mvp', 'website'].includes(x.key)).map(pack).join('')}
     </div>
-    <ul class="screens" tabindex="0" aria-label="Zengly interface screens, scrollable">
-      <li>${phone('zengly-home-light', 'Zengly home screen in light mode with balance and quick actions', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Everyday money</b>Home, light mode' })}</li>
-      <li>${phone('zengly-split-bill', 'Zengly split bill screen with bill history', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Shared costs</b>Split bill' })}</li>
-      <li>${phone('zengly-vaniti-leaderboard', 'Zengly Vaniti leaderboard showing the top sprayers at an event', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Celebration</b>Vaniti leaderboard' })}</li>
-      <li>${phone('zengly-vaniti-sprayers', 'Zengly Vaniti community screen listing sprayers', { sizes: '(min-width: 1200px) 18vw, 220px', caption: '<b>Community</b>Vaniti sprayers' })}</li>
-    </ul>
-  </div>
-</section>
-
-<section class="sec surface-paper sheet" aria-labelledby="ventures-title">
-  <div class="shell split">
-    <div>
-      <h2 id="ventures-title" style="font-size:var(--fs-h2);max-width:13ch">Some ideas need a partner, not a vendor.</h2>
-    </div>
-    <div style="display:grid;gap:1.25rem;justify-items:start">
-      <p class="lead">Alongside client work, Lynexa builds ventures of its own and, selectively, with founders. For the right idea we can share risk through hybrid cash-and-equity or equity-for-service arrangements, or build and hand over a product to an operating team.</p>
-      <p class="muted">Every partnership is assessed case by case. It is not a funding offer, and nothing is agreed until it is in writing.</p>
-      ${link('/ventures/', 'How venture partnerships work')}
-    </div>
-  </div>
-</section>
-
-<section class="sec sheet" id="studio">
-  <div class="shell">${founder({ id: 'founder-title' })}</div>
-</section>
-
-<section class="sec surface-paper sheet" aria-labelledby="engage-title">
-  <div class="shell">
-    ${head2('Three ways to work with us.', 'Pick the shape that fits where you are. We will tell you honestly if a different one would serve you better.', { id: 'engage-title' })}
-    <div class="models">
-      <article class="model model--dark">
-        <h3>Full product build</h3>
-        <p>Strategy, design, engineering, brand and launch, carried by one team from idea to release.</p>
-        <ul class="checklist"><li>${icon.check}Founders building a first product</li><li>${icon.check}Businesses launching a new digital line</li></ul>
-      </article>
-      <article class="model">
-        <h3>Focused project</h3>
-        <p>One capability, scoped tightly: product design, a website, a brand identity, a pitch deck or an integration.</p>
-        <ul class="checklist"><li>${icon.check}Teams missing one specific skill</li><li>${icon.check}A clear, contained deliverable</li></ul>
-      </article>
-      <article class="model">
-        <h3>Ongoing partnership</h3>
-        <p>Part-time product leadership, continued engineering, or a selective venture partnership.</p>
-        <ul class="checklist"><li>${icon.check}Teams growing after launch or a raise</li><li>${icon.check}Founders seeking a long-term build partner</li></ul>
-      </article>
-    </div>
+    <p class="center-cta">${btn('/pricing/', 'See all packages', 'secondary', ' data-magnetic')}${bookBtn('secondary')}</p>
   </div>
 </section>
 

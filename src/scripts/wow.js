@@ -9,7 +9,19 @@
   const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const swarm = () => (window.LynexaSwarm && window.LynexaSwarm.build ? window.LynexaSwarm : null);
 
+  /* ------------------------------------------------------------------ 7. Lagos time in the footer */
+  try {
+  const clock = $('[data-lagos-time]');
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Africa/Lagos' });
+    const tick = () => { const now = new Date(); clock.textContent = fmt.format(now).replace(/\s?([ap]m)$/i, ' $1').toLowerCase(); clock.setAttribute('datetime', now.toISOString()); };
+    tick(); setInterval(tick, 30000);
+    const wrap = clock.closest('[data-lagos-wrap]'); if (wrap) wrap.hidden = false;
+  }
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
+
   /* ------------------------------------------------------------------ 1. Pitch us your idea (home hero) */
+  try {
   const KINDS = [
     { k: 'pay', words: ['pay', 'money', 'wallet', 'bank', 'loan', 'save', 'saving', 'invest', 'split', 'bill', 'naira', 'transfer', 'ajo', 'esusu', 'contribution', 'fintech', 'budget'], suffix: 'Pay',
       features: ['Wallet and transfers', 'Split and share costs', 'Spending insights'], card: ['Group balance', '₦45,000'], rows: [['Rent, Yaba flat', '₦30,000'], ['Shared groceries', '₦9,500'], ['Internet', '₦5,500']], cta: 'Collect contributions' },
@@ -128,8 +140,10 @@
       }
     });
   }
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
   /* ------------------------------------------------------------------ 2. Zengly prototype */
+  try {
   $$('[data-proto]').forEach((proto) => {
     const screens = $$('.proto__screen', proto);
     const status = $('[data-proto-status]', proto.parentElement) || $('[data-proto-status]');
@@ -162,8 +176,10 @@
     });
     show('home', false);
   });
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
   /* ------------------------------------------------------------------ 3. MVP timeline planner (indicative only) */
+  try {
   const planner = $('[data-planner]');
   if (planner) {
     const out = $('[data-plan-out]');
@@ -204,7 +220,7 @@
         <ol class="plan__bars">${r.phases.map(([n, [a, b], note]) => { const left = (start / scale) * 100; start += (a + b) / 2; return `<li><div class="plan__head"><b>${n}</b><span>${a === b ? a : a + '–' + b} week${b > 1 ? 's' : ''}</span></div><span class="plan__track"><i style="--l:${left.toFixed(1)}%;--w:${Math.max(6, ((a + b) / 2 / scale) * 100).toFixed(1)}%"></i></span><p>${note}</p></li>`; }).join('')}</ol>
         <p class="plan__rec">${rec}</p>
         <p class="plan__note">Indicative only: a starting point for the conversation, not a quote or a commitment. Real timelines are agreed after discovery.</p>
-        <p class="plan__actions"><a class="btn btn--light" href="/start-a-project/?plan=${encodeURIComponent(`${v.scope === 'v1' ? 'Fuller first version' : 'Lean MVP'} ${LABEL[v.type]}; ${STAGE[v.stage]}; features: ${v.feats.join(', ') || 'core only'}; indicative ${range(r.min, r.max)}`)}"><span>Send this plan with a brief</span></a></p>`;
+        <p class="plan__actions"><a class="btn btn--light" href="/start-a-project/?plan=${encodeURIComponent(`${v.scope === 'v1' ? 'Fuller first version' : 'Lean MVP'} ${LABEL[v.type]}; ${STAGE[v.stage]}; features: ${v.feats.join(', ') || 'core only'}; indicative ${range(r.min, r.max)}`)}"><span>Send this plan with a brief</span></a><button class="btn btn--ghost-light" type="button" data-plan-copy><span>Copy link to this plan</span></button></p>`;
       const live = $('[data-plan-live]');
       if (live) live.textContent = 'Indicative timeline: ' + range(r.min, r.max) + '.';
       const s = swarm();
@@ -214,13 +230,36 @@
         s.build(items, { tempo: 0.8 });
       }
     };
+    // Shareable plans: the answers live in the URL (?type=&stage=&scope=&f=a,b).
+    const toUrl = () => {
+      const v = read(); const q = new URLSearchParams({ type: v.type, stage: v.stage, scope: v.scope });
+      if (v.feats.length) q.set('f', v.feats.join(','));
+      try { history.replaceState(null, '', location.pathname + '?' + q.toString()); } catch (e) { /* ignore */ }
+    };
+    const fromUrl = () => {
+      const q = new URLSearchParams(location.search); if (!q.has('type')) return;
+      ['type', 'stage', 'scope'].forEach((k) => { const el = planner.querySelector(`input[name="${k}"][value="${CSS.escape(q.get(k) || '')}"]`); if (el) el.checked = true; });
+      const f = (q.get('f') || '').split(',');
+      $$('input[name="features"]', planner).forEach((el) => { el.checked = f.includes(el.value); });
+    };
+    out.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-plan-copy]'); if (!b) return;
+      toUrl();
+      const label = $('span', b);
+      try { await navigator.clipboard.writeText(location.href); label.textContent = 'Link copied'; }
+      catch (err) { label.textContent = 'Copy the address bar to share'; }
+      setTimeout(() => { label.textContent = 'Copy link to this plan'; }, 2500);
+    });
+    fromUrl();
     let t = 0;
-    planner.addEventListener('change', () => { clearTimeout(t); t = setTimeout(() => render(true), 120); });
+    planner.addEventListener('change', () => { clearTimeout(t); t = setTimeout(() => { toUrl(); render(true); }, 120); });
     planner.addEventListener('submit', (e) => e.preventDefault());
     render(false);
   }
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
   /* ------------------------------------------------------------------ 4. Brief prefill from the sketch or the planner */
+  try {
   const desc = $('#project-description');
   if (desc) {
     const q = new URLSearchParams(location.search);
@@ -230,12 +269,14 @@
     if (plan) lines.push('From the timeline planner: ' + plan.slice(0, 400));
     if (lines.length && !desc.value) { desc.value = lines.join('\n') + '\n\n'; const n = $('[data-prefill-note]'); if (n) n.hidden = false; }
   }
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
   /* ------------------------------------------------------------------ 5. Quick menu: Ctrl/Cmd+K */
+  try {
   const PAGES = [
     ['Home', '/'], ['Work', '/work/'], ['Zengly case study', '/work/zengly/'], ['Swiftly', '/work/swiftly/'], ['Websites we have designed', '/websites/'],
-    ['Services', '/services/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['About Lynexa', '/about/'],
-    ['Contact', '/contact/'], ['Start a project', '/start-a-project/'], ['Privacy notice', '/privacy/'], ['Terms of use', '/terms/']
+    ['Services', '/services/'], ['Pricing and packages', '/pricing/'], ['Insights', '/insights/'], ['Fintech', '/fintech/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['About Lynexa and the team', '/about/'],
+    ['Contact', '/contact/'], ['Start a project', '/start-a-project/'], ['Share feedback', '/feedback/'], ['Privacy notice', '/privacy/'], ['Terms of use', '/terms/']
   ];
   const extraLinks = $$('[data-cmdk-item]').map((a) => [a.dataset.cmdkItem, a.getAttribute('href')]);
   const ITEMS = [...PAGES, ...extraLinks];
@@ -282,8 +323,10 @@
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openMenu(); }
   });
   $$('[data-cmdk-open]').forEach((b) => b.addEventListener('click', openMenu));
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
   /* ------------------------------------------------------------------ 6. Prefetch internal pages on intent */
+  try {
   const done = new Set();
   const prefetch = (a) => {
     try {
@@ -295,12 +338,6 @@
   };
   document.addEventListener('pointerover', (e) => { const a = e.target.closest && e.target.closest('a[href^="/"]'); if (a) prefetch(a); }, { passive: true });
   document.addEventListener('focusin', (e) => { const a = e.target.closest && e.target.closest('a[href^="/"]'); if (a) prefetch(a); });
+  } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
-  /* ------------------------------------------------------------------ 7. Lagos time in the footer */
-  const clock = $('[data-lagos-time]');
-  if (clock) {
-    const fmt = new Intl.DateTimeFormat('en-NG', { hour: 'numeric', minute: '2-digit', timeZone: 'Africa/Lagos' });
-    const tick = () => { clock.textContent = fmt.format(new Date()); clock.setAttribute('datetime', new Date().toISOString()); };
-    tick(); setInterval(tick, 30000);
-  }
 })();
