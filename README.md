@@ -79,3 +79,13 @@ If you add an inline `<script>`, update the `sha256-…` hash in the CSP or the 
 - axe-core WCAG 2.2 AA + best practices on every route at 390px and 1280px
 - Horizontal-overflow check at 320–1920px and 200% zoom
 - Lighthouse (mobile and desktop) on the home, Zengly and project-brief pages
+
+## Functions, analytics and auto-replies
+
+| Function | What it does | Needs |
+| --- | --- | --- |
+| `netlify/functions/hit.mts` (`POST /api/hit`) | Counts page views and key actions anonymously: no cookies, no IP addresses, no profiles. Honours Do Not Track and Global Privacy Control. | Nothing |
+| `netlify/functions/stats.mts` (`GET /api/stats`) | Private summary shown at `/stats/` (enter the access key). | `STATS_KEY` (set in Netlify, Functions scope) |
+| `netlify/functions/submission-created.mts` | Emails a confirmation from hello@lynexa.co after every verified form submission. | `SMTP_PASS` = the hello@lynexa.co mailbox password (Namecheap Private Email). Optional: `SMTP_USER`, `SMTP_HOST` (default `mail.privateemail.com`), `SMTP_PORT` (default 465). |
+
+Content you will edit most often: `src/site.mjs` (contact details, `bookingUrl`, `cvUrl`), `src/content/pricing.mjs`, `src/content/team.mjs`, `src/content/testimonials.mjs`, `src/content/insights.mjs`. After adding an article or page, run `node build.mjs && node scripts/make-og.mjs` to render its social image.

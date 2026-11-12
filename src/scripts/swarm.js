@@ -44,6 +44,7 @@
   const isTablet = () => W() >= 700 && W() < 1100;
   const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 2;
   let degraded = lowPower;
+  let pagesSeen = 1;  // pages viewed this session; later pages build faster
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const timeScale = () => (isMobile() ? 0.72 : isTablet() ? 0.86 : 1);
 
@@ -407,7 +408,7 @@
   }
 
   // ---------------------------------------------------------------- units (what gets built, and when)
-  const CARD = '.reasons > div, .scard, .showcase__item, .vcard, .card, .vmodel, .model, .work-card, .channel, .faq-contact, .founder-card__panel';
+  const CARD = '.reasons > div, .scard, .showcase__item, .vcard, .card, .vmodel, .model, .work-card, .channel, .faq-contact, .founder-card__panel, .proof li, .team__member, .pack, .post, .voice, .tz-note';
   const FRAME = '.device, .browser';
   const MEDIA = '.photo-band figure, .founder-card__photo, .case-hero__media, .duo figure, .gallery figure';
   const ROW = '.stack > div, .svc-row, .founder-card__facts > div, .also li, .fit li';
@@ -637,7 +638,8 @@
       tracks = merged;
     }
     // Keep each section brief: scale timings if a cursor's queue runs long
-    const cap = isMobile() ? CONFIG.capMs.mobile : CONFIG.capMs.desktop;
+    // Visitors who have already seen a few pages get a quicker build (pages viewed this session).
+    const cap = (isMobile() ? CONFIG.capMs.mobile : CONFIG.capMs.desktop) * (pagesSeen > 2 ? 0.7 : 1);
     const longest = Math.max(...tracks.map((t) => t.reduce((s, j) => s + j.dur + j.wait, 0)));
     const k = longest > cap * (u.tempo || 1) ? (cap * (u.tempo || 1)) / longest : 1;
     if (k < 1) tracks.forEach((t) => t.forEach((j) => { j.dur *= k; j.wait *= k; }));
@@ -888,6 +890,7 @@
     try { if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 600))]); } catch (e) { /* ignore */ }
     let quick = false;
     try { quick = !!localStorage.getItem('lx-sw-seen'); localStorage.setItem('lx-sw-seen', '1'); } catch (e) { /* storage blocked */ }
+    try { pagesSeen = +(sessionStorage.getItem('lx-pages') || 0) + 1; sessionStorage.setItem('lx-pages', String(pagesSeen)); } catch (e) { /* storage blocked */ }
     const u = { section: hero, kind: 'intro', els: new Set(), tempo: quick ? 0.62 : 1, noHide: false, state: 'pending', data: {}, onDone: heroDone };
     const f = 1;                                          // waits below are scaled by tempo through W()
     const Wt = (ms) => ms * u.tempo * timeScale();

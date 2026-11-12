@@ -1,4 +1,4 @@
-import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder } from '../lib.mjs';
+import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder, bookBtn, teamSection, testimonialsSection, TZ_LONG } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 import { ventureForm } from './forms.mjs';
 
@@ -12,13 +12,9 @@ export function aboutPage() {
     <p class="lead">Lynexa Innovations Limited is a product design, engineering and venture-building studio based in Lagos. We work with founders and businesses in Nigeria, across Africa and further afield.</p>
   </div>
 </section>
-<section class="sec sec--tight" aria-label="Studio photography">
+<section class="sec sec--tight" id="team" aria-labelledby="team-title">
   <div class="shell">
-    <div class="photo-band">
-      <div data-reveal>${img('about-team-lagos', 'Three Nigerian tech professionals in a Lagos office reviewing a product on a laptop together', { sizes: '(min-width: 900px) 58vw, 100vw' })}</div>
-      <div data-reveal>${img('about-team-nesa', 'Two Nigerian software engineers pair-programming at a shared desk in a busy tech workspace', { sizes: '(min-width: 900px) 40vw, 100vw' })}</div>
-    </div>
-    <p class="credit">Photography via Unsplash: Ninthgrid, Lagos (left); NESA by Makers, Nigeria (right). Representative of the people and places we work with.</p>
+    ${teamSection({ id: 'team-title', title: 'Meet the team.', text: 'A small, senior team across product design, engineering and brand. The people you meet in the first call are the people who design and build your product.' })}
   </div>
 </section>
 <section class="sec surface-dark sheet why" aria-labelledby="why-title">
@@ -92,7 +88,7 @@ export function aboutPage() {
   <div class="shell">
     ${head2('Working with clients and partners', 'What you can expect from the first message onward.', { id: 'collab-title' })}
     <div class="cards cards--3">
-      <div class="card"><h3>A reply within two working days</h3><p>With an honest view of whether we are the right team, and if not, who might be.</p></div>
+      <div class="card"><h3>A reply within 24 hours on working days</h3><p>With an honest view of whether we are the right team, and if not, who might be.</p></div>
       <div class="card"><h3>Everything in writing</h3><p>Scope, deliverables, timeline and price agreed before work starts. No surprises.</p></div>
       <div class="card"><h3>Regular, visible progress</h3><p>Work you can see and try at each step, and a direct line to the people doing it.</p></div>
     </div>
@@ -102,12 +98,14 @@ export function aboutPage() {
   <div class="shell split">
     <h2 id="origin-title" style="font-size:var(--fs-h2);max-width:12ch">Nigerian roots, global standards.</h2>
     <div style="display:grid;gap:1rem;align-content:end">
-      <p class="lead">We are registered in Nigeria (${SITE.rc}) and based in Ikorodu, Lagos. Our products are designed first for African customers, and built to the standards of any market in the world. We work remotely with clients in other countries and time zones.</p>
+      <p class="lead">We are registered in Nigeria (${SITE.rc}) and based in Ikorodu, Lagos. Our products are designed first for African customers, and built to the standards of any market in the world.</p>
+      <p>${TZ_LONG}</p>
     </div>
   </div>
 </section>
+${testimonialsSection() ? `<section class="sec sheet" aria-label="Testimonials"><div class="shell">${testimonialsSection()}</div></section>` : ''}
 ${ctaBand()}`;
-  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a founder-led product design, engineering and venture studio in Lagos, Nigeria. Meet the studio and founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
+  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a product design, engineering and venture studio in Lagos, Nigeria. Meet the team led by founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
 }
 
 export function processPage() {
@@ -161,7 +159,7 @@ export function processPage() {
   <div class="shell">
     ${head2('How a project starts', 'From first message to kick-off.', { id: 'start-title' })}
     <ol class="steps steps--4">
-      <li class="step"><span class="step__n" aria-hidden="true">1</span><h3>You get in touch</h3><p>Send a short brief through the project form or email. We reply within two working days.</p></li>
+      <li class="step"><span class="step__n" aria-hidden="true">1</span><h3>You get in touch</h3><p>Send a short brief through the project form or email. We reply within 24 hours on working days.</p></li>
       <li class="step"><span class="step__n" aria-hidden="true">2</span><h3>First conversation</h3><p>A call about the idea, audience and timing. We tell you honestly whether we can help.</p></li>
       <li class="step"><span class="step__n" aria-hidden="true">3</span><h3>Written scope</h3><p>Deliverables, timeline and price on paper. An NDA first if you need one.</p></li>
       <li class="step"><span class="step__n" aria-hidden="true">4</span><h3>Kick-off</h3><p>Agreement signed, team introduced, discovery begins.</p></li>
@@ -201,7 +199,7 @@ export function venturesPage() {
             <div class="vmodel__best"><dt>Best for</dt><dd>${w}</dd></div>
           </dl>
           ${val
-            ? `<a class="vmodel__cta" href="#apply" data-pick-model="${val}"><span>Apply with this model</span>${icon.arrow}</a>`
+            ? `<a class="vmodel__cta" href="/ventures/apply/?model=${encodeURIComponent(val)}"><span>Apply with this model</span>${icon.arrow}</a>`
             : `<a class="vmodel__cta" href="/start-a-project/"><span>Start a project brief</span>${icon.arrow}</a>`}
         </li>`;
   const body = `
@@ -212,7 +210,7 @@ export function venturesPage() {
       <h1>Ventures and partnerships.</h1>
       <div>
         <p class="lead" style="margin-top:0">Some founders have a promising idea and limited capital. For the right teams, Lynexa can contribute more than delivery: shared risk, long-term partnership and a studio’s worth of product experience.</p>
-        <div class="actions">${btn('#apply', 'Submit your idea', 'primary')}${btn('#models', 'See the models', 'secondary')}</div>
+        <div class="actions">${btn('/ventures/apply/', 'Submit your idea', 'primary')}${btn('#models', 'See the models', 'secondary')}</div>
       </div>
     </div>
   </div>
@@ -240,7 +238,7 @@ export function venturesPage() {
         <ul class="vmodels__list" role="list">${models.slice(4).map((m, i) => mcard(m, i + 4)).join('')}
         </ul>
       </div>
-      <p class="vmodels__unsure">Not sure which fits? <a class="link" href="#apply" data-pick-model="Not sure yet">Apply with “Not sure yet”${icon.arrow}</a> and we will recommend one.</p>
+      <p class="vmodels__unsure">Not sure which fits? <a class="link" href="/ventures/apply/?model=${encodeURIComponent('Not sure yet')}">Apply with “Not sure yet”${icon.arrow}</a> and we will recommend one.</p>
     </div>
   </div>
 </section>
@@ -271,13 +269,37 @@ export function venturesPage() {
   </div>
 </section>
 <section class="sec surface-paper sheet" id="apply" aria-labelledby="apply-title">
-  <div class="shell contact-grid">
+  <div class="shell split">
     <div>
-      <h2 id="apply-title" style="font-size:var(--fs-h2);max-width:12ch">Submit your startup idea</h2>
-      <p class="lead" style="margin-top:1.25rem">Tell us what you are building and what kind of help you are looking for. We treat submissions as confidential and are happy to sign an NDA before deeper conversations.</p>
+      <h2 id="apply-title" style="font-size:var(--fs-h2);max-width:12ch">Have an idea worth building?</h2>
     </div>
+    <div style="display:grid;gap:1.25rem;justify-items:start">
+      <p class="lead">Tell us what you are building and the kind of help you want. It takes about five minutes. Submissions are confidential, and we are happy to sign an NDA before deeper conversations.</p>
+      <div class="actions">${btn('/ventures/apply/', 'Submit your startup idea', 'primary', ' data-magnetic')}${bookBtn('secondary', 'Talk it through first')}</div>
+    </div>
+  </div>
+</section>`;
+  return { path: '/ventures/', title: 'Venture Building & Startup Partnerships', description: 'How Lynexa partners with founders: project work, startup enablement, hybrid cash-and-equity, equity-for-service and build-operate-transfer models.', body, jsonld: [crumbLd(trail)] };
+}
+
+export function ventureApplyPage() {
+  const trail = [['/', 'Home'], ['/ventures/', 'Ventures'], ['/ventures/apply/', 'Submit an idea']];
+  const body = `
+<section class="page-hero">
+  <div class="shell">
+    ${breadcrumbs(trail)}
+    <div class="page-hero__grid">
+      <h1>Submit your startup idea.</h1>
+      <p class="lead">Tell us what you are building and what kind of help you are looking for. We read every submission and reply within 24 hours on working days. Submissions are confidential.</p>
+    </div>
+    <p class="page-hero__more">${link('/ventures/#models', 'Compare the partnership models')}</p>
+  </div>
+</section>
+<section class="sec sec--tight" id="apply" aria-labelledby="apply-form-title">
+  <div class="shell form-shell">
+    <h2 id="apply-form-title" class="sr-only">Application form</h2>
     ${ventureForm()}
   </div>
 </section>`;
-  return { path: '/ventures/', title: 'Venture Building & Startup Partnerships', description: 'How Lynexa partners with founders: project engagements, startup enablement, hybrid cash-and-equity, equity-for-service and build-operate-transfer. Submit your startup idea.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/ventures/apply/', title: 'Submit Your Startup Idea', description: 'Apply to build your startup with Lynexa: project engagements, startup enablement, hybrid cash-and-equity and build-operate-transfer partnerships.', body, jsonld: [crumbLd(trail)] };
 }

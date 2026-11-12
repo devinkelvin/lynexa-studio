@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 // Lynexa static site build. Zero runtime dependencies: node build.mjs → dist/
 import { mkdir, rm, writeFile, readFile, cp } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
@@ -8,10 +9,13 @@ import { SERVICES } from './src/content/services.mjs';
 import home from './src/pages/home.mjs';
 import { servicesIndex, servicePage } from './src/pages/services.mjs';
 import { workIndex, zenglyPage, swiftlyPage, websitesPage } from './src/pages/work.mjs';
-import { aboutPage, processPage, venturesPage } from './src/pages/studio.mjs';
-import { contactPage, startPage, thanksPages } from './src/pages/forms.mjs';
+import { aboutPage, processPage, venturesPage, ventureApplyPage } from './src/pages/studio.mjs';
+import { contactPage, startPage, feedbackPage, statsPage, thanksPages } from './src/pages/forms.mjs';
 import { privacyPage, termsPage, notFoundPage } from './src/pages/legal.mjs';
 import { plannerPage } from './src/pages/planner.mjs';
+import { pricingPage } from './src/pages/pricing.mjs';
+import { insightsPages } from './src/pages/insights.mjs';
+import { fintechPage } from './src/pages/fintech.mjs';
 
 const root = process.cwd();
 const out = join(root, 'dist');
@@ -24,7 +28,9 @@ await cp(join(root, 'public'), out, { recursive: true });
 // Fingerprinted CSS/JS
 const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10);
 const css = await readFile(join(root, 'src/styles/site.css'), 'utf8');
-const js = (await readFile(join(root, 'src/scripts/site.js'), 'utf8')) + '\n' + (await readFile(join(root, 'src/scripts/wow.js'), 'utf8'));
+// Each script runs in its own try block, so an error in one can never stop the other.
+const guard = (code, name) => `try {\n${code}\n} catch (e) { if (window.console) console.warn('Lynexa ${name} script failed:', e); }\n`;
+const js = guard(await readFile(join(root, 'src/scripts/site.js'), 'utf8'), 'site') + guard(await readFile(join(root, 'src/scripts/wow.js'), 'utf8'), 'extras');
 const swarm = await readFile(join(root, 'src/scripts/swarm.js'), 'utf8');
 const cssName = `site.${hash(css)}.css`;
 const jsName = `site.${hash(js)}.js`;
@@ -35,14 +41,17 @@ await writeFile(join(out, 'assets', swarmName), swarm);
 
 const pages = [
   home(), aboutPage(), servicesIndex(), ...SERVICES.map(servicePage),
-  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), plannerPage(), venturesPage(),
-  contactPage(), startPage(), ...thanksPages(), privacyPage(), termsPage(), notFoundPage()
+  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), plannerPage(), pricingPage(), fintechPage(), ...insightsPages(), venturesPage(), ventureApplyPage(),
+  contactPage(), startPage(), feedbackPage(), statsPage(), ...thanksPages(), privacyPage(), termsPage(), notFoundPage()
 ];
 
 const seen = new Set();
 for (const p of pages) {
   if (seen.has(p.path)) throw new Error(`Duplicate route ${p.path}`);
   seen.add(p.path);
+  // Per-page social image when one has been rendered by scripts/make-og.mjs.
+  const og = p.path === '/' ? 'home' : p.path.replace(/^\/|\/$/g, '').replace(/\//g, '--');
+  if (!p.ogImage && existsSync(join(root, 'public', 'assets', 'og', og + '.png'))) p.ogImage = `/assets/og/${og}.png`;
   let html = layout(p)
     .replace('/assets/site.css?v=__BUILD__', `/assets/${cssName}`)
     .replace('/assets/site.js?v=__BUILD__', `/assets/${jsName}`)
@@ -60,7 +69,19 @@ await writeFile(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?
 ${indexable.map((p) => `  <url><loc>${SITE.url}${p.path}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `);
-await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /project-received/\nDisallow: /application-received/\nDisallow: /message-received/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
+// RSS feed for Insights
+{
+  const { ARTICLES } = await import('./src/content/insights.mjs');
+  const x = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  await writeFile(join(out, 'insights', 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+<title>Lynexa Insights</title><link>${SITE.url}/insights/</link><description>Practical notes on building products for African markets.</description><language>en</language>
+<atom:link href="${SITE.url}/insights/feed.xml" rel="self" type="application/rss+xml"/>
+${ARTICLES.map((a) => `<item><title>${x(a.title)}</title><link>${SITE.url}/insights/${a.slug}/</link><guid>${SITE.url}/insights/${a.slug}/</guid><pubDate>${new Date(a.date + 'T09:00:00Z').toUTCString()}</pubDate><description>${x(a.description)}</description></item>`).join('\n')}
+</channel></rss>
+`);
+}
+await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /project-received/\nDisallow: /application-received/\nDisallow: /message-received/\nDisallow: /feedback-received/\nDisallow: /stats/\nDisallow: /api/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 
 // Redirects for old URLs and likely mistypes. Netlify serves /path/ for /path automatically.
 await writeFile(join(out, '_redirects'), `# Legacy single-page site

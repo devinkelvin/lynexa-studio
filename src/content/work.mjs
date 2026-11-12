@@ -1,4 +1,5 @@
 // Portfolio. Statuses must stay truthful: 'live' only for things a visitor can use today.
+import { SITE } from '../site.mjs';
 export const CATEGORIES = [
   ['fintech', 'Fintech'],
   ['product-design', 'Product design'],
@@ -12,7 +13,8 @@ export const PROJECTS = [
     slug: 'zengly', name: 'Zengly', page: true,
     sector: 'Fintech, social finance',
     summary: 'A social-finance app for young Nigerians, built around how people actually share, celebrate and plan with money.',
-    status: ['progress', 'App in pre-launch'],
+    status: ['progress', 'App launching December 2026'],
+    site: ['https://zenglypay.com/', 'zenglypay.com'],
     cats: ['fintech', 'product-design', 'web', 'brand'],
     role: ['Product strategy', 'UX/UI design', 'Design system', 'Brand identity', 'Marketing site', 'Investor materials']
   },
@@ -25,20 +27,12 @@ export const PROJECTS = [
     role: ['Product specification', 'Venture strategy', 'Marketing site prototype', 'Fare comparison research']
   },
   {
-    slug: 'createmycvnow', name: 'CreateMyCVNow', page: false, href: 'https://createmycvnownow.netlify.app/',
+    slug: 'createmycvnow', name: 'CreateMyCVNow', page: false, href: SITE.cvUrl,
     sector: 'Careers, AI',
     summary: 'An AI-powered CV checker and builder for Nigerian job seekers, with ATS scoring and downloadable templates.',
     status: ['live', 'Live'],
     cats: ['web', 'product-design'],
     role: ['Product design', 'Web app engineering', 'AI features', 'Payments integration']
-  },
-  {
-    slug: 'kelvinekuhoho', name: 'Kelvin Ekuhoho portfolio', page: false, href: 'https://kelvinekuhoho.com/',
-    sector: 'Personal brand, web',
-    summary: 'An editorial, dark-mode portfolio for our founder, with a cinematic intro, selected work and a direct line for enquiries.',
-    status: ['live', 'Live'],
-    cats: ['web', 'brand'],
-    role: ['Art direction', 'Web design', 'Front-end engineering']
   },
   {
     slug: 'landlink', name: 'LandLink', page: false,
@@ -63,9 +57,10 @@ export const PROJECTS = [
   }
 ];
 
-// Real photography for studio ventures without product screens yet (Unsplash licence; see IMAGE_CREDITS.md).
-export const VENTURE_PHOTO = {
-  landlink: { alt: 'A hand signing a property agreement with a fountain pen, the paperwork LandLink aims to make verifiable.', credit: 'Cytonn Photography' },
-  sparkhive: { alt: 'A young African woman mapping ideas on a wall of sticky notes.', credit: 'Vitaly Gariev' },
-  lexforum: { alt: 'A smiling Nigerian lawyer in a barrister’s wig, gown and bib.', credit: 'Modupe Esther Bello' }
+// Concept interface designs for studio ventures that have no shipped product yet. Always labelled "Concept design".
+export const VENTURE_MOCK = {
+  landlink: { alt: 'LandLink concept design: a phone showing title verification progress for a plot in Ikorodu, a survey plan matched to the registry, and a verified-owner card.' },
+  sparkhive: { alt: 'SparkHive concept design: an idea board with problem, experiment and MVP-scope notes, a road-to-MVP progress bar and a team card.' },
+  lexforum: { alt: 'LexForum concept design: a legal research assistant answering a question about deeds of assignment with sources to review, and a community feed on a phone.' },
+  swiftly: { alt: 'Swiftly concept design: a phone listing Lagos to Ibadan departures with fares, an e-ticket, and an event to add at the destination.' }
 };

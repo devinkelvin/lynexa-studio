@@ -1,6 +1,8 @@
 import { btn, link, head2, faq, faqLd, breadcrumbs, crumbLd, ctaBand, icon, img, status } from '../lib.mjs';
 import { SERVICES, ALSO, PILLARS, svcBySlug } from '../content/services.mjs';
 import { PROJECTS } from '../content/work.mjs';
+import { PACKAGES, usd } from '../content/pricing.mjs';
+import { pack } from './pricing.mjs';
 
 export function servicesIndex() {
   const trail = [['/', 'Home'], ['/services/', 'Services']];
@@ -33,10 +35,9 @@ export function servicesIndex() {
 </section>
 <section class="sec surface-paper sheet" aria-labelledby="map-title">
   <div class="shell">
-    ${head2('Not sure which service you need?', 'Most projects follow the same arc. Find where you are, and start there.', { id: 'map-title' })}
-    <ol class="steps steps--4">
-      ${PILLARS.map((p, i) => `<li class="step"><span class="step__n" aria-hidden="true">${i + 1}</span><h3>${p.title}</h3><p>${p.text}</p><ul>${p.links.map((s) => `<li><a href="/services/${s}/">${svcBySlug[s].name}</a></li>`).join('')}</ul></li>`).join('')}
-    </ol>
+    ${head2('Three common starting points.', 'Most clients begin with one of these. Every project gets a written scope and a fixed price before work starts.', { id: 'map-title' })}
+    <div class="packs">${PACKAGES.filter((x) => ['sprint', 'mvp', 'website'].includes(x.key)).map(pack).join('')}</div>
+    <p class="center-cta" style="margin-top:2rem">${btn('/pricing/', 'See all packages and prices', 'secondary')}</p>
   </div>
 </section>
 ${ctaBand({ title: 'Tell us where you are stuck.', text: 'Describe the project and we will recommend the right starting point, even if that is not us.' })}`;
@@ -49,7 +50,8 @@ ${ctaBand({ title: 'Tell us where you are stuck.', text: 'Describe the project a
 
 export function servicePage(s) {
   const trail = [['/', 'Home'], ['/services/', 'Services'], [`/services/${s.slug}/`, s.nav]];
-  const projects = PROJECTS.filter((p) => s.work.includes(p.slug) && p.page);
+  const projects = s.work.map((k) => PROJECTS.find((p) => p.slug === k)).filter((p) => p && (p.page || p.href));
+  const price = PACKAGES.find((x) => x.service === `/services/${s.slug}/`);
   const others = SERVICES.filter((x) => x.slug !== s.slug).slice(0, 3);
   const steps = [
     ['Understand', 'A conversation about your goals, users and constraints, then a written scope with deliverables and timeline.'],
@@ -66,6 +68,7 @@ export function servicePage(s) {
       <div>
         <p class="lead" style="margin-top:0">${s.lead}</p>
         <div class="actions">${btn(`/start-a-project/?service=${s.slug}`, 'Start a project', 'primary')}${btn('#includes', 'What’s included', 'secondary')}</div>
+        ${price ? `<p class="svc-price"><b>From ${usd(price.from)}${price.unit}</b><span>${price.weeks}</span>${link('/pricing/', 'See pricing')}</p>` : ''}
       </div>
     </div>
   </div>
@@ -123,7 +126,7 @@ ${projects.length ? `
   <div class="shell">
     ${head2('Related work', '', { id: 'ex-title', cls: 'sec-head--stack' })}
     <div class="cards">
-      ${projects.map((p) => `<a class="card" href="/work/${p.slug}/" style="text-decoration:none;display:grid;gap:.8rem;justify-items:start">${status(...p.status)}<h3 style="font-size:1.6rem;margin:0">${p.name}</h3><p>${p.summary}</p><span class="link">View project${icon.arrow}</span></a>`).join('')}
+      ${projects.map((p) => `<a class="card" href="${p.page ? `/work/${p.slug}/` : p.href}"${p.page ? '' : ' target="_blank" rel="noopener noreferrer"'} style="text-decoration:none;display:grid;gap:.8rem;justify-items:start">${status(...p.status)}<h3 style="font-size:1.6rem;margin:0">${p.name}</h3><p>${p.summary}</p><span class="link">${p.page ? 'View project' : 'Visit the product'}${icon.arrow}${p.page ? '' : '<span class="sr-only"> (opens in a new tab)</span>'}</span></a>`).join('')}
     </div>
   </div>
 </section>` : ''}
@@ -148,6 +151,6 @@ ${ctaBand({ title: `Talk to us about ${s.nav.replace(/^[A-Z][a-z]/, (m) => m.toL
 
   return {
     path: `/services/${s.slug}/`, title: s.title, description: s.description, body,
-    jsonld: [crumbLd(trail), faqLd(s.faqs), { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: s.name, provider: { '@id': 'https://lynexa.co/#organization' }, areaServed: ['Nigeria', 'Africa', 'Worldwide'], url: `https://lynexa.co/services/${s.slug}/` }]
+    jsonld: [crumbLd(trail), faqLd(s.faqs), { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: s.name, provider: { '@id': 'https://lynexa.co/#organization' }, areaServed: ['Nigeria', 'Africa', 'Worldwide'], url: `https://lynexa.co/services/${s.slug}/`, ...(price ? { offers: { '@type': 'Offer', priceCurrency: 'USD', priceSpecification: { '@type': 'PriceSpecification', minPrice: price.from, priceCurrency: 'USD' }, url: 'https://lynexa.co/pricing/' } } : {}) }]
   };
 }

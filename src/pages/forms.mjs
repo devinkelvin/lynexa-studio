@@ -1,4 +1,4 @@
-import { breadcrumbs, crumbLd, icon, link, btn } from '../lib.mjs';
+import { breadcrumbs, crumbLd, icon, link, btn, bookBtn, TZ_LONG } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 import { SERVICES } from '../content/services.mjs';
 
@@ -23,7 +23,7 @@ const wrap = (name, action, inner, submitLabel) => `${open(name, action)}
   ${consent(name)}
   <div class="form__foot">
     <button class="btn btn--primary" type="submit"><span>${submitLabel}</span></button>
-    <p>We reply within two working days.</p>
+    <p>We reply within 24 hours on working days.</p>
   </div>
 </form>`;
 
@@ -44,7 +44,7 @@ const stepped = (name, action, steps, submitLabel) => `${open(name, action, ' da
     <button class="btn btn--secondary" type="button" data-prev hidden>${icon.back}<span>Back</span></button>
     <button class="btn btn--primary" type="button" data-next><span>Continue</span></button>
     <button class="btn btn--primary" type="submit" data-submit><span>${submitLabel}</span></button>
-    <p>Takes about two minutes. We reply within two working days.</p>
+    <p>Takes about two minutes. We reply within 24 hours on working days.</p>
   </div>
 </form>`;
 
@@ -102,7 +102,7 @@ export function projectForm() {
       ${area('description', f, 'Tell us about it', { required: true, min: 30, hint: 'What are you building, who is it for, and where are you now?', msg: 'Tell us a little about the project.' })}`],
     ['Timing and budget', `
       ${pills('launch', f, 'When would you like to launch?', ['Within 3 months', '3 to 6 months', '6 to 12 months', 'No fixed date'], { required: true, msg: 'Choose a rough target, or “No fixed date”.' })}
-      ${pills('budget', f, 'Expected budget', ['Under $10k', '$10k to $25k', '$25k to $50k', 'Over $50k', 'Not sure yet', 'Venture partnership'], { hint: 'Approximate, in US dollars or the naira equivalent.' })}`]
+      ${pills('budget', f, 'Expected budget', ['Under $3k', '$3k to $10k', '$10k to $25k', '$25k to $50k', 'Over $50k', 'Not sure yet', 'Venture partnership'], { hint: 'Approximate. We quote and invoice in US dollars or in naira at the current exchange rate. See <a href="/pricing/">starting prices</a>.' })}`]
   ], 'Send project brief');
 }
 
@@ -133,6 +133,36 @@ export function messageForm() {
   ${area('message', f, 'Message', { required: true, min: 10, msg: 'Write a short message.' })}`, 'Send message');
 }
 
+// Collect testimonials from clients and collaborators. Nothing is published without the written permission captured here.
+export function feedbackPage() {
+  const trail = [['/', 'Home'], ['/feedback/', 'Share feedback']];
+  const f = 'testimonial';
+  const body = `
+<section class="page-hero">
+  <div class="shell">
+    ${breadcrumbs(trail)}
+    <div class="page-hero__grid">
+      <h1>Worked with us? Tell us how it went.</h1>
+      <p class="lead">Your honest feedback helps us improve, and with your permission, helps other founders decide. We only publish what you agree to, exactly as you approve it.</p>
+    </div>
+  </div>
+</section>
+<section class="sec sec--tight">
+  <div class="shell form-shell">
+    ${wrap(f, '/feedback-received/', `
+      ${text('name', f, 'Your name', { required: true, auto: 'name', msg: 'Please tell us your name.' })}
+      ${text('email', f, 'Email address', { type: 'email', required: true, auto: 'email', hint: 'Only used to confirm the wording with you. Never published.', msg: 'Please enter a valid email address, like name@example.com.' })}
+      ${text('role', f, 'Your role and company', { hint: 'For example: Founder, Example Ltd', auto: 'organization-title' })}
+      ${text('project', f, 'What we worked on together', { hint: 'For example: the Zengly app design, our website' })}
+      ${area('quote', f, 'Your feedback', { required: true, min: 20, hint: 'What was the situation, what did we do, and what changed for you?', msg: 'Please write a few words about your experience.' })}
+      <div class="field" data-field>
+        <label class="consent"><input type="checkbox" name="publish_permission" value="Yes, Lynexa may publish my name, role and feedback"><span>Lynexa may publish my name, role and feedback on lynexa.co and in proposals. We will email you the final wording before it goes live.</span></label>
+      </div>`, 'Send feedback')}
+  </div>
+</section>`;
+  return { path: '/feedback/', title: 'Share Feedback', noindex: true, description: 'Share feedback about working with Lynexa Innovations.', body, jsonld: [crumbLd(trail)] };
+}
+
 export function contactPage() {
   const trail = [['/', 'Home'], ['/contact/', 'Contact']];
   const body = `
@@ -150,12 +180,14 @@ export function contactPage() {
     <div>
       <p style="font-weight:700;font-size:1.2rem;margin-bottom:1rem">${SITE.legalName}</p>
       <div class="channels">
-        <div class="channel"><span class="channel__icon">${icon.mail}</span><div><h2>Email</h2><a href="mailto:${SITE.email}">${SITE.email}</a><small>Main enquiries</small><p style="margin-top:.75rem"><a href="mailto:${SITE.emailSecondary}" style="font-size:1rem">${SITE.emailSecondary}</a></p><small>Alternative address</small></div></div>
+        <div class="channel"><span class="channel__icon">${icon.calendar}</span><div><h2>Video call</h2><a href="${SITE.bookingHref}" target="_blank" rel="noopener noreferrer" data-book>Book a 20-minute intro call<span class="sr-only"> (opens in a new tab)</span></a><small>Free, no preparation needed</small></div></div>
+        <div class="channel"><span class="channel__icon">${icon.mail}</span><div><h2>Email</h2><a href="mailto:${SITE.email}">${SITE.email}</a><small>All enquiries</small></div></div>
         <div class="channel"><span class="channel__icon channel__icon--wa">${icon.whatsapp}</span><div><h2>WhatsApp</h2><a href="${SITE.whatsappUrl}" target="_blank" rel="noopener noreferrer">Chat with us on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a><small>Quickest for short questions</small></div></div>
         <div class="channel"><span class="channel__icon">${icon.phone}</span><div><h2>Phone</h2><a href="tel:${SITE.phoneIntl}">${SITE.phoneDisplay}</a><small>International: +234 703 827 1812</small></div></div>
         <div class="channel"><span class="channel__icon">${icon.pin}</span><div><h2>Address</h2><address>${SITE.address.lines.join('<br>')}</address>${link(SITE.mapsUrl, 'Get directions in Google Maps')}</div></div>
       </div>
-      <p class="muted" style="margin-top:1.5rem;font-size:.95rem">Registered in Nigeria, ${SITE.rc}. We work across time zones; Lagos is GMT+1.</p>
+      <div class="tz-note"><span class="channel__icon">${icon.globe}</span><p>${TZ_LONG}</p></div>
+      <p class="muted" style="margin-top:1.5rem;font-size:.95rem">Registered in Nigeria, ${SITE.rc}. We reply within 24 hours on working days.</p>
     </div>
     <div>
       <h2 style="font-size:1.6rem;margin-bottom:1.25rem">Send a message</h2>
@@ -173,7 +205,7 @@ export function startPage() {
   <div class="shell">
     ${breadcrumbs(trail)}
     <h1>Tell us about your project.</h1>
-    <p class="lead">A few minutes now saves a round of emails later. We read every brief and reply within two working days, including when we are not the right fit.</p>
+    <p class="lead">A few minutes now saves a round of emails later. We read every brief and reply within 24 hours on working days, including when we are not the right fit.</p>
   </div>
 </section>
 <section class="sec sec--tight" aria-label="Project brief">
@@ -182,19 +214,20 @@ export function startPage() {
       <div>
         <h2 style="font-size:1.25rem;margin-bottom:1rem">What happens next</h2>
         <ol class="checklist" style="gap:.9rem">
-          <li>${icon.check}We review your brief and reply within two working days.</li>
+          <li>${icon.check}We review your brief and reply within 24 hours on working days.</li>
           <li>${icon.check}If it looks like a fit, we set up a call.</li>
           <li>${icon.check}You receive a written scope with deliverables, timeline and price.</li>
         </ol>
       </div>
       <div class="note">Sharing something sensitive? Keep the brief high-level. We are happy to sign a mutual NDA before going into detail.</div>
       <p class="muted" style="font-size:.95rem">Prefer email? Write to <a class="link" href="mailto:${SITE.email}">${SITE.email}</a></p>
-      <p class="muted" style="font-size:.95rem">Not sure about timing yet? Try the <a class="link" href="/mvp-planner/">MVP timeline planner</a>.</p>
+      <p class="muted" style="font-size:.95rem">Not sure about timing yet? Try the <a class="link" href="/mvp-planner/">MVP timeline planner</a>, or see <a class="link" href="/pricing/">starting prices</a>.</p>
+      <p style="margin-top:.5rem">${bookBtn('secondary', 'Rather talk first? Book a call')}</p>
     </aside>
     ${projectForm()}
   </div>
 </section>`;
-  return { path: '/start-a-project/', title: 'Start a Project', description: 'Send Lynexa a short project brief for product design, MVP development, websites, branding or pitch materials. We reply within two working days.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/start-a-project/', title: 'Start a Project', description: 'Send Lynexa a short project brief for product design, MVP development, websites, branding or pitch materials. We reply within 24 hours on working days.', body, jsonld: [crumbLd(trail)] };
 }
 
 const thanks = (path, title, h1, text, steps) => ({
@@ -212,7 +245,35 @@ const thanks = (path, title, h1, text, steps) => ({
 });
 
 export const thanksPages = () => [
-  thanks('/project-received/', 'Project brief received', 'Thanks, your brief is with us.', 'We read every brief personally. Expect a reply from the Lynexa team within two working days.', ['We review your brief and check how we can help.', `If it is a fit, we email you to arrange a call. Check your spam folder for messages from ${SITE.email}.`, 'After the call, you receive a written scope with deliverables, timeline and price.']),
-  thanks('/application-received/', 'Venture idea received', 'Thanks for sharing your idea.', 'Your submission is confidential. We review every idea and reply within two working days, including when it is not a fit.', ['We read your submission and look at the market.', 'For promising ideas, we arrange a conversation with the founders.', 'Nothing is agreed until both sides sign written terms.']),
-  thanks('/message-received/', 'Message received', 'Thanks, your message is on its way.', 'We reply to every message within two working days.', [`Replies come from ${SITE.email}.`, 'If it is urgent, call us on ' + SITE.phoneDisplay + '.'])
+  thanks('/project-received/', 'Project brief received', 'Thanks, your brief is with us.', 'We read every brief personally. Expect a reply from the Lynexa team within 24 hours on working days.', ['We review your brief and check how we can help.', `If it is a fit, we email you to arrange a call. Check your spam folder for messages from ${SITE.email}.`, 'After the call, you receive a written scope with deliverables, timeline and price.']),
+  thanks('/application-received/', 'Venture idea received', 'Thanks for sharing your idea.', 'Your submission is confidential. We review every idea and reply within 24 hours on working days, including when it is not a fit.', ['We read your submission and look at the market.', 'For promising ideas, we arrange a conversation with the founders.', 'Nothing is agreed until both sides sign written terms.']),
+  thanks('/feedback-received/', 'Feedback received', 'Thank you for your feedback.', 'It means a lot to a small team. If you gave permission to publish it, we will email you the final wording to approve first.', ['We read every response.', 'Nothing is published without your approval of the exact wording.']),
+  thanks('/message-received/', 'Message received', 'Thanks, your message is on its way.', 'We reply to every message within 24 hours on working days.', [`Replies come from ${SITE.email}.`, 'If it is urgent, call us on ' + SITE.phoneDisplay + '.'])
 ];
+
+// Private, key-protected summary of the anonymous visit counts (see netlify/functions/stats.mts).
+export function statsPage() {
+  return {
+    path: '/stats/', title: 'Site statistics', noindex: true, swarm: 'none', description: 'Private site statistics.',
+    body: `
+<section class="page-hero">
+  <div class="shell">
+    <h1>Site statistics</h1>
+    <p class="lead">Anonymous visit counts for lynexa.co. No cookies, no IP addresses and no individual profiles are collected.</p>
+  </div>
+</section>
+<section class="sec sec--tight">
+  <div class="shell stats" data-stats>
+    <form class="stats__form">
+      <label for="stats-key">Access key</label>
+      <input class="input" id="stats-key" type="password" autocomplete="current-password" required>
+      <label for="stats-days">Period</label>
+      <select class="input" id="stats-days"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select>
+      <button class="btn btn--primary" type="submit"><span>Show statistics</span></button>
+    </form>
+    <p role="status" data-stats-msg></p>
+    <div data-stats-out></div>
+  </div>
+</section>`
+  };
+}
