@@ -8,7 +8,7 @@ export function workIndex() {
   const trail = [['/', 'Home'], ['/work/', 'Work']];
   const used = CATEGORIES.filter(([k]) => PROJECTS.some((p) => p.cats.includes(k)));
   const media = (p) => {
-    if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly">${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 45vw, 100vw' })}<span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
+    if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly"><span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
     if (p.slug === 'swiftly') return `<span class="showcase__media showcase__media--cover">${img('mock-swiftly', VENTURE_MOCK.swiftly.alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Concept design</small></span>`;
     if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'CreateMyCVNow', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
     if (p.slug === 'kelvinekuhoho') return `<span class="showcase__media showcase__media--site showcase__media--night">${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
@@ -55,7 +55,7 @@ export function workIndex() {
   </div>
 </section>
 ${ctaBand()}`;
-  return { path: '/work/', title: 'Work & Case Studies', description: 'Selected Lynexa work: Zengly social-finance app (launching December 2026), CreateMyCVNow, Swiftly mobility venture and studio ventures in property, legal and productivity technology, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/work/', title: 'Work & Case Studies', description: 'Lynexa work: the Zengly social-finance app (launching December 2026), CreateMyCVNow, Swiftly and studio ventures, each labelled with its real status.', body, jsonld: [crumbLd(trail)] };
 }
 
 const chapter = (title, html) => `<div class="chapter"><h2>${title}</h2><div class="chapter__body">${html}</div></div>`;
@@ -82,8 +82,12 @@ export function zenglyPage() {
       <div><dt>Platforms</dt><dd>iOS and Android app, marketing website</dd></div>
       <div><dt>Status</dt><dd>App launching December 2026 on iOS and Android; website live at <a href="https://zenglypay.com/" target="_blank" rel="noopener noreferrer">zenglypay.com<span class="sr-only"> (opens in a new tab)</span></a></dd></div>
     </dl>
-    <div class="case-hero__media" data-reveal>${img('zengly-friends', 'Four friends at a restaurant table, each using their phone', { sizes: '(min-width: 1320px) 1320px, 100vw' }).replace('<img ', '<img style="width:100%;aspect-ratio:21/9;object-fit:cover" ')}</div>
-    <p class="credit">Photo: BlackBoy Joy via Pexels.</p>
+    <div class="case-hero__media zstage" data-reveal>
+      ${phone('zengly-fig-nearby', 'Vaniti finding nearby guests to spray, with three guests on a radar', { sizes: '(min-width: 900px) 220px, 30vw', cls: 'zstage__p zstage__p--l' })}
+      ${phone('zengly-fig-gift', 'Vaniti sending a black money bag gift to a guest', { sizes: '(min-width: 900px) 260px, 36vw', cls: 'zstage__p zstage__p--c', eager: true })}
+      ${phone('zengly-fig-sent', 'Vaniti confirming a gift sent successfully, with a Money na water placard', { sizes: '(min-width: 900px) 220px, 30vw', cls: 'zstage__p zstage__p--r' })}
+    </div>
+    <p class="credit">Zengly’s Vaniti flow, from the product design files.</p>
   </div>
 </section>
 
@@ -91,12 +95,13 @@ export function zenglyPage() {
   <div class="shell proto">
     <div class="proto__intro">
       <h2 id="proto-title">Tap through Zengly</h2>
-      <p>These are Zengly’s real design screens, linked into a small click-through. Tap the highlighted areas on the phone, or jump straight to a screen. The app launches in December 2026, so this is the design, not the live app.</p>
+      <p>These are Zengly’s real design screens, linked into a small click-through. Tap the highlighted areas on the phone to spray a guest at an event with Vaniti, or jump straight to a screen. The app launches in December 2026, so this is the design, not the live app.</p>
       <div class="proto__nav" role="group" aria-label="Jump to a screen">
         <button type="button" data-proto-go="home" aria-pressed="true">Home</button>
         <button type="button" data-proto-go="menu" aria-pressed="false">All services</button>
         <button type="button" data-proto-go="split" aria-pressed="false">Split bill</button>
-        <button type="button" data-proto-go="sprayers" aria-pressed="false">Vaniti</button>
+        <button type="button" data-proto-go="vaniti" aria-pressed="false">Vaniti spray</button>
+        <button type="button" data-proto-go="event" aria-pressed="false">Create an event</button>
         <button type="button" data-proto-go="leaderboard" aria-pressed="false">Leaderboard</button>
       </div>
       <button class="proto__theme" type="button" data-proto-theme aria-pressed="false"><span>Light mode</span><i aria-hidden="true"></i></button>
@@ -106,11 +111,17 @@ export function zenglyPage() {
       <div class="proto__phone" data-proto>
         <span class="device__island" aria-hidden="true"></span>
         ${[
-          ['home', 'the home screen', 'zengly-home-dark', 'Zengly home screen in dark mode with balance, quick actions and services', [['Open Vaniti', 'sprayers', 30.6, 28, 16.8, 11.2], ['Open Split Bill', 'split', 53.5, 28, 17, 11.2], ['See all services', 'menu', 75, 41.3, 18.4, 10.6]]],
-          ['home-light', 'the home screen in light mode', 'zengly-home-light', 'Zengly home screen in light mode with balance, quick actions and services', [['Open Vaniti', 'sprayers', 30.6, 28, 16.8, 11.2], ['Open Split Bill', 'split', 53.5, 28, 17, 11.2], ['See all services', 'menu', 75, 41.3, 18.4, 10.6]]],
-          ['menu', 'all services', 'zengly-menu', 'Zengly services menu listing transfers, bills, Vaniti and Split Bill', [['Back', 'back', 0, 6.7, 18.6, 6.1], ['Open Vaniti', 'sprayers', 34.8, 21, 29, 12], ['Open Split Bill', 'split', 66, 21, 28.5, 12]]],
+          ['home', 'the home screen', 'zengly-home-dark', 'Zengly home screen in dark mode with balance, quick actions and services', [['Open Vaniti', 'vaniti', 30.6, 28, 16.8, 11.2], ['Open Split Bill', 'split', 53.5, 28, 17, 11.2], ['See all services', 'menu', 75, 41.3, 18.4, 10.6]]],
+          ['home-light', 'the home screen in light mode', 'zengly-home-light', 'Zengly home screen in light mode with balance, quick actions and services', [['Open Vaniti', 'vaniti', 30.6, 28, 16.8, 11.2], ['Open Split Bill', 'split', 53.5, 28, 17, 11.2], ['See all services', 'menu', 75, 41.3, 18.4, 10.6]]],
+          ['menu', 'all services', 'zengly-menu', 'Zengly services menu listing transfers, bills, Vaniti and Split Bill', [['Back', 'back', 0, 6.7, 18.6, 6.1], ['Open Vaniti', 'vaniti', 34.8, 21, 29, 12], ['Open Split Bill', 'split', 66, 21, 28.5, 12]]],
           ['split', 'Split Bill', 'zengly-split-bill', 'Zengly split-bill screen showing a “Divide expenses fairly” card and bill history', [['Back', 'back', 0, 7.3, 18.6, 6.7]]],
           ['sprayers', 'Vaniti', 'zengly-vaniti-sprayers', 'Zengly Vaniti screen showing an event’s top sprayers', [['Back', 'back', 0, 7.3, 18.6, 6.7], ['See the leaderboard', 'leaderboard', 71.8, 33.5, 24, 4.9], ['See more sprayers', 'leaderboard', 31.9, 82.9, 35, 5.5]]],
+          ['vaniti', 'Vaniti spray setup', 'zengly-fig-home', 'Vaniti spray setup: choose currency, spray option and how to find the person', [['Back', 'back', 0, 6.5, 18.6, 6.5], ['Open the leaderboard', 'leaderboard', 50, 13.6, 46, 4.6], ['Start spray', 'nearby', 5.5, 58.4, 89, 6.2]]],
+          ['nearby', 'nearby guests', 'zengly-fig-nearby', 'Vaniti radar showing three nearby guests: Charley, Sammy and Benny', [['Back', 'back', 0, 6.5, 18.6, 6.5], ['Spray Sammy', 'options', 60, 29, 24, 11], ['Spray Charley', 'options', 14, 31, 24, 11], ['Spray Benny', 'options', 66, 48.5, 24, 11]]],
+          ['options', 'spray options', 'zengly-fig-gifts', 'Vaniti spray options: notes, cash bundles and gifts with naira amounts', [['Back', 'back', 0, 6.5, 18.6, 6.5], ['Choose spray notes', 'sending', 6.5, 19, 43, 14.5], ['Choose cash bundle, 10,000 naira', 'sending', 6.5, 39, 43, 14.5], ['Choose cash bundle, 20,000 naira', 'sending', 50.5, 39, 43, 14.5]]],
+          ['sending', 'sending a gift', 'zengly-fig-gift', 'Vaniti sending a black money bag gift to Ability Elijah', [['Finish sending', 'sent', 4, 61, 92, 25]]],
+          ['sent', 'gift sent', 'zengly-fig-sent', 'Gift sent successfully: 4 million naira sent to Ability Elijah, with a Money na water placard', [['Go home', 'home', 4, 84.5, 92, 6.5], ['View on leaderboard', 'leaderboard', 4, 91.5, 92, 5]]],
+          ['event', 'create an event', 'zengly-fig-ready', 'Creating a Vaniti event: Chioma and David’s wedding with guest joining options and live experience settings', [['Back', 'back', 0, 6.5, 18.6, 6.5], ['Create event', 'vaniti', 4, 89.5, 92, 6.5]]],
           ['leaderboard', 'the Vaniti leaderboard', 'zengly-vaniti-leaderboard', 'Zengly Vaniti leaderboard ranking the top sprayers at an event', [['Back', 'back', 0, 5.5, 18.6, 6.7], ['Switch to Baller mode', 'sprayers', 4.3, 14, 44.4, 3.9]]]
         ].map(([id, title, im, alt, spots]) => `<div class="proto__screen" data-screen="${id}" data-title="${title}" aria-hidden="true">${img(im, alt, { sizes: '300px' })}${spots.map(([label, go, l, t, w, h]) => `<button class="proto__hot" type="button" tabindex="-1" data-go="${go}" style="left:${l}%;top:${t}%;width:${w}%;height:${h}%"><span class="sr-only">${label}</span></button>`).join('')}</div>`).join('')}
       </div>
@@ -183,7 +194,7 @@ export function zenglyPage() {
 ${ctaBand({ title: 'Building something people will use with friends?' })}`;
   return {
     path: '/work/zengly/', title: 'Zengly: Social-Finance App Case Study',
-    description: 'How Lynexa shaped and designed Zengly, a social-finance app for young Nigerians launching in December 2026: product strategy, UX/UI, brand, design system and marketing site.',
+    description: 'How Lynexa shaped Zengly, a social-finance app for young Nigerians launching December 2026: strategy, UX/UI, brand, design system and website.',
     body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'CreativeWork', name: 'Zengly case study', about: 'Zengly social-finance app', creator: { '@id': 'https://lynexa.co/#organization' }, url: 'https://lynexa.co/work/zengly/' }]
   };
 }

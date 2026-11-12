@@ -31,7 +31,7 @@ export function insightsIndex() {
   </div>
 </section>
 ${ctaBand({ title: 'Have a question we should write about?', text: 'Or a product you want to build. We reply within 24 hours on working days.' })}`;
-  return { path: '/insights/', title: 'Insights', description: 'Articles from Lynexa on scoping MVPs, designing fintech for African markets, payments integration and preparing products for investors.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/insights/', title: 'Insights on MVPs, Fintech and Product Design', description: 'Articles from Lynexa on scoping MVPs, designing fintech for African markets, payments integration and preparing products for investors.', body, jsonld: [crumbLd(trail)] };
 }
 
 export function articlePage(a) {
@@ -66,9 +66,10 @@ ${ctaBand({ title: 'Building something like this?', text: 'Tell us what you are 
     '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.description,
     datePublished: a.date, dateModified: a.date, mainEntityOfPage: `${SITE.url}/insights/${a.slug}/`,
     author: { '@type': 'Organization', name: SITE.legalName, url: SITE.url },
-    publisher: { '@type': 'Organization', name: SITE.legalName, url: SITE.url }
+    publisher: { '@type': 'Organization', name: SITE.legalName, url: SITE.url, logo: { '@type': 'ImageObject', url: `${SITE.url}/apple-touch-icon.png` } },
+    image: `${SITE.url}/assets/og/insights--${a.slug}.png`, inLanguage: 'en'
   };
-  return { path: `/insights/${a.slug}/`, title: a.title, description: a.description, body, jsonld: [crumbLd(trail), ld] };
+  return { path: `/insights/${a.slug}/`, title: a.title, seoTitle: a.seoTitle, description: a.description, ogType: 'article', published: a.date, body, jsonld: [crumbLd(trail), ld] };
 }
 
 export const insightsPages = () => [insightsIndex(), ...ARTICLES.map(articlePage)];

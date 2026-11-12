@@ -287,6 +287,21 @@
     forms.forEach((f) => fo.observe(f));
   }
 
+  /* Venture application page: ?model=... (from "Apply with this model") pre-selects that model */
+  (() => {
+    const m = new URLSearchParams(location.search).get('model');
+    const form = document.querySelector('#apply form');
+    if (!m || !form) return;
+    const radio = [...form.querySelectorAll('input[name="model"]')].find((r) => r.value === m);
+    if (!radio) return;
+    radio.checked = true;
+    const note = document.createElement('p');
+    note.className = 'form-picked';
+    note.setAttribute('role', 'status');
+    note.textContent = 'Model selected: ' + m + '. You can change it in the last step.';
+    form.insertBefore(note, form.querySelector('.form__step'));
+  })();
+
   /* Venture models: "Apply with this model" pre-selects the matching option in the application form */
   document.querySelectorAll('[data-pick-model]').forEach((a) => {
     a.addEventListener('click', () => {

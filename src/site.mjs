@@ -27,7 +27,7 @@ export const SITE = {
   reply: 'within 24 hours on working days',
   // Paste a Cal.com or Calendly link here to switch every "Book a call" button to it.
   // Empty = the button opens WhatsApp with a booking message instead.
-  bookingUrl: '',
+  bookingUrl: 'https://cal.com/kelvin-ekuhoho-0qvxb6',
   // CreateMyCVNow: change cvUrl once its custom domain is connected in Netlify.
   cvUrl: 'https://createmycvnownow.netlify.app/'
 };

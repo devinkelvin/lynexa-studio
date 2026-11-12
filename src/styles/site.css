@@ -1306,3 +1306,23 @@ kbd { display: inline-block; padding: .05rem .4rem; border: 1px solid var(--line
 .svc-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .svc-price b { font-size: 1.35rem; letter-spacing: -.02em; }
 .svc-price span { color: var(--stone); }
+
+/* Zengly: real design screens on a warm Zengly-gold stage (replaces stock photography) */
+.showcase__media--zengly { background: radial-gradient(90% 120% at 50% 0%, #c98a2b 0%, #8a5414 42%, #2a1a08 100%); }
+.zstage { position: relative; display: flex; justify-content: center; align-items: flex-end; gap: clamp(.75rem, 3vw, 2.5rem); padding: clamp(2rem, 5vw, 4rem) 1rem 0; min-height: clamp(320px, 46vw, 560px); background: radial-gradient(80% 110% at 50% 0%, #d29433 0%, #8a5414 45%, #24170a 100%); }
+.zstage__p { width: clamp(110px, 18vw, 230px); margin: 0; }
+.zstage__p--c { width: clamp(130px, 21vw, 270px); transform: translateY(-6%); }
+.zstage__p--l, .zstage__p--r { transform: translateY(8%); }
+
+/* Private stats page */
+.stats__form { display: grid; gap: .6rem; max-width: 420px; margin-bottom: 1.5rem; }
+.stats__total { font-size: 1.2rem; margin: 1rem 0; }
+.stats__total b { font-size: 2rem; letter-spacing: -.03em; }
+.stats__bars { display: flex; align-items: flex-end; gap: 3px; height: 140px; padding: 10px; border-radius: var(--r-card); background: var(--paper); border: 1px solid var(--line); margin-bottom: 1.5rem; }
+.stats__bars i { flex: 1; height: max(2px, var(--h)); border-radius: 3px 3px 0 0; background: var(--violet); }
+.stats__grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+.stats__card { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--r-card); background: var(--paper); }
+.stats__card h2 { font-size: 1.1rem; margin-bottom: .75rem; }
+.stats__card table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.stats__card td { padding: .4rem 0; border-top: 1px solid var(--line); }
+.stats__card td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }

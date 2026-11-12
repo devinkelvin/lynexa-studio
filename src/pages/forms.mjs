@@ -250,3 +250,30 @@ export const thanksPages = () => [
   thanks('/feedback-received/', 'Feedback received', 'Thank you for your feedback.', 'It means a lot to a small team. If you gave permission to publish it, we will email you the final wording to approve first.', ['We read every response.', 'Nothing is published without your approval of the exact wording.']),
   thanks('/message-received/', 'Message received', 'Thanks, your message is on its way.', 'We reply to every message within 24 hours on working days.', [`Replies come from ${SITE.email}.`, 'If it is urgent, call us on ' + SITE.phoneDisplay + '.'])
 ];
+
+// Private, key-protected summary of the anonymous visit counts (see netlify/functions/stats.mts).
+export function statsPage() {
+  return {
+    path: '/stats/', title: 'Site statistics', noindex: true, swarm: 'none', description: 'Private site statistics.',
+    body: `
+<section class="page-hero">
+  <div class="shell">
+    <h1>Site statistics</h1>
+    <p class="lead">Anonymous visit counts for lynexa.co. No cookies, no IP addresses and no individual profiles are collected.</p>
+  </div>
+</section>
+<section class="sec sec--tight">
+  <div class="shell stats" data-stats>
+    <form class="stats__form">
+      <label for="stats-key">Access key</label>
+      <input class="input" id="stats-key" type="password" autocomplete="current-password" required>
+      <label for="stats-days">Period</label>
+      <select class="input" id="stats-days"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select>
+      <button class="btn btn--primary" type="submit"><span>Show statistics</span></button>
+    </form>
+    <p role="status" data-stats-msg></p>
+    <div data-stats-out></div>
+  </div>
+</section>`
+  };
+}

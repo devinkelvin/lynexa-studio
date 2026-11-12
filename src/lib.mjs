@@ -32,14 +32,14 @@ const DIMS = {
   'site-zengly-desktop': [1440, 900], 'site-kelvin-desktop': [1440, 900], 'site-cv-desktop': [1440, 900],
   'site-zengly-mobile': [390, 844], 'site-kelvin-mobile': [390, 844], 'site-cv-mobile': [390, 844],
   'venture-landlink': [1280, 854], 'venture-sparkhive': [1280, 720], 'venture-lexforum': [1280, 853],
-  'swiftly-danfo': [1600, 1066], 'mock-landlink': [1280, 800], 'mock-sparkhive': [1280, 800], 'mock-lexforum': [1280, 800], 'mock-swiftly': [1600, 1000], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
+  'swiftly-danfo': [1600, 1066], 'zengly-fig-home': [752, 1640], 'zengly-fig-nearby': [752, 1640], 'zengly-fig-gifts': [752, 1640], 'zengly-fig-gift': [752, 1640], 'zengly-fig-sent': [752, 1640], 'zengly-fig-ready': [752, 1640], 'mock-landlink': [1280, 800], 'mock-sparkhive': [1280, 800], 'mock-lexforum': [1280, 800], 'mock-swiftly': [1600, 1000], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
 };
 const WIDTHS = {
   'zengly-sign': [540, 1080], 'zengly-podium': [540, 1080], 'zengly-gift': [540, 1080], 'zengly-friends': [600, 1200],
   'lagos-professionals': [800, 1600], 'lagos-collaboration': [800, 1600], 'lagos-strategy-session': [800, 1600],
   'site-zengly-desktop': [720, 1440], 'site-kelvin-desktop': [720, 1440], 'site-cv-desktop': [720, 1440],
   'venture-landlink': [640, 1280], 'venture-sparkhive': [640, 1280], 'venture-lexforum': [640, 1280],
-  'swiftly-danfo': [800, 1600], 'mock-landlink': [640, 1280], 'mock-sparkhive': [640, 1280], 'mock-lexforum': [640, 1280], 'mock-swiftly': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
+  'swiftly-danfo': [800, 1600], 'zengly-fig-home': [376, 752], 'zengly-fig-nearby': [376, 752], 'zengly-fig-gifts': [376, 752], 'zengly-fig-gift': [376, 752], 'zengly-fig-sent': [376, 752], 'zengly-fig-ready': [376, 752], 'mock-landlink': [640, 1280], 'mock-sparkhive': [640, 1280], 'mock-lexforum': [640, 1280], 'mock-swiftly': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
 };
 export function img(name, alt, { sizes = '100vw', cls = '', eager = false } = {}) {
   const [w, h] = DIMS[name];
@@ -183,6 +183,7 @@ export const orgLd = () => ({
   '@type': 'ProfessionalService',
   '@id': `${SITE.url}/#organization`,
   name: SITE.legalName,
+  legalName: SITE.legalName,
   alternateName: 'Lynexa',
   url: SITE.url,
   logo: `${SITE.url}/icon-512.png`,
@@ -192,6 +193,10 @@ export const orgLd = () => ({
   telephone: SITE.phoneIntl,
   address: { '@type': 'PostalAddress', streetAddress: SITE.address.street, addressLocality: SITE.address.locality, addressRegion: SITE.address.region, addressCountry: SITE.address.country },
   areaServed: ['Nigeria', 'Africa', 'Worldwide'],
+  priceRange: '$$',
+  currenciesAccepted: 'USD, NGN',
+  knowsAbout: ['Product design', 'UX design', 'MVP development', 'Mobile app development', 'Fintech', 'Web design', 'Brand identity', 'Venture building'],
+  contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: SITE.email, telephone: SITE.phoneIntl, availableLanguage: ['English'], areaServed: 'Worldwide' },
   founder: { '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO' },
   sameAs: [SITE.linkedin]
 });
@@ -284,9 +289,9 @@ const footer = () => `
 // asks the hero wireframe to wait for the swarm to draw it. Its hash is added to the CSP at build time.
 export const HEAD_SCRIPT = "(function(e){e.classList.add('js');try{var m=localStorage.getItem('lx-motion');if(m)e.setAttribute('data-motion',m);var r=matchMedia('(prefers-reduced-motion: reduce)').matches,c=navigator.connection;if((m==='full'||(!m&&!r))&&!(c&&c.saveData)&&e.getAttribute('data-swarm-mode')!=='none'){e.classList.add('sw-intro');var l=document.createElement('link');l.rel='preload';l.as='script';l.href=e.getAttribute('data-swarm-src');document.head.appendChild(l)}}catch(x){}})(document.documentElement)";
 
-export function layout({ path, title, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', bodyClass = '', swarm = 'full' }) {
+export function layout({ path, title, seoTitle, description, body, jsonld = [], noindex = false, ogImage = '/assets/og/lynexa-og.png', ogType = 'website', published, bodyClass = '', swarm = 'full' }) {
   const canonical = SITE.url + path;
-  const fullTitle = path === '/' ? title : `${title} | Lynexa`;
+  const fullTitle = path === '/' ? title : `${seoTitle || title} | Lynexa`;
   const ld = [orgLd(), ...jsonld];
   return `<!doctype html>
 <html lang="en-NG" data-swarm-src="/assets/swarm.js?v=__BUILD__" data-swarm-mode="${swarm}">
@@ -298,7 +303,7 @@ export function layout({ path, title, description, body, jsonld = [], noindex = 
 <link rel="canonical" href="${canonical}">
 ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta name="theme-color" content="#F1EEE8">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${ogType}">
 <meta property="og:site_name" content="Lynexa">
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(description)}">
@@ -306,8 +311,15 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:image" content="${SITE.url}${ogImage}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(title)}: Lynexa">
 <meta property="og:locale" content="en_NG">
-<meta name="twitter:card" content="summary_large_image">
+${published ? `<meta property="article:published_time" content="${published}">\n<meta property="article:author" content="${SITE.url}/about/">\n` : ''}<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(fullTitle)}">
+<meta name="twitter:description" content="${esc(description)}">
+<meta name="twitter:image" content="${SITE.url}${ogImage}">
+<meta name="twitter:image:alt" content="${esc(title)}: Lynexa">
+<meta name="author" content="${SITE.legalName}">
+<link rel="alternate" type="application/rss+xml" title="Lynexa Insights" href="/insights/feed.xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">

@@ -1,4 +1,4 @@
-import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder, teamSection, testimonialsSection, TZ_LONG } from '../lib.mjs';
+import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder, bookBtn, teamSection, testimonialsSection, TZ_LONG } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 import { ventureForm } from './forms.mjs';
 
@@ -199,7 +199,7 @@ export function venturesPage() {
             <div class="vmodel__best"><dt>Best for</dt><dd>${w}</dd></div>
           </dl>
           ${val
-            ? `<a class="vmodel__cta" href="#apply" data-pick-model="${val}"><span>Apply with this model</span>${icon.arrow}</a>`
+            ? `<a class="vmodel__cta" href="/ventures/apply/?model=${encodeURIComponent(val)}"><span>Apply with this model</span>${icon.arrow}</a>`
             : `<a class="vmodel__cta" href="/start-a-project/"><span>Start a project brief</span>${icon.arrow}</a>`}
         </li>`;
   const body = `
@@ -210,7 +210,7 @@ export function venturesPage() {
       <h1>Ventures and partnerships.</h1>
       <div>
         <p class="lead" style="margin-top:0">Some founders have a promising idea and limited capital. For the right teams, Lynexa can contribute more than delivery: shared risk, long-term partnership and a studio’s worth of product experience.</p>
-        <div class="actions">${btn('#apply', 'Submit your idea', 'primary')}${btn('#models', 'See the models', 'secondary')}</div>
+        <div class="actions">${btn('/ventures/apply/', 'Submit your idea', 'primary')}${btn('#models', 'See the models', 'secondary')}</div>
       </div>
     </div>
   </div>
@@ -238,7 +238,7 @@ export function venturesPage() {
         <ul class="vmodels__list" role="list">${models.slice(4).map((m, i) => mcard(m, i + 4)).join('')}
         </ul>
       </div>
-      <p class="vmodels__unsure">Not sure which fits? <a class="link" href="#apply" data-pick-model="Not sure yet">Apply with “Not sure yet”${icon.arrow}</a> and we will recommend one.</p>
+      <p class="vmodels__unsure">Not sure which fits? <a class="link" href="/ventures/apply/?model=${encodeURIComponent('Not sure yet')}">Apply with “Not sure yet”${icon.arrow}</a> and we will recommend one.</p>
     </div>
   </div>
 </section>
@@ -269,13 +269,37 @@ export function venturesPage() {
   </div>
 </section>
 <section class="sec surface-paper sheet" id="apply" aria-labelledby="apply-title">
-  <div class="shell contact-grid">
+  <div class="shell split">
     <div>
-      <h2 id="apply-title" style="font-size:var(--fs-h2);max-width:12ch">Submit your startup idea</h2>
-      <p class="lead" style="margin-top:1.25rem">Tell us what you are building and what kind of help you are looking for. We treat submissions as confidential and are happy to sign an NDA before deeper conversations.</p>
+      <h2 id="apply-title" style="font-size:var(--fs-h2);max-width:12ch">Have an idea worth building?</h2>
     </div>
+    <div style="display:grid;gap:1.25rem;justify-items:start">
+      <p class="lead">Tell us what you are building and the kind of help you want. It takes about five minutes. Submissions are confidential, and we are happy to sign an NDA before deeper conversations.</p>
+      <div class="actions">${btn('/ventures/apply/', 'Submit your startup idea', 'primary', ' data-magnetic')}${bookBtn('secondary', 'Talk it through first')}</div>
+    </div>
+  </div>
+</section>`;
+  return { path: '/ventures/', title: 'Venture Building & Startup Partnerships', description: 'How Lynexa partners with founders: project work, startup enablement, hybrid cash-and-equity, equity-for-service and build-operate-transfer models.', body, jsonld: [crumbLd(trail)] };
+}
+
+export function ventureApplyPage() {
+  const trail = [['/', 'Home'], ['/ventures/', 'Ventures'], ['/ventures/apply/', 'Submit an idea']];
+  const body = `
+<section class="page-hero">
+  <div class="shell">
+    ${breadcrumbs(trail)}
+    <div class="page-hero__grid">
+      <h1>Submit your startup idea.</h1>
+      <p class="lead">Tell us what you are building and what kind of help you are looking for. We read every submission and reply within 24 hours on working days. Submissions are confidential.</p>
+    </div>
+    <p class="page-hero__more">${link('/ventures/#models', 'Compare the partnership models')}</p>
+  </div>
+</section>
+<section class="sec sec--tight" id="apply" aria-labelledby="apply-form-title">
+  <div class="shell form-shell">
+    <h2 id="apply-form-title" class="sr-only">Application form</h2>
     ${ventureForm()}
   </div>
 </section>`;
-  return { path: '/ventures/', title: 'Venture Building & Startup Partnerships', description: 'How Lynexa partners with founders: project engagements, startup enablement, hybrid cash-and-equity, equity-for-service and build-operate-transfer. Submit your startup idea.', body, jsonld: [crumbLd(trail)] };
+  return { path: '/ventures/apply/', title: 'Submit Your Startup Idea', description: 'Apply to build your startup with Lynexa: project engagements, startup enablement, hybrid cash-and-equity and build-operate-transfer partnerships.', body, jsonld: [crumbLd(trail)] };
 }

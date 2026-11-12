@@ -62,5 +62,5 @@ export function fintechPage() {
   </div>
 </section>
 ${ctaBand({ title: 'Building a money product?', text: 'Tell us what you are working on. We reply within 24 hours on working days with an honest view of whether, and how, we can help.' })}`;
-  return { path: '/fintech/', title: 'Fintech Product Design & Development in Africa', description: 'Lynexa designs and builds fintech products for African markets: wallets, payments, lending and social finance, with Paystack, Flutterwave, Monnify, Mono and BVN/NIN integrations.', body, jsonld: [crumbLd(trail), faqLd(FINTECH_FAQ)] };
+  return { path: '/fintech/', title: 'Fintech Product Design & Development in Africa', description: 'Fintech product design and engineering for African markets: wallets, payments, lending and social finance, with Paystack, Flutterwave, Mono and BVN/NIN.', body, jsonld: [crumbLd(trail), faqLd(FINTECH_FAQ)] };
 }

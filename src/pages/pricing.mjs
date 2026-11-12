@@ -76,5 +76,5 @@ export function pricingPage() {
   </div>
 </section>
 ${ctaBand({ title: 'Want a fixed price for your project?', text: 'Send a short brief and we reply within 24 hours on working days with an honest view of scope, timing and cost.' })}`;
-  return { path: '/pricing/', title: 'Pricing and Packages', description: 'Starting prices in US dollars for Lynexa product sprints, MVP builds, websites, brand identity, pitch decks and fractional product leadership. Fixed-price scopes before work starts.', body, jsonld: [crumbLd(trail), faqLd(PRICE_FAQ)] };
+  return { path: '/pricing/', title: 'Pricing and Packages', description: 'Starting prices in US dollars for product sprints, MVP builds, websites, brand identity, pitch decks and product leadership. Fixed price before work starts.', body, jsonld: [crumbLd(trail), faqLd(PRICE_FAQ)] };
 }

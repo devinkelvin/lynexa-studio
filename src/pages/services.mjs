@@ -151,6 +151,6 @@ ${ctaBand({ title: `Talk to us about ${s.nav.replace(/^[A-Z][a-z]/, (m) => m.toL
 
   return {
     path: `/services/${s.slug}/`, title: s.title, description: s.description, body,
-    jsonld: [crumbLd(trail), faqLd(s.faqs), { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: s.name, provider: { '@id': 'https://lynexa.co/#organization' }, areaServed: ['Nigeria', 'Africa', 'Worldwide'], url: `https://lynexa.co/services/${s.slug}/` }]
+    jsonld: [crumbLd(trail), faqLd(s.faqs), { '@context': 'https://schema.org', '@type': 'Service', name: s.name, description: s.description, serviceType: s.name, provider: { '@id': 'https://lynexa.co/#organization' }, areaServed: ['Nigeria', 'Africa', 'Worldwide'], url: `https://lynexa.co/services/${s.slug}/`, ...(price ? { offers: { '@type': 'Offer', priceCurrency: 'USD', priceSpecification: { '@type': 'PriceSpecification', minPrice: price.from, priceCurrency: 'USD' }, url: 'https://lynexa.co/pricing/' } } : {}) }]
   };
 }

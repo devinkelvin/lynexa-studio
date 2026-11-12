@@ -9,6 +9,63 @@
   const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const swarm = () => (window.LynexaSwarm && window.LynexaSwarm.build ? window.LynexaSwarm : null);
 
+  /* ------------------------------------------------------------------ 8. Anonymous visit counting (no cookies, no IP, no profiles) */
+  try {
+    const optOut = navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true;
+    const live = /(^|\.)lynexa\.co$/.test(location.hostname);
+    const sent = new Set();
+    const track = (e, once) => {
+      if (optOut || !live || !navigator.sendBeacon) return;
+      if (once) { if (sent.has(e)) return; sent.add(e); }
+      try { navigator.sendBeacon('/api/hit', new Blob([JSON.stringify({ e, p: location.pathname, r: e === 'view' ? document.referrer : '' })], { type: 'text/plain' })); } catch (err) { /* ignore */ }
+    };
+    window.LynexaTrack = track;
+    track('view');
+    document.addEventListener('click', (ev) => {
+      const a = ev.target.closest && ev.target.closest('a, button');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (a.hasAttribute('data-book')) track('book');
+      else if (href.includes('wa.me/')) track('whatsapp');
+      else if (href.startsWith('mailto:')) track('email');
+      else if (href.startsWith('/start-a-project')) track('start');
+      else if (a.closest('[data-proto]') || a.hasAttribute('data-proto-go')) track('proto', true);
+      else if (a.hasAttribute('data-cmdk-open')) track('cmdk', true);
+    }, { capture: true, passive: true });
+    document.addEventListener('submit', (ev) => {
+      const f = ev.target;
+      if (f.matches('[data-pitch]')) track('sketch', true);
+      else if (f.matches('form[data-netlify], form[name]') && !f.matches('[data-planner]')) track('submit');
+    }, true);
+    const pl = $('[data-planner]'); if (pl) pl.addEventListener('change', () => track('plan', true));
+  } catch (err) { /* never break the page */ }
+
+  /* ------------------------------------------------------------------ 9. Private stats page (/stats/) */
+  try {
+    const box = $('[data-stats]');
+    if (box) {
+      const form = $('form', box), out = $('[data-stats-out]', box), msg = $('[data-stats-msg]', box);
+      const NAMES = { view: 'Page views', book: 'Book-a-call clicks', whatsapp: 'WhatsApp clicks', email: 'Email clicks', start: 'Start-a-project clicks', submit: 'Form submissions', sketch: 'Idea sketches', plan: 'Planner used', proto: 'Prototype used', cmdk: 'Quick menu opened' };
+      const table = (title, rows, fmt = (k) => k) => `<section class="stats__card"><h2>${title}</h2>${rows.length ? `<table><tbody>${rows.map(([k, v]) => `<tr><td>${esc(fmt(k) || '(direct)')}</td><td>${v}</td></tr>`).join('')}</tbody></table>` : '<p>No data yet.</p>'}</section>`;
+      const load = async (key, days) => {
+        msg.textContent = 'Loading…';
+        try {
+          const r = await fetch('/api/stats?days=' + days, { headers: { 'x-stats-key': key } });
+          if (r.status === 401) { msg.textContent = 'That key is not right.'; return; }
+          const d = await r.json();
+          try { sessionStorage.setItem('lx-stats', key); } catch (e) { /* ignore */ }
+          const max = Math.max(1, ...d.perDay.map((x) => x.views));
+          msg.textContent = '';
+          out.innerHTML = `<p class="stats__total"><b>${d.views}</b> page views in the last ${d.days} days, ${d.mobileShare}% on phones.</p>
+            <div class="stats__bars" role="img" aria-label="Page views per day">${d.perDay.map((x) => `<i title="${x.day}: ${x.views}" style="--h:${(x.views / max) * 100}%"></i>`).join('')}</div>
+            <div class="stats__grid">${table('Top pages', d.pages)}${table('Where visitors came from', d.referrers)}${table('Countries', d.countries)}${table('Actions', d.events, (k) => NAMES[k] || k)}</div>`;
+        } catch (e) { msg.textContent = 'Could not load the stats. Try again in a moment.'; }
+      };
+      form.addEventListener('submit', (e) => { e.preventDefault(); load($('input', form).value.trim(), $('select', form).value); });
+      try { const k = sessionStorage.getItem('lx-stats'); if (k) { $('input', form).value = k; load(k, 30); } } catch (e) { /* ignore */ }
+    }
+  } catch (err) { /* ignore */ }
+
   /* ------------------------------------------------------------------ 7. Lagos time in the footer */
   try {
   const clock = $('[data-lagos-time]');
@@ -275,7 +332,7 @@
   try {
   const PAGES = [
     ['Home', '/'], ['Work', '/work/'], ['Zengly case study', '/work/zengly/'], ['Swiftly', '/work/swiftly/'], ['Websites we have designed', '/websites/'],
-    ['Services', '/services/'], ['Pricing and packages', '/pricing/'], ['Insights', '/insights/'], ['Fintech', '/fintech/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['About Lynexa and the team', '/about/'],
+    ['Services', '/services/'], ['Pricing and packages', '/pricing/'], ['Insights', '/insights/'], ['Fintech', '/fintech/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['Submit a startup idea', '/ventures/apply/'], ['About Lynexa and the team', '/about/'],
     ['Contact', '/contact/'], ['Start a project', '/start-a-project/'], ['Share feedback', '/feedback/'], ['Privacy notice', '/privacy/'], ['Terms of use', '/terms/']
   ];
   const extraLinks = $$('[data-cmdk-item]').map((a) => [a.dataset.cmdkItem, a.getAttribute('href')]);

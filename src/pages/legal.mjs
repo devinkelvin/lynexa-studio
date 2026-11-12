@@ -1,8 +1,8 @@
 import { breadcrumbs, crumbLd, btn, link, icon } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 
-const UPDATED = '10 November 2026';
-const UPDATED_ISO = '2026-11-10';
+const UPDATED = '12 November 2026';
+const UPDATED_ISO = '2026-11-12';
 
 const glyph = {
   inbox: '<path d="M4 13l2.5-7h11L20 13v6H4z"/><path d="M4 13h4l1 2h6l1-2h4"/>',
@@ -78,7 +78,7 @@ export function privacyPage() {
     intro: `How ${SITE.legalName} handles the personal information you share through this website, and the choices you have.`,
     summary: [
       ['inbox', 'Only what you send us', 'Your name, contact details and what you tell us about your project. Nothing is collected behind your back.'],
-      ['shield', 'No tracking cookies', 'No advertising or analytics cookies, and fonts are served from our own domain. We never sell your information.'],
+      ['shield', 'No tracking cookies', 'No advertising or analytics cookies. Visits are counted anonymously, without cookies or IP addresses. We never sell your information.'],
       ['key', 'You stay in control', 'Ask to see, correct or delete your information at any time under the Nigeria Data Protection Act 2023.']
     ],
     sections: [
@@ -89,7 +89,9 @@ export function privacyPage() {
           <li>What you tell us about your project or idea, including stage, timeline, budget range and how you heard about us.</li>
           <li>Technical information that our hosting provider records automatically when any website is visited, such as IP address, browser type and the pages requested, used for security and to keep the site running.</li>
         </ul>
-        <p>This website does not use advertising or analytics cookies, and our fonts are hosted on our own domain, not loaded from third parties. If you message us on WhatsApp, WhatsApp’s own privacy policy also applies to that conversation.</p>`],
+        <p>This website does not use cookies for advertising or analytics, and our fonts are hosted on our own domain, not loaded from third parties. If you message us on WhatsApp, WhatsApp’s own privacy policy also applies to that conversation.</p>`],
+      ['statistics', 'Anonymous visit statistics', `<p>To understand which pages are useful, we count visits without cookies. For each page view or action, such as a click on “Book a call”, we record only the page address, the type of action, the website that linked to us, your country and whether you used a phone or a computer. We do not store your IP address, browser details or any identifier, so the counts cannot be linked to you or combined into a profile. If your browser sends a “Do Not Track” or Global Privacy Control signal, nothing is counted. The counts are stored by Netlify and summarised daily; detailed records are deleted after 120 days.</p>`],
+      ['emails', 'Confirmation emails', `<p>When you send a form, we email you a short confirmation from hello@lynexa.co. It is sent through our email provider and uses only the name and email address you entered.</p>`],
       ['use', 'Why we use it', `<ul>
           <li>To reply to your enquiry and discuss possible work together, based on your consent and on steps you ask us to take before entering a contract.</li>
           <li>To keep records of our business conversations, based on our legitimate interest in running the company.</li>
@@ -136,7 +138,7 @@ export function termsPage() {
     ],
     other: ['/privacy/', 'Read the privacy notice']
   });
-  return { swarm: 'none', path: '/terms/', title: 'Terms of Use', description: 'Terms for using the Lynexa Innovations Limited website, lynexa.co.', body, jsonld: [crumbLd(trail)] };
+  return { swarm: 'none', path: '/terms/', title: 'Terms of Use', description: 'The terms for using lynexa.co, the website of Lynexa Innovations Limited, a product design and engineering studio in Lagos, Nigeria.', body, jsonld: [crumbLd(trail)] };
 }
 
 export function notFoundPage() {

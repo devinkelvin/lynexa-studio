@@ -32,6 +32,7 @@ export const ARTICLES = [
   {
     slug: 'fintech-design-for-real-conditions',
     title: 'Designing fintech apps for mid-range Android phones and patchy networks',
+    seoTitle: 'Designing fintech apps for real phones and networks',
     description: 'What changes when you design money apps for the devices and networks your customers actually use, not the ones in the design studio.',
     date: '2026-11-12', minutes: 7, topic: 'Product design',
     body: `

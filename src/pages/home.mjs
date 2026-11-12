@@ -105,10 +105,9 @@ export default function home() {
     <div class="showcase">
       <a class="showcase__item showcase__item--wide" href="/work/zengly/" data-cursor-text="View">
         <span class="showcase__media showcase__media--zengly" data-reveal>
-          ${img('zengly-friends', '', { cls: 'bg', sizes: '(min-width: 900px) 60vw, 100vw' })}
           <span class="showcase__phones">
-            ${phone('zengly-home-dark', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
-            ${phone('zengly-vaniti-leaderboard', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
+            ${phone('zengly-fig-gift', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
+            ${phone('zengly-fig-sent', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
           </span>
         </span>
         <span class="showcase__meta">
@@ -195,7 +194,7 @@ ${ctaBand({ title: 'Have a product to build or rethink?' })}
   return {
     path: '/',
     title: 'Lynexa — Product Design, Engineering & Venture Studio in Lagos',
-    description: 'Lynexa is a Lagos product studio that helps founders and businesses turn ideas into working digital products: strategy, UX/UI design, MVP development, websites and launch.',
+    description: 'Lagos product studio turning founders’ ideas into working products: strategy, UX/UI design, MVP development, websites and launch. Fixed-price scopes.',
     body,
     jsonld: [faqLd(HOME_FAQ), { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Lynexa', url: 'https://lynexa.co/' }]
   };

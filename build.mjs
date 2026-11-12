@@ -9,8 +9,8 @@ import { SERVICES } from './src/content/services.mjs';
 import home from './src/pages/home.mjs';
 import { servicesIndex, servicePage } from './src/pages/services.mjs';
 import { workIndex, zenglyPage, swiftlyPage, websitesPage } from './src/pages/work.mjs';
-import { aboutPage, processPage, venturesPage } from './src/pages/studio.mjs';
-import { contactPage, startPage, feedbackPage, thanksPages } from './src/pages/forms.mjs';
+import { aboutPage, processPage, venturesPage, ventureApplyPage } from './src/pages/studio.mjs';
+import { contactPage, startPage, feedbackPage, statsPage, thanksPages } from './src/pages/forms.mjs';
 import { privacyPage, termsPage, notFoundPage } from './src/pages/legal.mjs';
 import { plannerPage } from './src/pages/planner.mjs';
 import { pricingPage } from './src/pages/pricing.mjs';
@@ -41,8 +41,8 @@ await writeFile(join(out, 'assets', swarmName), swarm);
 
 const pages = [
   home(), aboutPage(), servicesIndex(), ...SERVICES.map(servicePage),
-  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), plannerPage(), pricingPage(), fintechPage(), ...insightsPages(), venturesPage(),
-  contactPage(), startPage(), feedbackPage(), ...thanksPages(), privacyPage(), termsPage(), notFoundPage()
+  workIndex(), zenglyPage(), swiftlyPage(), websitesPage(), processPage(), plannerPage(), pricingPage(), fintechPage(), ...insightsPages(), venturesPage(), ventureApplyPage(),
+  contactPage(), startPage(), feedbackPage(), statsPage(), ...thanksPages(), privacyPage(), termsPage(), notFoundPage()
 ];
 
 const seen = new Set();
@@ -69,7 +69,19 @@ await writeFile(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?
 ${indexable.map((p) => `  <url><loc>${SITE.url}${p.path}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `);
-await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /project-received/\nDisallow: /application-received/\nDisallow: /message-received/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
+// RSS feed for Insights
+{
+  const { ARTICLES } = await import('./src/content/insights.mjs');
+  const x = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  await writeFile(join(out, 'insights', 'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+<title>Lynexa Insights</title><link>${SITE.url}/insights/</link><description>Practical notes on building products for African markets.</description><language>en</language>
+<atom:link href="${SITE.url}/insights/feed.xml" rel="self" type="application/rss+xml"/>
+${ARTICLES.map((a) => `<item><title>${x(a.title)}</title><link>${SITE.url}/insights/${a.slug}/</link><guid>${SITE.url}/insights/${a.slug}/</guid><pubDate>${new Date(a.date + 'T09:00:00Z').toUTCString()}</pubDate><description>${x(a.description)}</description></item>`).join('\n')}
+</channel></rss>
+`);
+}
+await writeFile(join(out, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /project-received/\nDisallow: /application-received/\nDisallow: /message-received/\nDisallow: /feedback-received/\nDisallow: /stats/\nDisallow: /api/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 
 // Redirects for old URLs and likely mistypes. Netlify serves /path/ for /path automatically.
 await writeFile(join(out, '_redirects'), `# Legacy single-page site
