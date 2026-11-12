@@ -258,7 +258,7 @@ const footer = () => `
       </div>
       <nav class="footer-cols" aria-label="Footer">
         <div><h2>Studio</h2><ul>
-          <li><a href="/about/">About and team</a></li><li><a href="/process/">Process</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/insights/">Insights</a></li><li><a href="/ventures/">Ventures</a></li>
+          <li><a href="/about/">About</a></li><li><a href="/process/">Process</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/insights/">Insights</a></li><li><a href="/ventures/">Ventures</a></li>
         </ul></div>
         <div><h2>Work</h2><ul>
           <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="/fintech/">Fintech</a></li><li><a href="/feedback/">Share feedback</a></li>

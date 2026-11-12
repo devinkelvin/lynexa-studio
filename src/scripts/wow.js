@@ -332,7 +332,7 @@
   try {
   const PAGES = [
     ['Home', '/'], ['Work', '/work/'], ['Zengly case study', '/work/zengly/'], ['Swiftly', '/work/swiftly/'], ['Websites we have designed', '/websites/'],
-    ['Services', '/services/'], ['Pricing and packages', '/pricing/'], ['Insights', '/insights/'], ['Fintech', '/fintech/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['Submit a startup idea', '/ventures/apply/'], ['About Lynexa and the team', '/about/'],
+    ['Services', '/services/'], ['Pricing and packages', '/pricing/'], ['Insights', '/insights/'], ['Fintech', '/fintech/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['Submit a startup idea', '/ventures/apply/'], ['About Lynexa', '/about/'],
     ['Contact', '/contact/'], ['Start a project', '/start-a-project/'], ['Share feedback', '/feedback/'], ['Privacy notice', '/privacy/'], ['Terms of use', '/terms/']
   ];
   const extraLinks = $$('[data-cmdk-item]').map((a) => [a.dataset.cmdkItem, a.getAttribute('href')]);
