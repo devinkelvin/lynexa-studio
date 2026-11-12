@@ -1,4 +1,4 @@
-import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, icon, bookBtn, teamSection, testimonialsSection } from '../lib.mjs';
+import { btn, link, img, phone, browser, head2, faq, faqLd, status, ctaBand, icon, bookBtn, founder, testimonialsSection } from '../lib.mjs';
 import { PACKAGES } from '../content/pricing.mjs';
 import { pack } from './pricing.mjs';
 import { PILLARS, svcBySlug } from '../content/services.mjs';
@@ -157,11 +157,8 @@ export default function home() {
   </div>
 </section>
 
-<section class="sec sheet" id="studio" aria-labelledby="team-title">
-  <div class="shell">
-    ${teamSection({ id: 'team-title', text: 'Led by Kelvin Ekuhoho, a product designer with seven years in Nigerian digital banking. The people you meet in the first call are the people who design and build your product.' })}
-    <p style="margin-top:2rem">${link('/about/', 'More about the studio')}</p>
-  </div>
+<section class="sec sheet" id="studio">
+  <div class="shell">${founder({ id: 'founder-title' })}</div>
 </section>
 
 <section class="sec surface-paper sheet" aria-labelledby="price-title">

@@ -1,4 +1,4 @@
-import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder, bookBtn, teamSection, testimonialsSection, TZ_LONG } from '../lib.mjs';
+import { btn, link, img, head2, breadcrumbs, crumbLd, ctaBand, icon, faq, faqLd, founder, bookBtn, testimonialsSection, TZ_LONG } from '../lib.mjs';
 import { SITE } from '../site.mjs';
 import { ventureForm } from './forms.mjs';
 
@@ -10,11 +10,6 @@ export function aboutPage() {
     ${breadcrumbs(trail)}
     <h1>A product studio for people building something new.</h1>
     <p class="lead">Lynexa Innovations Limited is a product design, engineering and venture-building studio based in Lagos. We work with founders and businesses in Nigeria, across Africa and further afield.</p>
-  </div>
-</section>
-<section class="sec sec--tight" id="team" aria-labelledby="team-title">
-  <div class="shell">
-    ${teamSection({ id: 'team-title', title: 'Meet the team.', text: 'A small, senior team across product design, engineering and brand. The people you meet in the first call are the people who design and build your product.' })}
   </div>
 </section>
 <section class="sec surface-dark sheet why" aria-labelledby="why-title">
@@ -105,7 +100,7 @@ export function aboutPage() {
 </section>
 ${testimonialsSection() ? `<section class="sec sheet" aria-label="Testimonials"><div class="shell">${testimonialsSection()}</div></section>` : ''}
 ${ctaBand()}`;
-  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a product design, engineering and venture studio in Lagos, Nigeria. Meet the team led by founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
+  return { path: '/about/', title: 'About Lynexa Innovations', description: 'Lynexa Innovations Limited is a founder-led product design, engineering and venture studio in Lagos, Nigeria. Meet the studio and founder Kelvin Ekuhoho.', body, jsonld: [crumbLd(trail), { '@context': 'https://schema.org', '@type': 'Person', name: SITE.founder, jobTitle: 'Founder & CEO', worksFor: { '@id': 'https://lynexa.co/#organization' }, sameAs: [SITE.linkedin, 'https://kelvinekuhoho.com/'] }] };
 }
 
 export function processPage() {
