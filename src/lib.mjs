@@ -165,7 +165,7 @@ export const founder = ({ id = 'founder-title', full = false } = {}) => `
             <div>
               <p>Before founding Lynexa, Kelvin worked with financial institutions including Sterling Bank and Polaris Bank, contributing to digital banking platforms, electronic payment systems, lending products and customer-facing financial experiences. That work gave him a grounding in payment infrastructure, banking operations, regulatory requirements and the trust that technology for regulated industries has to earn.</p>
               <p>He has also led product design in the energy and infrastructure technology sector: enterprise platforms, operational dashboards, customer applications and data tools that simplify complex workflows. His practice spans product strategy, user research, systems thinking, interaction design, design systems, web development and cross-functional delivery.</p>
-              <p>As founder and CEO of Lynexa, Kelvin leads a multidisciplinary team across product design, software engineering and business development, guiding products from research and concept through architecture, MVP, market positioning and commercial readiness. Under his leadership Lynexa is developing ventures across fintech, mobility, legal technology, property technology and digital productivity, including Zengly and Swiftly.</p>
+              <p>As founder and CEO of Lynexa, Kelvin leads a multidisciplinary team across product design, software engineering and business development, guiding products from research and concept through architecture, MVP, market positioning and commercial readiness. Under his leadership Lynexa is developing ventures across fintech, mobility, legal technology, property technology and digital productivity, including ZenglyPay and Swiftly.</p>
             </div>
           </details>` : ''}
         <div class="founder-card__links">
@@ -261,7 +261,7 @@ const footer = () => `
           <li><a href="/about/">About</a></li><li><a href="/process/">Process</a></li><li><a href="/pricing/">Pricing</a></li><li><a href="/insights/">Insights</a></li><li><a href="/ventures/">Ventures</a></li>
         </ul></div>
         <div><h2>Work</h2><ul>
-          <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">Zengly</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="/fintech/">Fintech</a></li><li><a href="/feedback/">Share feedback</a></li>
+          <li><a href="/work/">All work</a></li><li><a href="/work/zengly/">ZenglyPay</a></li><li><a href="/work/swiftly/">Swiftly</a></li><li><a href="/websites/">Websites</a></li><li><a href="/fintech/">Fintech</a></li><li><a href="/feedback/">Share feedback</a></li>
         </ul></div>
         <div><h2>Services</h2><ul>
           <li><a href="/services/product-design/">Product design</a></li><li><a href="/services/mvp-development/">MVP development</a></li><li><a href="/services/web-design-development/">Websites</a></li><li><a href="/services/brand-identity/">Brand identity</a></li><li><a href="/services/">All services</a></li>

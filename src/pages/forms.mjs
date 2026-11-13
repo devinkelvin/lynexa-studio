@@ -153,7 +153,7 @@ export function feedbackPage() {
       ${text('name', f, 'Your name', { required: true, auto: 'name', msg: 'Please tell us your name.' })}
       ${text('email', f, 'Email address', { type: 'email', required: true, auto: 'email', hint: 'Only used to confirm the wording with you. Never published.', msg: 'Please enter a valid email address, like name@example.com.' })}
       ${text('role', f, 'Your role and company', { hint: 'For example: Founder, Example Ltd', auto: 'organization-title' })}
-      ${text('project', f, 'What we worked on together', { hint: 'For example: the Zengly app design, our website' })}
+      ${text('project', f, 'What we worked on together', { hint: 'For example: the ZenglyPay app design, our website' })}
       ${area('quote', f, 'Your feedback', { required: true, min: 20, hint: 'What was the situation, what did we do, and what changed for you?', msg: 'Please write a few words about your experience.' })}
       <div class="field" data-field>
         <label class="consent"><input type="checkbox" name="publish_permission" value="Yes, Lynexa may publish my name, role and feedback"><span>Lynexa may publish my name, role and feedback on lynexa.co and in proposals. We will email you the final wording before it goes live.</span></label>

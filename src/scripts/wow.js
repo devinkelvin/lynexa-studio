@@ -1,4 +1,4 @@
-/* Lynexa interactive extras: idea sketch (hero), Zengly prototype, MVP timeline planner, quick menu (Ctrl/Cmd+K),
+/* Lynexa interactive extras: idea sketch (hero), ZenglyPay prototype, MVP timeline planner, quick menu (Ctrl/Cmd+K),
    link prefetch, Lagos clock, brief prefill. Zero dependencies; every feature works without the swarm, and the swarm
    (window.LynexaSwarm.build) animates it when present. */
 (() => {
@@ -313,9 +313,9 @@
     const live = $('[data-pitch-live]');
     const reset = () => {
       build.innerHTML = original;
-      build.setAttribute('aria-label', 'How an idea becomes a product, shown with Zengly’s split-bill feature');
+      build.setAttribute('aria-label', 'How an idea becomes a product, shown with ZenglyPay’s split-bill feature');
       input.value = '';
-      if (live) live.textContent = 'Showing the Zengly example again.';
+      if (live) live.textContent = 'Showing the ZenglyPay example again.';
     };
     pitch.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -360,7 +360,7 @@
       </div>
       <div class="build__caption sketch-caption">
         <p>We heard: ${esc(c.summary)}. This is a first sketch of ${esc(c.name)} built from that. Not quite right? Add a detail, like who it is for or what they do first, and sketch again.</p>
-        <p class="sketch-actions"><a class="btn btn--primary btn--sm" href="${brief}"><span>Turn this into a brief</span></a><button class="link" type="button" data-pitch-edit>Add a detail</button><button class="link" type="button" data-pitch-reset>Show the Zengly example</button></p>
+        <p class="sketch-actions"><a class="btn btn--primary btn--sm" href="${brief}"><span>Turn this into a brief</span></a><button class="link" type="button" data-pitch-edit>Add a detail</button><button class="link" type="button" data-pitch-reset>Show the ZenglyPay example</button></p>
       </div>`;
       $('[data-pitch-reset]', build).addEventListener('click', reset);
       $('[data-pitch-edit]', build).addEventListener('click', () => { input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
@@ -384,7 +384,7 @@
   }
   } catch (err) { if (window.console) console.warn('Lynexa extra failed:', err); }
 
-  /* ------------------------------------------------------------------ 2. Zengly prototype */
+  /* ------------------------------------------------------------------ 2. ZenglyPay prototype */
   try {
   $$('[data-proto]').forEach((proto) => {
     const screens = $$('.proto__screen', proto);
@@ -516,7 +516,7 @@
   /* ------------------------------------------------------------------ 5. Quick menu: Ctrl/Cmd+K */
   try {
   const PAGES = [
-    ['Home', '/'], ['Work', '/work/'], ['Zengly case study', '/work/zengly/'], ['Swiftly', '/work/swiftly/'], ['Websites we have designed', '/websites/'],
+    ['Home', '/'], ['Work', '/work/'], ['ZenglyPay case study', '/work/zengly/'], ['Swiftly', '/work/swiftly/'], ['Websites we have designed', '/websites/'],
     ['Services', '/services/'], ['Pricing and packages', '/pricing/'], ['Insights', '/insights/'], ['Fintech', '/fintech/'], ['Process', '/process/'], ['MVP timeline planner', '/mvp-planner/'], ['Ventures and partnerships', '/ventures/'], ['Submit a startup idea', '/ventures/apply/'], ['About Lynexa', '/about/'],
     ['Contact', '/contact/'], ['Start a project', '/start-a-project/'], ['Share feedback', '/feedback/'], ['Privacy notice', '/privacy/'], ['Terms of use', '/terms/']
   ];

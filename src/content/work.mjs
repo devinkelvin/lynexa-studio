@@ -10,7 +10,7 @@ export const CATEGORIES = [
 
 export const PROJECTS = [
   {
-    slug: 'zengly', name: 'Zengly', page: true,
+    slug: 'zengly', name: 'ZenglyPay', page: true,
     sector: 'Fintech, social finance',
     summary: 'A social-finance app for young Nigerians, built around how people actually share, celebrate and plan with money.',
     status: ['progress', 'App launching December 2026'],

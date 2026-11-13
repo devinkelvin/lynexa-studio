@@ -214,7 +214,7 @@ export function venturesPage() {
   <div class="shell split">
     <h2 id="studio-v-title" style="font-size:var(--fs-h2);max-width:12ch">We build our own ventures too.</h2>
     <div style="display:grid;gap:1rem;align-content:end;justify-items:start">
-      <p class="lead">Zengly, Swiftly and our earlier-stage ventures in property, legal and productivity technology give us first-hand experience of what founders face. That is what we bring to a partnership.</p>
+      <p class="lead">ZenglyPay, Swiftly and our earlier-stage ventures in property, legal and productivity technology give us first-hand experience of what founders face. That is what we bring to a partnership.</p>
       ${link('/work/', 'See the ventures')}
     </div>
   </div>

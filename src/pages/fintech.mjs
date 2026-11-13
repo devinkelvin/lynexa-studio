@@ -34,13 +34,13 @@ export function fintechPage() {
 <section class="sec surface-dark sheet" aria-labelledby="fz-title">
   <div class="shell split">
     <div style="display:grid;gap:1.25rem;justify-items:start">
-      <h2 id="fz-title" style="font-size:var(--fs-h2);max-width:14ch">Zengly: social finance for young Nigerians.</h2>
+      <h2 id="fz-title" style="font-size:var(--fs-h2);max-width:14ch">ZenglyPay: social finance for young Nigerians.</h2>
       <p>Transfers, bills, split bills and Vaniti, a social cash-spraying experience for celebrations. Lynexa leads its product, design, brand and website. The app launches on iOS and Android in December 2026.</p>
-      ${link('/work/zengly/', 'Read the Zengly case study')}
+      ${link('/work/zengly/', 'Read the ZenglyPay case study')}
     </div>
     <div class="fz-phones">
-      ${phone('zengly-home-dark', 'Zengly home screen in dark mode with balance and quick actions', { sizes: '(min-width: 900px) 200px, 40vw' })}
-      ${phone('zengly-split-bill', 'Zengly split-bill screen with bill history', { sizes: '(min-width: 900px) 200px, 40vw' })}
+      ${phone('zengly-home-dark', 'ZenglyPay home screen in dark mode with balance and quick actions', { sizes: '(min-width: 900px) 200px, 40vw' })}
+      ${phone('zengly-split-bill', 'ZenglyPay split-bill screen with bill history', { sizes: '(min-width: 900px) 200px, 40vw' })}
     </div>
   </div>
 </section>

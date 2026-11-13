@@ -126,7 +126,7 @@ export const ARTICLES = [
 <h2>Be honest about pending states</h2>
 <p>When a transfer is processing, say so, and say what the customer can expect: “This usually takes under a minute. We’ll notify you when it arrives.” Silence in that moment is when trust breaks.</p>
 <h2>Match the tone to the moment</h2>
-<p>A playful tone can work for celebrations and rewards; Zengly’s Vaniti feature leans into the joy of spraying money at a party. The same voice in an error or a security alert feels careless. Calm and clear wins whenever money is at risk.</p>
+<p>A playful tone can work for celebrations and rewards; ZenglyPay’s Vaniti feature leans into the joy of spraying money at a party. The same voice in an error or a security alert feels careless. Calm and clear wins whenever money is at risk.</p>
 <h2>Keep a shared vocabulary</h2>
 <p>Pick one word for each thing and use it everywhere: “wallet” or “account”, “send” or “transfer”. Mixed terms make people wonder whether two things are different.</p>
 <p>We write interface copy as part of our <a href="/services/product-design/">product design</a> work. Read more in <a href="/insights/fintech-design-for-real-conditions/">designing fintech for real conditions</a>.</p>`
@@ -208,7 +208,7 @@ export const ARTICLES = [
 <p>Clear receipts that can be shared on WhatsApp, recognisable bank names and logos, and transaction history that matches the bank statement all do more for trust than a security badge on the home screen.</p>
 <h2>Test where your customers are</h2>
 <p>Test on a mid-range Android phone with a throttled connection, outdoors, in one hand. Test with first-time users, not your team. You will find more in one afternoon of that than in a week of design reviews.</p>
-<p>These principles shaped our work on <a href="/work/zengly/">Zengly</a>, a social-finance app launching in December 2026. If you are building a money product, <a href="/start-a-project/">tell us about it</a>.</p>`
+<p>These principles shaped our work on <a href="/work/zengly/">ZenglyPay</a>, a social-finance app launching in December 2026. If you are building a money product, <a href="/start-a-project/">tell us about it</a>.</p>`
   },
   {
     slug: 'what-investors-want-in-a-prototype',
