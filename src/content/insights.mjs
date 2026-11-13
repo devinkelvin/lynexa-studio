@@ -2,6 +2,56 @@
 // Keep claims practical and checkable; link to primary sources for any fact that can change (fees, regulations).
 export const ARTICLES = [
   {
+    slug: 'nigeria-startup-act-label',
+    title: 'How to get a startup label under the Nigeria Startup Act',
+    seoTitle: 'How to get a Nigeria Startup Act label',
+    description: 'Who qualifies for a startup label under the Nigeria Startup Act 2022, how to apply, what you must report each year and how the 2025 tax reforms change the benefits.',
+    date: '2026-11-13', topic: 'Business',
+    sources: [
+      ['Nigeria Startup Act 2022 (full text, PLAC)', 'https://placng.org/i/wp-content/uploads/2023/01/NIGERIA-STARTUP-ACT-2022.pdf'],
+      ['Mondaq: Obtaining a startup label under the Nigeria Startup Act 2022', 'https://www.mondaq.com/nigeria/corporate-and-company-law/1703610/obtaining-a-startup-label-under-the-nigeria-startup-act-2022'],
+      ['Nairametrics: FG opens portal to register startups across Nigeria', 'https://nairametrics.com/2023/11/22/startup-act-fg-opens-portal-to-register-startups-across-nigeria'],
+      ['AO2LAW: The 2025 tax reform Acts and the Nigeria Startup Act', 'https://ao2law.com/the-2025-tax-reform-acts-and-the-nigeria-startup-act-reconciling-incentives-compliance-and-growth/'],
+      ['PwC Nigeria: Nigerian tax reforms 2025, sectoral analysis', 'https://www.pwc.com/ng/en/assets/pdf/nigeria-tax-reform-insight-series-sectoral-analysis.pdf']
+    ],
+    body: `
+<p>The Nigeria Startup Act 2022, signed on 19 October 2022, gives tech companies a formal status: the startup label. The Act’s incentives are tied to holding a label, so if you are building a digital product in Nigeria it is worth knowing whether you qualify and what holding a label commits you to. This is a practical summary, not legal or tax advice.</p>
+<h2>What the label is</h2>
+<p>A startup label is a digital certificate issued under the Act. The National Information Technology Development Agency (NITDA) serves as the Act’s Secretariat and manages the labelling process. Applications go through the Startup Support and Engagement Portal, which the government launched in November 2023 at startup.gov.ng. Once issued, the label is valid for 10 years.</p>
+<h2>Who qualifies</h2>
+<p>Under section 13, a company can be labelled if it:</p>
+<ul>
+<li>is a limited liability company registered under the Companies and Allied Matters Act, and has existed for no more than 10 years since incorporation;</li>
+<li>has objects covering the innovation, development, production, improvement or commercialisation of a digital technology product or process;</li>
+<li>holds a digital technology product or process, or owns registered software; and</li>
+<li>has at least one-third of its shares held by one or more Nigerians as founder or co-founder.</li>
+</ul>
+<p>Sole proprietorships and partnerships that meet the other conditions can be given a six-month pre-label status, and lose it if they have not converted to a company in that time. A holding company or subsidiary of an existing company that is not itself registered as a startup is excluded.</p>
+<h2>Check your paperwork before you apply</h2>
+<p>The checks are mostly about your company records, so prepare them before applying:</p>
+<ul>
+<li>Read the objects in your company documents. If they don’t describe digital technology work, update them first.</li>
+<li>Check your cap table. Nigerian founders or co-founders must hold at least a third of the shares, so model future funding rounds against that line.</li>
+<li>Have evidence of the product: a live app, a repository, or software registration.</li>
+<li>Gather the supporting documents the Secretariat prescribes on the portal at the time you apply.</li>
+</ul>
+<h2>What you must do once labelled</h2>
+<p>The label comes with duties under section 16. You must comply with the laws that govern businesses in Nigeria and any obligations the Coordinator sets. Each year you must also report your headcount, total assets and annual turnover, keep proper books of account, and file a report on the incentives you received and what they helped you achieve. Any change to your structure, composition or objects must be reported to the Coordinator within one month. If you default, you have 30 days from being notified to put it right. Under section 17 the label is then withdrawn and the agencies or investors that gave you incentives are told. Put these dates in your finance calendar from day one.</p>
+<h2>What the label can unlock</h2>
+<p>The Act lists support that does not depend on tax law, including:</p>
+<ul>
+<li>fast-tracked applications, through the portal, to the Central Bank of Nigeria’s regulatory sandbox, the Securities and Exchange Commission’s regulatory incubation programmes and other regulators’ sandboxes, though you must still qualify for each;</li>
+<li>a Startup Investment Seed Fund, managed by the Nigeria Sovereign Investment Authority, which the Act says should receive not less than ₦10 billion a year;</li>
+<li>help with registering and protecting intellectual property, and a discount on fees for technology transfer registrations;</li>
+<li>access to grants and loans from bodies such as the Bank of Industry, and training through the Industrial Training Fund.</li>
+</ul>
+<p>Whether each of these is running, and how much money is in it, varies over time, so ask the Secretariat rather than assuming.</p>
+<h2>How the 2025 tax reforms change the picture</h2>
+<p>The Act originally offered labelled startups an income tax exemption of up to five years and faster approval for pioneer status. The 2025 tax reform Acts, which law firm AO2LAW reports took effect on 1 January 2026, replace pioneer status with a new Economic Development Incentive, so do not build a tax holiday into your plan. The new rules also define small companies as those with annual turnover of ₦50 million or less and fixed assets of no more than ₦250 million, and exempt them from companies income tax, capital gains tax and the new development levy, whether labelled or not. For angel investors, venture capital and private equity funds, accelerators and incubators, AO2LAW reports that the new law exempts gains on disposing of assets in a labelled startup held in Nigeria for at least 24 months, a rule the Startup Act already contained.</p>
+<p>The practical point: for an early company, the label matters more for credibility, sandbox access and investor terms than for your own tax bill. Confirm with a tax adviser whether your business qualifies as small and what still applies before you model it.</p>
+<p>If you are planning a product and want the build to stand up to this kind of scrutiny, <a href="/contact/">talk to us</a>.</p>`
+  },
+  {
     slug: 'ndpa-2023-for-product-teams',
     title: 'What Nigeria’s Data Protection Act means for your product',
     seoTitle: 'Nigeria’s Data Protection Act for product teams',
