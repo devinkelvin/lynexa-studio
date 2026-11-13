@@ -1370,3 +1370,16 @@ a:hover .zlife__phone { transform: translateY(-52%) rotate(3deg); }
 .comments__note { color: var(--stone); font-size: .88rem; }
 .comments__error:empty { display: none; }
 .comments__error { color: var(--red); font-weight: 600; font-size: .95rem; }
+
+/* Idea sketch: what we heard */
+.heard { display: grid; gap: .45rem; font-size: var(--fs-small); margin: 0; }
+.heard > div { display: grid; grid-template-columns: 7.5em 1fr; gap: .75rem; align-items: baseline; }
+.heard dt { color: var(--stone); }
+.heard dd { margin: 0; color: var(--ink); font-weight: 600; }
+.heard dd::first-letter { text-transform: uppercase; }
+.wire--said i { font-style: normal; font-size: 7.5px; line-height: 1; display: flex; align-items: center; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: rgba(24, 23, 28, .62); }
+.wire--said .w-a { width: auto; height: 12px; padding: 0; background: none; color: var(--ink); font-weight: 700; font-size: 9px; }
+.wire--said .w-b { align-items: flex-start; padding-top: 8px; color: var(--violet); }
+.wire--said .w-e { justify-content: center; color: #fff; font-weight: 700; }
+.concept__for { margin-top: -4px; color: var(--stone); font-size: 9px; }
+.sketch-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; }
