@@ -165,26 +165,144 @@
       features: ['Profiles and groups', 'Events and RSVPs', 'Messaging'], card: ['Going this weekend', '126'], rows: [['Tola’s birthday', 'Sat'], ['Tech meetup, Yaba', 'Thu'], ['Book club', 'Sun']], cta: 'Create an event' }
   ];
   const GENERIC = { k: 'idea', suffix: 'Hub', features: ['Simple onboarding', 'The core workflow', 'Dashboard and insights'], card: ['Today', '3 tasks'], rows: [['First step', 'Done'], ['Second step', 'In progress'], ['Next', 'Planned']], cta: 'Get started' };
-  const STOP = new Set('a an the for to of and or with in on at by from that this my our your their it its is are be app apps platform website site product tool tools system service services solution which who people using use make makes help helps easy easier simple better online digital nigeria nigerian lagos africa african like more less into across'.split(' '));
-
-  function concept(idea) {
-    const words = idea.toLowerCase().replace(/[^a-z0-9\s'’-]/g, ' ').split(/\s+/).filter(Boolean);
-    let best = GENERIC, score = 0;
-    KINDS.forEach((k) => { const sc = words.filter((w) => k.words.includes(w) || k.words.includes(w.replace(/s$/, ''))).length; if (sc > score) { score = sc; best = k; } });
-    const GEN = new Set(['app', 'apps', 'booking', 'bookings', 'marketplace', 'platform', 'tracker', 'manager', 'management', 'service', 'services', 'system', 'tool', 'website', 'portal', 'dashboard', 'helps', 'connects', 'lets', 'buy', 'sell', 'find', 'get', 'see', 'track', 'manage', 'order', 'people', 'users', 'customers', 'everyone']);
-    const ok = (w) => w.length > 2 && !STOP.has(w) && !GEN.has(w);
-    const sing = (w) => (/(ss|us|is)$/.test(w) ? w : w.replace(/ies$/, 'y').replace(/(ch|sh|x)es$/, '$1').replace(/([^s])s$/, '$1'));
-    // Prefer who it is for ("for barbers", "for Lagos tailors"), then the most specific word.
-    const fi = words.lastIndexOf('for');
-    const aud = fi >= 0 ? words.slice(fi + 1).filter(ok) : [];
-    const place = (w) => /^(lagos|abuja|nigeria|nigerians?|africa|yaba|lekki|ikeja|ikorodu|small|local|busy|young)$/.test(w);
-    const inKind = (w) => (best.words || []).includes(w);
-    const pick = aud.find((w) => !place(w) && !inKind(w)) || aud.find((w) => !place(w) && !/^(lagos|abuja|nigeria|nigerians?|africa|yaba|lekki|ikeja|ikorodu|small|local|busy|young)$/.test(w))
-      || words.filter(ok).filter((w) => !(best.words || []).includes(w)).sort((a, b) => b.length - a.length)[0]
-      || words.filter(ok)[0] || 'Idea';
-    const word = sing(pick).replace(/['’-]/g, '');
-    const name = word.charAt(0).toUpperCase() + word.slice(1, 12) + ' ' + best.suffix;
-    return { ...best, name };
+  // Reads a one-line idea the way a person would: who it is for, what they need to do, to what, and where.
+  // Everything on the sketch and the first screen is built from those parts, so the visitor sees their own idea.
+  const PLACES = /^(lagos|abuja|ibadan|kano|enugu|port|harcourt|benin|kaduna|jos|owerri|calabar|uyo|abeokuta|ilorin|nigeria|ghana|kenya|accra|nairobi|africa|yaba|lekki|ikeja|ikorodu|surulere|ajah|campus|campuses|universities|university|town|city|cities|estate|estates)$/;
+  const PERSON = /^(customers?|clients?|patients?|students?|members?|tenants?|guests?|drivers?|staff|workers?|employees?|buyers?|sellers?|users?|parents?|children|child|kids?|players?|farmers?|traders?|vendors?|tailors?|barbers?|stylists?|teachers?|tutors?|doctors?|nurses?|lawyers?|landlords?|agents?|freelancers?|creators?|artists?|musicians?|chefs?|riders?|mechanics?|artisans?|plumbers?|electricians?|founders?|friends?|famil(y|ies)|volunteers?|donors?|athletes?|coaches?|photographers?|designers?|developers?|writers?|pharmacists?|caterers?|planners?|hosts?|travell?ers?|commuters?|shoppers?|fans?|readers?|learners?|flatmates?|roommates?|couples?|women|men|mums?|moms?|dads?|graduates?|job|seekers?|businesses|smes?|shops?|owners?|cleaners?|makeup|artists?|bakers?|churches|pastors?|managers?|teams?|retailers?|suppliers?|distributors?|pharmacies|clinics|schools|hospitals|restaurants|hotels)$/;
+  const STOPAT = new Set('for with in on at by from to and so that who which when while without via using through into across near around between instead or but where whose they them before after because if until than fast quickly easily online instantly now today nearby safely cheaply together'.split(' '));
+  const DET = new Set('a an the their your my our his her its all every each some any small local busy young new'.split(' '));
+  const BRANDS = { uber: 'book', bolt: 'book', airbnb: 'book', calendly: 'book', netflix: 'share', spotify: 'share', youtube: 'share', tiktok: 'share', instagram: 'share', amazon: 'buy', jumia: 'buy', konga: 'buy', shopify: 'sell', upwork: 'find', fiverr: 'find', linkedin: 'find', tinder: 'find', zillow: 'find', duolingo: 'learn', glovo: 'deliver', chowdeck: 'deliver', gokada: 'deliver', piggyvest: 'pay', paystack: 'pay', opay: 'pay', splitwise: 'pay', trello: 'manage', notion: 'manage' };
+  const NAMES = [['Mrs Okafor', 'Tunde A.', 'Chika N.'], ['Ada', 'Emeka', 'Zainab'], ['Bisi', 'Kunle', 'Ngozi']];
+  const VERBS = {
+    track: { forms: 'track tracks tracking monitor monitors monitoring log logs logging record records recording measure measures keep keeps', suffix: 'Log', kind: '', obj: 'records',
+      feats: (o, O1) => [`Track ${o}`, `Add a new ${O1} in seconds`, 'History, search and reminders'], card: (o) => [`${cap(o)} tracked`, '24'], st: ['Updated today', 'Yesterday', 'Due Fri'], pre: ['Latest', 'Last week’s', 'Upcoming'], cta: (o, O1) => `Add ${an(O1)}` },
+    manage: { forms: 'manage manages managing organise organises organising organize organizes organizing run runs running handle handles handling coordinate coordinates', suffix: 'Desk', kind: '', obj: 'operations',
+      feats: (o) => [`Manage ${o} in one place`, 'A dashboard that shows what needs attention', 'Access for your team'], card: (o) => [`Active ${o}`, '18'], st: ['Active', 'Needs attention', 'Done'], pre: ['Main', 'New', 'Archived'], cta: (o, O1) => `New ${O1}` },
+    book: { forms: 'book books booking reserve reserves reserving schedule schedules scheduling request requests requesting', suffix: 'Book', kind: 'book', obj: 'appointments',
+      feats: (o) => [`Book ${o} in a few taps`, 'Pick a time that suits you', 'Reminders and deposits'], card: () => ['Next booking', 'Today, 4:00 pm'], st: ['Confirmed', 'Pending', 'Open'], rows: (O1) => [`${cap(O1)}, morning`, `${cap(O1)}, afternoon`, `${cap(O1)}, Saturday`], cta: (o, O1) => `Book ${an(O1)}` },
+    find: { forms: 'find finds finding discover discovers discovering search searches searching locate locates locating hire hires hiring connect connects connecting match matches matching compare compares comparing choose', suffix: 'Find', kind: '', obj: 'services',
+      feats: (o) => [`Find ${o} near you`, 'Verified profiles and honest reviews', 'Compare and save favourites'], card: (o) => [`${cap(o)} near you`, '18'], st: ['★ 4.9, 0.8 km', '★ 4.7, 1.4 km', '★ 4.6, 2.5 km'], pre: ['Nearest', 'Top-rated', 'Best-priced'], cta: (o, O1) => `Find ${an(O1)}` },
+    sell: { forms: 'sell sells selling list lists listing advertise advertises', suffix: 'Mart', kind: 'shop', obj: 'products',
+      feats: (o) => [`List and sell ${o}`, 'Get paid by card or bank transfer', 'Orders and delivery in one view'], card: () => ['Sales this week', '₦86,500'], st: ['₦8,500', '₦12,000', 'Sold out'], pre: ['Standard', 'Premium', 'Bulk'], cta: (o, O1) => `List ${an(O1)}` },
+    buy: { forms: 'buy buys buying order orders ordering shop shops shopping rent rents renting', suffix: 'Mart', kind: 'shop', obj: 'items',
+      feats: (o) => [`Order ${o} without the stress`, 'Pay online or on delivery', 'Track every order'], card: () => ['Your orders', '3 on the way'], st: ['₦4,500', '₦7,000', 'Delivered'], rows: (O1) => [cap(O1), `${cap(O1)} bundle`, 'Last order'], cta: (o, O1) => `Order ${O1}` },
+    pay: { forms: 'give gives giving pay pays paying split splits splitting send sends sending transfer transfers collect collects collecting contribute contributes save saves saving invest invests investing lend lends lending borrow borrows borrowing raise raises raising donate donates fund funds', suffix: 'Pay', kind: 'pay', obj: 'money',
+      feats: (o, O1, v) => [`${cap(v)} ${o} with less back-and-forth`, 'See who has paid and who has not', 'Reminders before anything is due'], card: () => ['Collected so far', '₦45,000'], st: ['Paid', '₦5,000 due', 'Paid'], people: true, cta: (o, O1, v) => `${cap(v)} ${o}` },
+    learn: { forms: 'learn learns learning study studies studying teach teaches teaching practise practice practising practicing prepare prepares preparing revise', suffix: 'Learn', kind: 'learn', obj: 'skills',
+      feats: (o) => [`Learn ${o} in short lessons`, 'Practice questions with instant feedback', 'Progress you can see'], card: () => ['This week', '4 lessons'], st: ['80%', '65%', 'Sat'], rows: (O1) => [`${cap(O1)} basics`, 'Practice test', 'Mock exam'], cta: () => 'Continue learning' },
+    share: { forms: 'share shares sharing post posts posting chat chats chatting discuss discusses review reviews reviewing rate rates rating swap swaps swapping showcase stream streams', suffix: 'Circle', kind: 'people', obj: 'stories',
+      feats: (o) => [`Share ${o} with people who care`, 'Comments, reactions and follows', 'Groups for every interest'], card: () => ['New this week', '126 posts'], st: ['12 likes', '4 replies', 'New'], people: true, cta: (o, O1) => `Share ${an(O1)}` },
+    plan: { forms: 'plan plans planning invite invites inviting host hosts hosting celebrate', suffix: 'Plan', kind: 'people', obj: 'events',
+      feats: (o) => [`Plan ${o} from start to finish`, 'Invites and RSVPs', 'Budget and checklist'], card: () => ['Coming up', 'Sat, 2:00 pm'], st: ['Confirmed', 'Invited', 'To do'], rows: () => ['Guest list', 'Budget', 'Venue'], cta: (o, O1) => `Plan ${an(O1)}` },
+    deliver: { forms: 'deliver delivers delivering ship ships shipping move moves moving pick dispatch dispatches', suffix: 'Go', kind: 'move', obj: 'packages',
+      feats: (o) => [`Deliver ${o} across town`, 'Live rider tracking', 'Proof of delivery'], card: () => ['Out for delivery', '6'], st: ['On the way', 'Picked up', 'Delivered'], rows: () => ['Order #1042', 'Order #1043', 'Order #1044'], cta: () => 'Request a pickup' },
+    verify: { forms: 'verify verifies verifying check checks checking confirm confirms authenticate validate inspect inspects', suffix: 'Check', kind: 'home', obj: 'documents',
+      feats: (o) => [`Verify ${o} before money changes hands`, 'A step-by-step checklist', 'A report you can share'], card: () => ['Checks passed', '3 of 5'], st: ['Verified', 'Pending', 'Not started'], rows: (O1) => [`${cap(O1)} documents`, 'Identity check', 'Final report'], cta: (o, O1) => `Verify ${an(O1)}` }
+  };
+  const NOUNV = { delivery: ['deliver', 'deliver'], deliveries: ['deliver', 'deliver'], savings: ['pay', 'save'], payments: ['pay', 'pay'], payment: ['pay', 'pay'], rental: ['buy', 'rent'], rentals: ['buy', 'rent'], tracker: ['track', 'track'], tutoring: ['learn', 'learn'], lessons: ['learn', 'learn'], bookings: ['book', 'book'], marketplace: ['', ''] };
+  const VERB_OF = {};
+  Object.keys(VERBS).forEach((k) => VERBS[k].forms.split(' ').forEach((f) => { VERB_OF[f] = k; }));
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function an(s) { if (/^(laundry|rent|money|food|data|water|gas|fuel|electricity|furniture|equipment|advice|help|information|transport|cleaning|catering|music|content|news|insurance|healthcare|fashion|clothing|luggage|feedback|support|training|childcare|homework)\b/i.test(s)) return s; return (/^[aeiou]/i.test(s) && !/^(uni|use|eu)/i.test(s) ? 'an ' : 'a ') + s; }
+  function sing(w) { if (/(tomato|potato|mango|hero|echo)es$/.test(w)) return w.slice(0, -2); return /(ss|us|is)$/.test(w) || /^(physics|mathematics|economics|statistics|logistics|analytics|electronics|politics)$/.test(w) || /^(staff|news|series|money|rent|data)$/.test(w) ? w : w.replace(/ies$/, 'y').replace(/(ch|sh|x|ss)es$/, '$1').replace(/([^s])s$/, '$1'); }
+  function base(w) {
+    if (VERBS[w]) return w;
+    let s = w;
+    if (/ies$/.test(w)) s = w.slice(0, -3) + 'y';
+    else if (/ing$/.test(w)) { s = w.slice(0, -3); if (/([bdgmnprt])\1$/.test(s)) s = s.slice(0, -1); if (!VERB_OF[s] && VERB_OF[s + 'e']) s += 'e'; }
+    else if (/es$/.test(w) && VERB_OF[w.slice(0, -2)]) s = w.slice(0, -2);
+    else if (/s$/.test(w) && VERB_OF[w.slice(0, -1)]) s = w.slice(0, -1);
+    return VERB_OF[s] ? s : w;
+  }
+  function phrase(toks, i, max) {
+    const out = [];
+    for (let j = i; j < toks.length && out.length < max; j++) {
+      const w = toks[j];
+      if (STOPAT.has(w) || (out.length && VERB_OF[w] && !/s$/.test(w) && j > i)) break;
+      if (DET.has(w) && !out.length) continue;
+      if (/^\d/.test(w) && !out.length) continue;
+      out.push(w);
+    }
+    return out;
+  }
+  function understand(idea) {
+    const CASE = {};
+    idea.replace(/[’']/g, '').split(/[^A-Za-z0-9-]+/).forEach((w) => { if (w.length > 1 && w === w.toUpperCase() && /[A-Z]/.test(w)) CASE[w.toLowerCase()] = w; });
+    const fix = (t) => t.replace(/[A-Za-z0-9]+/g, (w) => CASE[w.toLowerCase()] || w);
+    const toks = idea.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9\s-]/g, ' ').split(/\s+/).filter(Boolean);
+    // Kind (colour and fallbacks) from keyword overlap, as before.
+    let kind = GENERIC, score = 0;
+    KINDS.forEach((k) => { const sc = toks.filter((w) => k.words.includes(w) || k.words.includes(w.replace(/s$/, ''))).length; if (sc > score) { score = sc; kind = k; } });
+    // "Uber for laundry": borrow the model, the rest is the object.
+    let like = '', verb = '', vi = -1, object = [], audience = [], where = [];
+    const bi = toks.findIndex((w) => BRANDS[w]);
+    if (bi >= 0 && toks[bi + 1] === 'for') { like = cap(toks[bi]); verb = BRANDS[toks[bi]]; object = phrase(toks, bi + 2, 3).filter((w) => !PLACES.test(w)); }
+    let nounBase = '', prepPhrase = '';
+    // "food delivery", "a savings app": the action is a noun and the thing comes before it.
+    if (!verb) { const ni = toks.findIndex((w) => NOUNV[w] && NOUNV[w][0]); if (ni >= 0 && !toks.slice(0, ni).some((w) => VERB_OF[w])) { verb = NOUNV[toks[ni]][0]; nounBase = NOUNV[toks[ni]][1]; vi = ni; const prev = toks[ni - 1]; if (prev && !STOPAT.has(prev) && !DET.has(prev) && !PLACES.test(prev) && !VERB_OF[prev]) object = [prev]; } }
+    // First action word that is not "help/let/allow".
+    if (!verb) {
+      for (let i = 0; i < toks.length; i++) { if (VERB_OF[toks[i]]) { vi = i; verb = VERB_OF[toks[i]]; break; } }
+      if (vi >= 0) object = phrase(toks, vi + 1, 3).filter((w) => !PLACES.test(w));
+    }
+    // Who it is for: "for X", "helps X", "lets X", "X can".
+    for (let i = 0; i < toks.length; i++) {
+      if (/^(for|helps?|lets?|allows?|enables?)$/.test(toks[i]) && !(bi >= 0 && i === bi + 1)) {
+        const p = phrase(toks, i + 1, 3);
+        if (p.length && !VERB_OF[p[0]]) {
+          const people = p.filter((w) => !PLACES.test(w));
+          if (people.length && (people.some((w) => PERSON.test(w)) || !object.length || i < vi)) { audience = people; if (p.length > people.length) where = p.filter((w) => PLACES.test(w)); break; }
+        }
+      }
+    }
+    const pi = toks.findIndex((w, i) => /^(in|across|around|near)$/.test(w) && PLACES.test(toks[i + 1] || ''));
+    if (pi >= 0) where = phrase(toks, pi + 1, 3).filter((w) => PLACES.test(w) || /^(state|island|mainland)$/.test(w));
+    if (verb && vi >= 0 && !nounBase && !object.length && /^(for|to|on)$/.test(toks[vi + 1] || '') && (prepPhrase = toks[vi + 1])) object = phrase(toks, vi + 2, 3).filter((w) => !PLACES.test(w));
+    if (!audience.length && vi > 0 && PERSON.test(toks[vi - 1])) audience = [toks[vi - 1]];
+    // "connects landlords with tenants": the first group is the user, the second is who they are looking for.
+    let partner = [];
+    const after = vi >= 0 ? vi + 1 + toks.slice(vi + 1).findIndex((w) => STOPAT.has(w)) : -1;
+    if (after > vi && /^(with|to)$/.test(toks[after] || '')) partner = phrase(toks, after + 1, 3).filter((w) => !PLACES.test(w));
+    if (verb === 'find' && /^(connect|match)/.test(toks[vi]) && partner.length) { if (!audience.length) audience = object; object = partner; partner = []; nounBase = 'find'; }
+    if (!audience.length && partner.some((w) => PERSON.test(w)) && verb === 'pay') { audience = partner; partner = []; }
+    // If no action word, treat what follows "for/an app for" as the object.
+    if (!verb && !object.length) {
+      const fi = toks.indexOf('for');
+      const rest = (fi >= 0 ? phrase(toks, fi + 1, 3) : toks.filter((w) => !STOPAT.has(w) && !DET.has(w) && !/^(app|apps|platform|website|site|tool|idea|startup|business)$/.test(w)).slice(-2)).filter((w) => !PLACES.test(w));
+      if (rest.some((w) => PERSON.test(w))) audience = rest; else object = rest;
+    }
+    if (audience.join(' ') === object.join(' ')) audience = [];
+    const V = VERBS[verb] || null;
+    if (!kind.words && V && V.kind) kind = KINDS.find((k) => k.k === V.kind) || kind;
+    const hadA = vi >= 0 && /^(a|an)$/.test(toks[vi + 1] || '') && object.length && !/s$/.test(object[object.length - 1]);
+    const objText = ((hadA ? object.join(' ') + 's' : object.join(' ')) || (V ? V.obj : '')).slice(0, 28);
+    const head = sing(object[object.length - 1] || (V ? V.obj : 'item'));
+    const O1 = object.length > 1 ? object.slice(0, -1).filter((w) => !PERSON.test(w)).concat(head).join(' ') || head : head;
+    const vBase = like ? verb : nounBase || (vi >= 0 ? base(toks[vi]) : '');
+    const aud = audience.join(' ');
+    const audHead = audience.length ? sing(audience[audience.length - 1]) : '';
+    // Working name: the most specific noun plus a suffix that fits the job.
+    const genericAud = /^(people|person|user|customer|everyone|business|businesses|owner|women|woman|men|man|folk)$/.test(audHead);
+    const nameWord = (audHead && !genericAud ? audHead : audience.length > 1 && genericAud ? sing(audience[0]) : (object.length ? head : '')) || 'idea';
+    const suffix = V ? V.suffix : kind.suffix;
+    const name = cap(nameWord.replace(/-/g, '').slice(0, 12)) + ' ' + (cap(nameWord) === suffix ? 'Hub' : suffix);
+    const doing = V ? (vBase === 'deliver' && nounBase ? `get ${objText} delivered` : `${vBase || verb} ${prepPhrase ? prepPhrase + ' ' : ''}${hadA ? an(object.join(' ')) : objText}${partner.length ? ' to ' + partner.join(' ') : ''}`.trim()) : (objText ? `get ${objText} sorted` : '');
+    let features, card, rows, cta;
+    if (V) {
+      features = V.feats(objText, O1, vBase || verb);
+      card = V.card(objText);
+      const personObj = object.some((w) => PERSON.test(w));
+      const labels = V.rows ? V.rows(O1) : (V.people || personObj ? NAMES[toks.length % 3] : V.pre.map((p) => `${p} ${O1}`));
+      rows = labels.map((l, i) => [cap(l), V.st[i]]);
+      cta = V.cta(objText, O1, vBase || verb);
+      if (verb === 'pay' && /^(save|invest)$/.test(vBase)) { features = [`${cap(vBase)} ${objText} a little at a time`, 'Goals you can watch grow', 'Withdraw when you need it']; card = ['Saved so far', '₦45,000']; rows = rows.map(([a], i) => [a, ['₦500 daily', '₦2,000 weekly', 'Goal reached'][i]]); cta = 'Start saving'; }
+      if (verb === 'pay' && /^(give|donate|raise|fund|contribute)$/.test(vBase)) { features = [`${cap(vBase)} ${objText} in a few taps`, 'Receipts for every gift', 'See what each campaign has raised']; card = ['Given this month', '₦128,000']; rows = rows.map(([a], i) => [a, ['₦5,000', '₦2,000', '₦10,000'][i]]); }
+    } else {
+      features = (objText ? [`Everything about ${objText} in one place`] : []).concat(kind.features).slice(0, 3);
+      if (kind === GENERIC && objText) { card = [`Your ${objText}`, '3 active']; rows = [[`New ${O1} request`, 'Today'], [`${cap(O1)} update`, 'In progress'], ['Next step', 'Planned']]; cta = 'Get started'; } else { card = kind.card; rows = kind.rows; cta = kind.cta; }
+    }
+    const summary = (aud ? cap(aud) + ' who need to ' : 'Anyone who needs to ') + (doing || 'get this done') + (where.length ? ' in ' + where.map(cap).join(' ') : '');
+    return { k: kind.k, name: fix(name), like, aud: fix(cap(aud)), doing: fix(doing), where: where.map(cap).join(' '), summary: fix(summary), features: features.map((f) => fix(cap(f)).slice(0, 60)), card: [fix(cap(card[0])).slice(0, 30), card[1]], rows: rows.map(([a, b]) => [fix(a).slice(0, 26), b]), cta: fix(cap(cta)).slice(0, 28), greet: audHead && PERSON.test(audience[audience.length - 1]) ? `For ${aud}` : '' };
   }
 
   const pitch = $('[data-pitch]');
@@ -204,24 +322,25 @@
       const idea = input.value.trim().replace(/\s+/g, ' ').slice(0, 140);
       if (idea.length < 6) { input.setAttribute('aria-invalid', 'true'); $('.pitch__hint', pitch).textContent = 'Give us a few words about your idea, for example “an app for splitting rent with flatmates”.'; input.focus(); return; }
       input.removeAttribute('aria-invalid');
-      const c = concept(idea);
+      const c = understand(idea);
+      const said = (k, v) => v ? `<div><dt>${k}</dt><dd>${v}</dd></div>` : '';
       const brief = '/start-a-project/?idea=' + encodeURIComponent(idea) + '&name=' + encodeURIComponent(c.name);
       build.setAttribute('aria-label', 'A first sketch of your idea, ' + c.name);
       build.innerHTML = `
       <span class="build__line" aria-hidden="true"></span>
       <div class="build__stage build__stage--idea">
-        <p class="build__label"><b>1</b>Your idea</p>
+        <p class="build__label"><b>1</b>What we heard</p>
         <div class="build__idea">
           <p class="build__note-text">“${esc(idea)}”</p>
-          <p>Working name: <b>${esc(c.name)}</b></p>
+          <dl class="heard">${said('For', esc(c.aud))}${said('They need to', esc(c.doing))}${said('Where', esc(c.where))}${said('Works like', c.like ? esc(c.like) : '')}${said('Working name', '<b>' + esc(c.name) + '</b>')}</dl>
         </div>
       </div>
       <div class="build__stage">
         <p class="build__label"><b>2</b>Sketched</p>
         <div class="build__frame build__frame--wire" aria-hidden="true">
-          <div class="phone"><span class="phone__island"></span><div class="wire">
-            <i class="w-a"></i><i class="w-b"></i><i class="w-c"></i>
-            <span class="w-row"><i></i><i></i><i></i></span><i class="w-d"></i><i class="w-d"></i><i class="w-e"></i>
+          <div class="phone"><span class="phone__island"></span><div class="wire wire--said">
+            <i class="w-a">${esc(c.name)}</i><i class="w-b">${esc(c.card[0])}</i><i class="w-c"></i>
+            <span class="w-row"><i></i><i></i><i></i></span><i class="w-d">${esc(c.rows[0][0])}</i><i class="w-d">${esc(c.rows[1][0])}</i><i class="w-e">${esc(c.cta)}</i>
           </div></div>
         </div>
         <ul class="sketch-features">${c.features.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
@@ -231,7 +350,7 @@
         <div class="build__frame build__frame--real build__frame--concept">
           <div class="phone"><span class="phone__island"></span>
             <div class="concept concept--${c.k}">
-              <p class="concept__bar"><span class="concept__logo" aria-hidden="true">${esc(c.name.charAt(0))}</span>${esc(c.name)}</p>
+              <p class="concept__bar"><span class="concept__logo" aria-hidden="true">${esc(c.name.charAt(0))}</span>${esc(c.name)}</p>${c.aud ? `<p class="concept__for">Made for ${esc(c.aud.toLowerCase() === c.aud ? c.aud : c.aud.charAt(0).toLowerCase() + c.aud.slice(1))}</p>` : ''}
               <div class="concept__card"><p>${esc(c.card[0])}</p><p class="concept__big">${esc(c.card[1])}</p></div>
               <ul class="concept__rows">${c.rows.map(([a, b]) => `<li><span>${esc(a)}</span><span>${esc(b)}</span></li>`).join('')}</ul>
               <p class="concept__cta">${esc(c.cta)}</p>
@@ -240,22 +359,23 @@
         </div>
       </div>
       <div class="build__caption sketch-caption">
-        <p>A first sketch of ${esc(c.name)}, made from your sentence in seconds. A real product starts with a discovery conversation, and that part is on us.</p>
-        <p class="sketch-actions"><a class="btn btn--primary btn--sm" href="${brief}"><span>Turn this into a brief</span></a><button class="link" type="button" data-pitch-reset>Show the Zengly example</button></p>
+        <p>We heard: ${esc(c.summary)}. This is a first sketch of ${esc(c.name)} built from that. Not quite right? Add a detail, like who it is for or what they do first, and sketch again.</p>
+        <p class="sketch-actions"><a class="btn btn--primary btn--sm" href="${brief}"><span>Turn this into a brief</span></a><button class="link" type="button" data-pitch-edit>Add a detail</button><button class="link" type="button" data-pitch-reset>Show the Zengly example</button></p>
       </div>`;
       $('[data-pitch-reset]', build).addEventListener('click', reset);
-      if (live) live.textContent = 'Sketched ' + c.name + ': ' + c.features.join(', ') + '. You can turn it into a brief.';
+      $('[data-pitch-edit]', build).addEventListener('click', () => { input.focus(); input.setSelectionRange(input.value.length, input.value.length); });
+      if (live) live.textContent = 'We heard: ' + c.summary + '. Sketched ' + c.name + ': ' + c.features.join(', ') + '. You can turn it into a brief.';
       const s = swarm();
       if (s) {
         const items = [];
         $$('.build__label', build).forEach((el, i) => items.push({ el, type: 'text', lane: 'labels', speed: 1.4, wait: i ? 0 : 0 }));
         items.push({ el: $('.build__idea', build), type: 'box', lane: 'idea' });
-        $$('.build__idea p', build).forEach((el) => items.push({ el, type: 'text', lane: 'idea', speed: 1.8 }));
+        $$('.build__idea p, .heard > div', build).forEach((el) => items.push({ el, type: 'text', lane: 'idea', speed: 1.8 }));
         items.push({ el: $('.build__frame--wire', build), type: 'box', lane: 'wf', wait: 250 });
         $$('.wire > i, .wire .w-row i', build).forEach((el, i) => items.push({ el, type: 'wire', lane: 'w' + (i % 3), wait: i < 3 ? 700 : 0 }));
         $$('.sketch-features li', build).forEach((el) => items.push({ el, type: 'text', lane: 'feat', speed: 1.6, wait: 400 }));
         items.push({ el: $('.build__frame--concept', build), type: 'box', lane: 'phone', wait: 450 });
-        $$('.concept__bar, .concept__card p, .concept__rows li, .concept__cta', build).forEach((el, i) => items.push({ el, type: 'text', lane: 'c' + (i % 3), speed: 1.6, wait: i < 3 ? 900 : 0 }));
+        $$('.concept__bar, .concept__for, .concept__card p, .concept__rows li, .concept__cta', build).forEach((el, i) => items.push({ el, type: 'text', lane: 'c' + (i % 3), speed: 1.6, wait: i < 3 ? 900 : 0 }));
         items.push({ el: $('.sketch-caption > p', build), type: 'text', lane: 'cap', speed: 3, wait: 1600 });
         items.push({ el: $('.sketch-actions', build), type: 'box', lane: 'cap' });
         s.build(items);
