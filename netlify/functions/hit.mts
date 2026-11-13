@@ -5,7 +5,7 @@
 import { getStore } from '@netlify/blobs';
 import type { Config, Context } from '@netlify/functions';
 
-const EVENTS = new Set(['view', 'book', 'whatsapp', 'email', 'start', 'submit', 'sketch', 'plan', 'proto', 'cmdk']);
+const EVENTS = new Set(['view', 'book', 'whatsapp', 'email', 'start', 'submit', 'sketch', 'plan', 'proto', 'cmdk', 'like', 'share', 'comment']);
 const BOTS = /bot|crawl|spider|slurp|preview|lighthouse|headless|monitor|curl|wget|python|axios|node-fetch/i;
 
 export default async (req: Request, context: Context) => {

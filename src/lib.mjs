@@ -32,14 +32,14 @@ const DIMS = {
   'site-zengly-desktop': [1440, 900], 'site-kelvin-desktop': [1440, 900], 'site-cv-desktop': [1440, 900],
   'site-zengly-mobile': [390, 844], 'site-kelvin-mobile': [390, 844], 'site-cv-mobile': [390, 844],
   'venture-landlink': [1280, 854], 'venture-sparkhive': [1280, 720], 'venture-lexforum': [1280, 853],
-  'swiftly-danfo': [1600, 1066], 'zengly-fig-home': [752, 1640], 'zengly-fig-nearby': [752, 1640], 'zengly-fig-gifts': [752, 1640], 'zengly-fig-gift': [752, 1640], 'zengly-fig-sent': [752, 1640], 'zengly-fig-ready': [752, 1640], 'mock-landlink': [1280, 800], 'mock-sparkhive': [1280, 800], 'mock-lexforum': [1280, 800], 'mock-swiftly': [1600, 1000], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
+  'swiftly-danfo': [1600, 1066], 'zengly-fig-home': [752, 1640], 'zengly-fig-nearby': [752, 1640], 'zengly-fig-gifts': [752, 1640], 'zengly-fig-gift': [752, 1640], 'zengly-fig-sent': [752, 1640], 'zengly-fig-ready': [752, 1640], 'zengly-lifestyle': [1600, 1200], 'zengly-phone-orange': [640, 1320], 'mock-landlink': [1600, 1000], 'mock-sparkhive': [1600, 1000], 'mock-lexforum': [1600, 1000], 'mock-swiftly': [1600, 1000], 'about-team-lagos': [1600, 1062], 'about-team-nesa': [1600, 1066]
 };
 const WIDTHS = {
   'zengly-sign': [540, 1080], 'zengly-podium': [540, 1080], 'zengly-gift': [540, 1080], 'zengly-friends': [600, 1200],
   'lagos-professionals': [800, 1600], 'lagos-collaboration': [800, 1600], 'lagos-strategy-session': [800, 1600],
   'site-zengly-desktop': [720, 1440], 'site-kelvin-desktop': [720, 1440], 'site-cv-desktop': [720, 1440],
   'venture-landlink': [640, 1280], 'venture-sparkhive': [640, 1280], 'venture-lexforum': [640, 1280],
-  'swiftly-danfo': [800, 1600], 'zengly-fig-home': [376, 752], 'zengly-fig-nearby': [376, 752], 'zengly-fig-gifts': [376, 752], 'zengly-fig-gift': [376, 752], 'zengly-fig-sent': [376, 752], 'zengly-fig-ready': [376, 752], 'mock-landlink': [640, 1280], 'mock-sparkhive': [640, 1280], 'mock-lexforum': [640, 1280], 'mock-swiftly': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
+  'swiftly-danfo': [800, 1600], 'zengly-fig-home': [376, 752], 'zengly-fig-nearby': [376, 752], 'zengly-fig-gifts': [376, 752], 'zengly-fig-gift': [376, 752], 'zengly-fig-sent': [376, 752], 'zengly-fig-ready': [376, 752], 'zengly-lifestyle': [800, 1600], 'zengly-phone-orange': [320, 640], 'mock-landlink': [800, 1600], 'mock-sparkhive': [800, 1600], 'mock-lexforum': [800, 1600], 'mock-swiftly': [800, 1600], 'about-team-lagos': [800, 1600], 'about-team-nesa': [800, 1600]
 };
 export function img(name, alt, { sizes = '100vw', cls = '', eager = false } = {}) {
   const [w, h] = DIMS[name];

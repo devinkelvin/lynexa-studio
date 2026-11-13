@@ -8,7 +8,7 @@ export function workIndex() {
   const trail = [['/', 'Home'], ['/work/', 'Work']];
   const used = CATEGORIES.filter(([k]) => PROJECTS.some((p) => p.cats.includes(k)));
   const media = (p) => {
-    if (p.slug === 'zengly') return `<span class="showcase__media showcase__media--zengly"><span class="showcase__phones">${phone('zengly-home-dark', '', { sizes: '12vw' })}${phone('zengly-split-bill', '', { sizes: '12vw' })}</span></span>`;
+    if (p.slug === 'zengly') return `<span class="showcase__media zlife">${img('zengly-lifestyle', '', { cls: 'zlife__bg', sizes: '(min-width: 900px) 45vw, 100vw' })}${img('zengly-phone-orange', 'Zengly home screen on an orange iPhone', { cls: 'zlife__phone', sizes: '(min-width: 900px) 160px, 30vw' })}</span>`;
     if (p.slug === 'swiftly') return `<span class="showcase__media showcase__media--cover">${img('mock-swiftly', VENTURE_MOCK.swiftly.alt, { sizes: '(min-width: 900px) 45vw, 92vw' })}<small class="photo-credit">Concept design</small></span>`;
     if (p.slug === 'createmycvnow') return `<span class="showcase__media showcase__media--site">${browser('site-cv-desktop', 'CreateMyCVNow homepage', 'CreateMyCVNow', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
     if (p.slug === 'kelvinekuhoho') return `<span class="showcase__media showcase__media--site showcase__media--night">${browser('site-kelvin-desktop', 'Kelvin Ekuhoho portfolio homepage', 'kelvinekuhoho.com', { sizes: '(min-width: 900px) 40vw, 90vw' })}</span>`;
@@ -209,7 +209,7 @@ export function swiftlyPage() {
       <h1>How Africa moves and gathers.</h1>
       <div style="display:grid;gap:1.25rem;justify-items:start">
         ${status('concept', 'Proposed venture, internal prototype')}
-        <p class="lead" style="margin:0">Swiftly is a Lynexa studio venture: a proposed platform that brings intercity travel, tickets and experiences into one place. It has not launched. This page shows the thinking and prototypes behind it.</p>
+        <p class="lead" style="margin:0">Swiftly is a Lynexa studio venture: a proposed ticketing app for transport, movies and events: bus, train and flight seats, cinema showtimes and event passes, bought and kept in one wallet. It has not launched. This page shows the thinking and prototypes behind it.</p>
       </div>
     </div>
     <dl class="facts">

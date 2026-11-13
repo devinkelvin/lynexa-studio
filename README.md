@@ -89,3 +89,11 @@ If you add an inline `<script>`, update the `sha256-…` hash in the CSP or the 
 | `netlify/functions/submission-created.mts` | Emails a confirmation from hello@lynexa.co after every verified form submission. | `SMTP_PASS` = the hello@lynexa.co mailbox password (Namecheap Private Email). Optional: `SMTP_USER`, `SMTP_HOST` (default `mail.privateemail.com`), `SMTP_PORT` (default 465). |
 
 Content you will edit most often: `src/site.mjs` (contact details, `bookingUrl`, `cvUrl`), `src/content/pricing.mjs`, `src/content/team.mjs`, `src/content/testimonials.mjs`, `src/content/insights.mjs`. After adding an article or page, run `node build.mjs && node scripts/make-og.mjs` to render its social image.
+
+## Insights: articles, covers, likes and comments
+
+- Articles live in `src/content/insights.mjs` (newest first, with `sources`). Reading time is computed.
+- `node scripts/make-covers.mjs` draws a cover for each new article (`--force` redraws all).
+- `node scripts/check-insights.mjs` is the quality gate; run it after `node build.mjs`.
+- Functions: `/api/likes`, `/api/comments` (no email collected, links rejected, honeypot and rate limits) and `/api/comments-moderate` (needs the `STATS_KEY` header).
+- A daily scheduled task researches, fact-checks and publishes one article. See `INSIGHTS_AUTOMATION.md`.
