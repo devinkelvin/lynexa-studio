@@ -1326,3 +1326,47 @@ kbd { display: inline-block; padding: .05rem .4rem; border: 1px solid var(--line
 .stats__card table { width: 100%; border-collapse: collapse; font-size: .95rem; }
 .stats__card td { padding: .4rem 0; border-top: 1px solid var(--line); }
 .stats__card td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* Zengly card: lifestyle photo with the orange iPhone mockup floating on top */
+.zlife { position: relative; overflow: hidden; isolation: isolate; }
+.zlife__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 55%; transition: transform .9s var(--ease-out); }
+.zlife::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, rgba(14,13,17,0) 35%, rgba(14,13,17,.55) 100%); }
+.zlife__phone { position: absolute; z-index: 1; right: 7%; top: 50%; width: clamp(80px, 17%, 220px); height: auto; transform: translateY(-50%) rotate(6deg); filter: drop-shadow(0 30px 40px rgba(0,0,0,.55)); transition: transform .6s var(--ease-out); }
+a:hover .zlife__bg { transform: scale(1.03); }
+a:hover .zlife__phone { transform: translateY(-52%) rotate(3deg); }
+@media (prefers-reduced-motion: reduce) { .zlife__bg, .zlife__phone { transition: none; } }
+
+/* Insights: covers, sources, like/share/comments */
+.post__cover { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: calc(var(--r-card) - 6px); margin-bottom: .4rem; background: var(--graphite); }
+.article-cover { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+.article-cover .post__cover { border-radius: var(--r-media); }
+.article__sources { margin-top: 2.5rem; padding: 1.4rem 1.5rem; border-radius: var(--r-card); background: var(--paper); border: 1px solid var(--line); }
+.article__sources h2 { font-size: 1.05rem; margin-bottom: .6rem; }
+.article__sources ul { display: grid; gap: .4rem; font-size: .95rem; }
+.article__sources a { color: var(--violet-deep); text-decoration: underline; text-underline-offset: .18em; }
+.engage { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.engage__bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+.engage__like { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 1.1rem; border: 1.5px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink); font: 600 .95rem var(--font); cursor: pointer; transition: background-color var(--t-fast), color var(--t-fast), border-color var(--t-fast); }
+.engage__like:hover { border-color: var(--ink); }
+.engage__like[aria-pressed="true"] { background: #fde8ee; border-color: #c43c68; color: #a3234e; }
+.engage__like[aria-pressed="true"] svg { fill: currentColor; }
+.engage__count:empty { display: none; }
+.engage__share { display: flex; flex-wrap: wrap; gap: .5rem; }
+.engage__btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .95rem; border: 1.5px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink); font: 500 .9rem var(--font); text-decoration: none; cursor: pointer; }
+.engage__btn:hover { border-color: var(--ink); }
+.comments { margin-top: 2.5rem; }
+.comments h2 { font-size: 1.4rem; margin-bottom: 1.25rem; }
+.comments__list { display: grid; gap: .75rem; }
+.comment { padding: 1.1rem 1.25rem; border-radius: var(--r-card); background: var(--paper); border: 1px solid var(--line); }
+.comment__who { display: flex; gap: .6rem; align-items: baseline; font-size: .95rem; }
+.comment__who time { color: var(--stone); font-size: .85rem; }
+.comment__text { margin-top: .4rem; white-space: pre-line; overflow-wrap: anywhere; }
+.comments__empty { color: var(--stone); }
+.comments__form { display: grid; gap: 1rem; margin-top: 1.75rem; padding: clamp(1.25rem, 3vw, 1.75rem); border-radius: var(--r-card); border: 1px solid var(--line); }
+.comments__form h3 { font-size: 1.15rem; }
+.comments__form .field { display: grid; gap: .4rem; }
+.comments__form label { font-weight: 600; font-size: .95rem; }
+.comments__form .btn { justify-self: start; }
+.comments__note { color: var(--stone); font-size: .88rem; }
+.comments__error:empty { display: none; }
+.comments__error { color: var(--red); font-weight: 600; font-size: .95rem; }

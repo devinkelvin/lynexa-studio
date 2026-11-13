@@ -104,11 +104,9 @@ export default function home() {
     ${head2('Selected work', 'Products we have designed and engineered, and ventures we are building. Every project shows where it really is today.', { id: 'work-title' })}
     <div class="showcase">
       <a class="showcase__item showcase__item--wide" href="/work/zengly/" data-cursor-text="View">
-        <span class="showcase__media showcase__media--zengly" data-reveal>
-          <span class="showcase__phones">
-            ${phone('zengly-fig-gift', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
-            ${phone('zengly-fig-sent', '', { sizes: '(min-width: 900px) 14vw, 30vw' })}
-          </span>
+        <span class="showcase__media zlife" data-reveal>
+          ${img('zengly-lifestyle', 'A person at a desk holding a phone showing the Zengly home screen', { cls: 'zlife__bg', sizes: '(min-width: 900px) 60vw, 100vw' })}
+          ${img('zengly-phone-orange', 'Zengly home screen in light mode on an orange iPhone: balance, Transfer, Vaniti, Split Bill and recent transactions', { cls: 'zlife__phone', sizes: '(min-width: 900px) 220px, 32vw' })}
         </span>
         <span class="showcase__meta">
           <span class="showcase__title">Zengly ${status(...zengly.status)}</span>

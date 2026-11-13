@@ -40,12 +40,77 @@
     const pl = $('[data-planner]'); if (pl) pl.addEventListener('change', () => track('plan', true));
   } catch (err) { /* never break the page */ }
 
+  /* ------------------------------------------------------------------ 10. Insights: like, share and comment */
+  try {
+    const eg = $('[data-engage]');
+    if (eg) {
+      const slug = eg.dataset.slug, title = eg.dataset.title, url = location.origin + location.pathname;
+      const status = $('[data-engage-status]', eg);
+      const say = (t) => { status.textContent = t; };
+      const track = (e) => { if (window.LynexaTrack) window.LynexaTrack(e); };
+      const started = Date.now();
+      const api = location.hostname === 'localhost' ? null : '/api';
+      // Likes
+      const likeBtn = $('[data-like]', eg), likeCount = $('[data-like-count]', eg), likeLabel = $('[data-like-label]', eg);
+      const likedKey = 'lx-liked-' + slug;
+      let liked = false; try { liked = localStorage.getItem(likedKey) === '1'; } catch (e) { /* ignore */ }
+      const paint = (n) => { if (typeof n === 'number') likeCount.textContent = n ? String(n) : ''; likeBtn.setAttribute('aria-pressed', String(liked)); likeLabel.textContent = liked ? 'Liked' : 'Like'; };
+      paint();
+      if (api) fetch(api + '/likes?slug=' + encodeURIComponent(slug)).then((r) => r.ok ? r.json() : null).then((d) => d && paint(d.likes)).catch(() => {});
+      likeBtn.addEventListener('click', async () => {
+        if (liked) return;
+        liked = true; paint(); try { localStorage.setItem(likedKey, '1'); } catch (e) { /* ignore */ }
+        track('like');
+        if (!api) return;
+        try { const r = await fetch(api + '/likes', { method: 'POST', body: JSON.stringify({ slug }) }); const d = await r.json(); paint(d.likes); say('Thanks for liking this article.'); } catch (e) { /* ignore */ }
+      });
+      // Share
+      const nat = $('[data-share-native]', eg);
+      if (navigator.share) { nat.hidden = false; nat.addEventListener('click', () => { navigator.share({ title, url }).then(() => track('share')).catch(() => {}); }); }
+      $('[data-share-copy]', eg).addEventListener('click', async (e) => {
+        const b = e.currentTarget;
+        try { await navigator.clipboard.writeText(url); b.textContent = 'Link copied'; say('Link copied to the clipboard.'); } catch (err) { b.textContent = 'Copy the address bar'; }
+        track('share'); setTimeout(() => { b.textContent = 'Copy link'; }, 2500);
+      });
+      $$('.engage__share a', eg).forEach((a) => a.addEventListener('click', () => track('share')));
+      // Comments
+      const list = $('[data-comments]', eg), countEl = $('[data-comment-count]', eg), form = $('[data-comment-form]', eg), err = $('[data-comment-error]', eg);
+      const when = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const item = (c) => `<li class="comment"><p class="comment__who"><b>${esc(c.name)}</b> <time datetime="${esc(c.at)}">${when(c.at)}</time></p><p class="comment__text">${esc(c.text)}</p></li>`;
+      let comments = [];
+      const draw = () => {
+        countEl.textContent = comments.length ? '(' + comments.length + ')' : '';
+        list.innerHTML = comments.length ? comments.map(item).join('') : '<li class="comments__empty">No comments yet. Be the first to share a thought.</li>';
+      };
+      if (api) fetch(api + '/comments?slug=' + encodeURIComponent(slug)).then((r) => r.ok ? r.json() : { comments: [] }).then((d) => { comments = d.comments || []; draw(); }).catch(() => { list.innerHTML = '<li class="comments__empty">Comments could not be loaded right now.</li>'; });
+      else draw();
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault(); err.textContent = '';
+        const fd = new FormData(form);
+        const name = String(fd.get('name') || '').trim(), text = String(fd.get('text') || '').trim();
+        if (name.length < 2) { err.textContent = 'Please add your name.'; $('#c-name').focus(); return; }
+        if (text.length < 3) { err.textContent = 'Please write a comment.'; $('#c-text').focus(); return; }
+        const btn = $('button[type="submit"]', form); btn.disabled = true;
+        try {
+          if (!api) throw new Error('Comments work on the live site.');
+          const r = await fetch(api + '/comments', { method: 'POST', body: JSON.stringify({ slug, name, text, website: fd.get('website'), ms: Date.now() - started }) });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.error || 'Your comment could not be posted. Please try again.');
+          if (d.comment) { comments.push(d.comment); draw(); say('Your comment is posted.'); }
+          else say('Thanks. Your comment will appear once it has been reviewed.');
+          form.reset(); track('comment');
+        } catch (x) { err.textContent = x.message; }
+        btn.disabled = false;
+      });
+    }
+  } catch (err) { /* never break the page */ }
+
   /* ------------------------------------------------------------------ 9. Private stats page (/stats/) */
   try {
     const box = $('[data-stats]');
     if (box) {
       const form = $('form', box), out = $('[data-stats-out]', box), msg = $('[data-stats-msg]', box);
-      const NAMES = { view: 'Page views', book: 'Book-a-call clicks', whatsapp: 'WhatsApp clicks', email: 'Email clicks', start: 'Start-a-project clicks', submit: 'Form submissions', sketch: 'Idea sketches', plan: 'Planner used', proto: 'Prototype used', cmdk: 'Quick menu opened' };
+      const NAMES = { view: 'Page views', book: 'Book-a-call clicks', whatsapp: 'WhatsApp clicks', email: 'Email clicks', start: 'Start-a-project clicks', submit: 'Form submissions', sketch: 'Idea sketches', plan: 'Planner used', proto: 'Prototype used', cmdk: 'Quick menu opened', like: 'Article likes', share: 'Article shares', comment: 'Comments posted' };
       const table = (title, rows, fmt = (k) => k) => `<section class="stats__card"><h2>${title}</h2>${rows.length ? `<table><tbody>${rows.map(([k, v]) => `<tr><td>${esc(fmt(k) || '(direct)')}</td><td>${v}</td></tr>`).join('')}</tbody></table>` : '<p>No data yet.</p>'}</section>`;
       const load = async (key, days) => {
         msg.textContent = 'Loading…';
