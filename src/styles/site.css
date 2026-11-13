@@ -345,7 +345,7 @@ main:focus { outline: none; }
 .surface-dark .checklist .icon { color: var(--violet-light); }
 @media (min-width: 900px) { .phase { grid-template-columns: 1fr 1.3fr; gap: 4rem; } .phase__cols { grid-template-columns: 1fr 1fr; } }
 
-/* ---------- Spotlight (Zengly) ---------- */
+/* ---------- Spotlight (ZenglyPay) ---------- */
 .spotlight { overflow: hidden; }
 .spotlight__top { display: grid; gap: 2rem; align-items: end; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
 .spotlight__top img.logo { width: 150px; margin-bottom: 1.5rem; }
@@ -695,7 +695,7 @@ fieldset.field { border: 0; margin: 0; padding: 0; min-width: 0; }
 /* Work index cards reuse showcase media */
 .work-card .showcase__media { margin-bottom: .25rem; }
 
-/* Zengly spotlight & gallery with phones */
+/* ZenglyPay spotlight & gallery with phones */
 .screens > li { flex: 0 0 clamp(190px, 24vw, 250px); }
 .screens .device figcaption { text-align: left; }
 .gallery--phones { gap: clamp(1rem, 3vw, 2.5rem); }
@@ -1125,7 +1125,7 @@ button.link { padding: 0; border: 0; background: none; color: var(--ink); font: 
 .concept__rows li span:last-child { font-weight: 600; white-space: nowrap; }
 .concept__cta { margin-top: 2px; padding: 8px; border-radius: 999px; background: var(--ink); color: #fff; text-align: center; font-weight: 600; }
 
-/* Zengly click-through */
+/* ZenglyPay click-through */
 .proto { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
 @media (min-width: 900px) { .proto { grid-template-columns: 1fr minmax(280px, 340px); } }
 .proto__intro { display: grid; gap: 1.25rem; justify-items: start; }
@@ -1307,7 +1307,7 @@ kbd { display: inline-block; padding: .05rem .4rem; border: 1px solid var(--line
 .svc-price b { font-size: 1.35rem; letter-spacing: -.02em; }
 .svc-price span { color: var(--stone); }
 
-/* Zengly: real design screens on a warm Zengly-gold stage (replaces stock photography) */
+/* ZenglyPay: real design screens on a warm ZenglyPay-gold stage (replaces stock photography) */
 .showcase__media--zengly { background: radial-gradient(90% 120% at 50% 0%, #c98a2b 0%, #8a5414 42%, #2a1a08 100%); }
 .zstage { position: relative; display: flex; justify-content: center; align-items: flex-end; gap: clamp(.75rem, 3vw, 2.5rem); padding: clamp(2rem, 5vw, 4rem) 1rem 0; min-height: clamp(320px, 46vw, 560px); background: radial-gradient(80% 110% at 50% 0%, #d29433 0%, #8a5414 45%, #24170a 100%); }
 .zstage__p { width: clamp(110px, 18vw, 230px); margin: 0; }
@@ -1327,7 +1327,7 @@ kbd { display: inline-block; padding: .05rem .4rem; border: 1px solid var(--line
 .stats__card td { padding: .4rem 0; border-top: 1px solid var(--line); }
 .stats__card td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 
-/* Zengly card: lifestyle photo with the orange iPhone mockup floating on top */
+/* ZenglyPay card: lifestyle photo with the orange iPhone mockup floating on top */
 .zlife { position: relative; overflow: hidden; isolation: isolate; }
 .zlife__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 40% 55%; transition: transform .9s var(--ease-out); }
 .zlife::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, rgba(14,13,17,0) 35%, rgba(14,13,17,.55) 100%); }

@@ -31,7 +31,7 @@ export default function home() {
       <div class="actions">${btn('/start-a-project/', 'Start a project', 'primary', ' data-magnetic')}${btn('/work/', 'Explore our work', 'secondary', ' data-magnetic')}</div>
     </div>
 
-    <div class="build" role="group" aria-label="How an idea becomes a product, shown with Zengly’s split-bill feature">
+    <div class="build" role="group" aria-label="How an idea becomes a product, shown with ZenglyPay’s split-bill feature">
       <span class="build__line" aria-hidden="true"></span>
       <div class="build__stage build__stage--idea">
         <p class="build__label"><b>1</b>The idea</p>
@@ -52,10 +52,10 @@ export default function home() {
       <div class="build__stage">
         <p class="build__label"><b>3</b>Built</p>
         <div class="build__frame build__frame--real">
-          <div class="phone phone--dark"><span class="phone__island"></span>${img('zengly-split-bill', 'Zengly split-bill screen showing a “Divide expenses fairly” card and bill history', { sizes: '(min-width: 760px) 240px, 40vw', eager: true })}</div>
+          <div class="phone phone--dark"><span class="phone__island"></span>${img('zengly-split-bill', 'ZenglyPay split-bill screen showing a “Divide expenses fairly” card and bill history', { sizes: '(min-width: 760px) 240px, 40vw', eager: true })}</div>
         </div>
       </div>
-      <p class="build__caption">Zengly’s split-bill feature, from a sentence to a wireframe to the interface in the app. Zengly launches in December 2026.</p>
+      <p class="build__caption">ZenglyPay’s split-bill feature, from a sentence to a wireframe to the interface in the app. ZenglyPay launches in December 2026.</p>
     </div>
     <form class="pitch" data-pitch novalidate>
       <label class="pitch__label" for="pitch-idea">Try it with your idea</label>
@@ -73,7 +73,7 @@ export default function home() {
   <div class="shell">
     <ul class="proof">
       <li><b>7+ years</b><span>designing banking and payment products at Sterling Bank and Polaris Bank</span></li>
-      <li><b>December 2026</b><span>Zengly, our social-finance app, launches on iOS and Android</span></li>
+      <li><b>December 2026</b><span>ZenglyPay, our social-finance app, launches on iOS and Android</span></li>
       <li><b>24 hours</b><span>to a reply on working days, from the people who will do the work</span></li>
       <li><b>GMT+1</b><span>all year, sharing the working day with London and Europe</span></li>
     </ul>
@@ -105,11 +105,11 @@ export default function home() {
     <div class="showcase">
       <a class="showcase__item showcase__item--wide" href="/work/zengly/" data-cursor-text="View">
         <span class="showcase__media zlife" data-reveal>
-          ${img('zengly-lifestyle', 'A person at a desk holding a phone showing the Zengly home screen', { cls: 'zlife__bg', sizes: '(min-width: 900px) 60vw, 100vw' })}
-          ${img('zengly-phone-orange', 'Zengly home screen in light mode on an orange iPhone: balance, Transfer, Vaniti, Split Bill and recent transactions', { cls: 'zlife__phone', sizes: '(min-width: 900px) 220px, 32vw' })}
+          ${img('zengly-lifestyle', 'A person at a desk holding a phone showing the ZenglyPay home screen', { cls: 'zlife__bg', sizes: '(min-width: 900px) 60vw, 100vw' })}
+          ${img('zengly-phone-orange', 'ZenglyPay home screen in light mode on an orange iPhone: balance, Transfer, Vaniti, Split Bill and recent transactions', { cls: 'zlife__phone', sizes: '(min-width: 900px) 220px, 32vw' })}
         </span>
         <span class="showcase__meta">
-          <span class="showcase__title">Zengly ${status(...zengly.status)}</span>
+          <span class="showcase__title">ZenglyPay ${status(...zengly.status)}</span>
           <span class="showcase__desc">${zengly.summary} The mobile app launches in December 2026; the website at zenglypay.com is live and taking early-access sign-ups.</span>
         </span>
       </a>
