@@ -2,6 +2,49 @@
 // Keep claims practical and checkable; link to primary sources for any fact that can change (fees, regulations).
 export const ARTICLES = [
   {
+    slug: 'whatsapp-business-api-pricing',
+    title: 'What WhatsApp Business messages cost your product in 2026',
+    seoTitle: 'WhatsApp Business API pricing in 2026',
+    description: 'How Meta now charges for WhatsApp Business Platform messages, what changed on 1 October 2026 and how to design your messaging so the bill stays predictable.',
+    date: '2026-11-14', topic: 'Growth',
+    sources: [
+      ['Meta for Developers: Pricing on the WhatsApp Business Platform', 'https://developers.facebook.com/documentation/business-messaging/whatsapp/pricing.md'],
+      ['Zendesk: Announcing upcoming changes to WhatsApp Business messaging pricing', 'https://support.zendesk.com/hc/en-us/articles/11113277351322-Announcing-upcoming-changes-to-WhatsApp-Business-messaging-pricing'],
+      ['Courier: WhatsApp pricing changes, October 1, 2026', 'https://www.courier.com/blog/whatsapp-pricing-changes-october-2026'],
+      ['Techpoint Africa: WhatsApp will charge businesses per message, starting October 1', 'https://techpoint.africa/insight/techpoint-digest-1414/'],
+      ['Legit.ng: Meta introduces per-message billing for WhatsApp Business users', 'https://www.legit.ng/business-economy/technology/1663021-meta-introduces-message-billing-whatsapp-business-users-drops-24-hour-flat-rate']
+    ],
+    body: `
+<p>For many Nigerian products, WhatsApp is where customers actually read messages: order updates, OTPs, payment receipts and support replies. If you send those through the WhatsApp Business Platform (the API, not the free WhatsApp Business app), almost every message you send now has a price, and the rules changed twice in just over a year. Here is how the pricing works today and what it means for how you design your messaging.</p>
+<h2>You pay per message, not per conversation</h2>
+<p>Since 1 July 2025, Meta has charged per delivered message instead of per 24-hour conversation. Under the old model, one fee covered a whole conversation window; now each chargeable message is priced on its own. The price depends on two things: the category of the message and the country calling code of the recipient’s number. Nigeria (+234) has its own rate in Meta’s country list rather than sharing a regional price.</p>
+<h2>The message categories</h2>
+<p>Messages you start are sent as approved templates, and every template has a category:</p>
+<ul>
+<li><b>Marketing:</b> promotions, offers, re-engagement. Marketing templates are charged unless they fall inside a free Click to WhatsApp window (see below).</li>
+<li><b>Utility:</b> updates linked to something the customer did, such as an order confirmation or a delivery update.</li>
+<li><b>Authentication:</b> one-time passcodes for login or verification.</li>
+</ul>
+<p>You accept the charge for whatever category a template has at the time you send it, and Meta makes you responsible for reviewing that category. Check it on each template so a transactional message is not billed at a higher rate than you planned for.</p>
+<h2>What changed on 1 October 2026</h2>
+<p>When a customer messages you, a 24-hour customer service window opens. Until recently, free-form replies inside that window cost nothing, and from July 2025 utility templates sent inside it were free too. Zendesk and Courier both report that from 1 October 2026 Meta charges per message for non-template replies sent in the window, and for utility templates sent in it. Courier reports that these service messages are charged at the same rate your market pays for utility and authentication messages.</p>
+<p>Some things stay free, according to the same sources: messages customers send to you, and replies to people who arrive through a Click to WhatsApp ad, which open a free 72-hour window. Marketing template pricing was not changed. When we checked, Meta’s main developer pricing page still described in-window replies as free, so confirm the current position with your messaging provider before you rely on either version.</p>
+<h2>What it costs in Nigeria</h2>
+<p>Meta publishes rate cards in US dollars and other currencies, not in naira, and it only changes prices on the first day of a quarter. In August 2026 Techpoint Africa put a utility message to a Nigerian number at about $0.0101 and a marketing message at about $0.062. Use those as a rough guide and take current figures from Meta’s rate card before you budget, since rates and exchange rates both move.</p>
+<h2>How to keep the bill predictable</h2>
+<ul>
+<li><b>Count your messages per customer journey.</b> List every WhatsApp message a customer receives in a typical month, from OTP to receipt to support. Multiply by your expected users and the current rate. Support conversations now belong in that model.</li>
+<li><b>Choose the channel per message.</b> In-app notifications and email cost you little to send. Keep WhatsApp for messages where reaching the customer quickly really matters.</li>
+<li><b>Write replies that resolve, not chat.</b> Outside a Click to WhatsApp window, each support reply is now a chargeable message, so a clear answer in one message is cheaper than five short ones, and better for the customer.</li>
+<li><b>Keep templates honestly categorised.</b> Keep promotional lines out of transactional templates, and check the category on each one before it goes live.</li>
+<li><b>Watch the pricing calendar.</b> Meta gives at least a month’s notice of rate changes. Put a quarterly check in your finance calendar.</li>
+<li><b>Know who bills you.</b> If you use a provider such as Twilio, Infobip or a local reseller, ask whether they pass Meta’s fees through at cost or add a margin.</li>
+</ul>
+<h2>Is it still worth it?</h2>
+<p>For most products serving Nigerian customers, yes. A delivered, read WhatsApp message often does more than an SMS or email that is ignored. The change is that messaging is now a cost line to design around, not a free channel. Model it at the start, the same way you would model payment fees.</p>
+<p>If you are planning a product’s notifications and support flows, <a href="/contact/">talk to us</a>.</p>`
+},
+  {
     slug: 'nigeria-startup-act-label',
     title: 'How to get a startup label under the Nigeria Startup Act',
     seoTitle: 'How to get a Nigeria Startup Act label',
